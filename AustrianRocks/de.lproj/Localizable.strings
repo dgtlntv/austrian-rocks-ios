@@ -1,0 +1,169 @@
+/*
+  Localizable.strings
+  Austrian.rocks
+
+  Created by Austrian.rocks
+  Copyright © 2025 Austrian.rocks. All rights reserved.
+*/
+
+"tabs.map" = "Karte";
+"tabs.discover" = "Entdecken";
+"tabs.ticklist" = "Tickliste";
+"tabs.contribute" = "Beitragen";
+
+// MARK: POI
+"poi.see_in" = "Öffnen in %@";
+"poi.share_gps_coordinates" = "Koordinaten teilen";
+"poi.cancel" = "Abbrechen";
+"poi.gps_coordinates_for_poi" = "%@ : %@,%@";
+
+// MARK: Filters
+"filters.title" = "Filter";
+"filters.level" = "Schwierigkeit";
+"filters.levels" = "Schwierigkeiten";
+"filters.popular" = "Beliebt";
+"filters.favorite" = "Projekte";
+"filters.ticked" = "Abgehakt";
+"filters.no_favorites_alert.title" = "Du hast noch keine Projekte";
+"filters.no_favorites_alert.message" = "Füge dein erstes Projekt hinzu, um diesen Filter zu verwenden.";
+"filters.no_ticks_alert.title" = "Du hast noch keine Ticks";
+"filters.no_ticks_alert.message" = "Hake deinen ersten Boulder ab, um diesen Filter zu verwenden.";
+"filters.clear" = "Löschen";
+"filters.beginner" = "Anfänger";
+"filters.grade.range.beginner" = "Schwierigkeit 1 → 3";
+"filters.grade.range.level4" = "Schwierigkeit 4";
+"filters.grade.range.level5" = "Schwierigkeit 5";
+"filters.grade.range.level6" = "Schwierigkeit 6";
+"filters.grade.range.level7" = "Schwierigkeit 7";
+"filters.grade.range.level8" = "Schwierigkeit 8";
+"filters.grade.range.custom" = "Eigene Schwierigkeit";
+"filters.grade.range_picker.level" = "Schwierigkeit";
+"filters.grade.range_picker.grade_min" = "Min. Grad";
+"filters.grade.range_picker.grade_max" = "Max. Grad";
+
+// MARK: Search
+"search.title" = "Suchen";
+"search.areas" = "Gebiete";
+"search.problems" = "Boulder";
+"search.placeholder" = "Boulder- oder Gebietsname";
+"search.cancel" = "Abbrechen";
+"search.no_results" = "Keine Ergebnisse";
+"search.request_error" = "Verbindungsproblem";
+"search.examples" = "Beispiele:";
+
+// MARK: Discover view
+"discover.title" = "Entdecken";
+"discover.all_areas" = "Alle Gebiete";
+"discover.popular" = "Beliebt";
+"discover.beginners_guide" = "Anfänger-Guide";
+"discover.top_areas.level" = "Für deine Schwierigkeit";
+"discover.top_areas.level.beginner_friendly" = "Anfängerfreundlich";
+"discover.top_areas.train" = "Mit Zug + Rad erreichbar";
+"discover.top_areas.train.intro" = "Radzeit vom Bahnhof:";
+"discover.top_areas.see_in_google_maps" = "In Google Maps öffnen";
+"discover.top_areas.dry_fast" = "Trocknet schnell";
+"discover.all_areas.map" = "Karte";
+"discover.search_prompt" = "Gebiet";
+"discover.support" = "Möchtest du helfen?";
+"discover.rate" = "App bewerten";
+"discover.contribute" = "Beitragen";
+
+// MARK: Area view
+"area.tags.popular" = "beliebt";
+"area.tags.beginner_friendly" = "anfängerfreundlich";
+"area.tags.family_friendly" = "familienfreundlich";
+"area.tags.dry_fast" = "trocknet schnell";
+"area.infos" = "Gebietsinfo";
+"area.problems" = "Boulder";
+"area.levels" = "Schwierigkeiten";
+"area.chart.level" = "Schwierigkeit";
+"area.chart.problems" = "Boulder";
+"area.problems.popular" = "Beliebt";
+"area.problems.all" = "Alle";
+"area.access" = "Zugang";
+"area.see_on_the_map" = "Auf der Karte anzeigen";
+"area.close" = "Schließen";
+"area.bike_time" = "Radzeit";
+"area.walking_time" = "Gehzeit";
+"area.problems.search_prompt" = "Bouldername";
+
+// MARK: Download
+"download.cluster.areas" = "Gebiete";
+"download.cluster.download" = "Herunterladen";
+"download.cluster.downloading" = "Lade herunter %d%%";
+"download.cluster.downloaded" = "Gebiete heruntergeladen";
+"download.cluster.remove.title" = "Downloads löschen?";
+"download.cluster.remove.action" = "Löschen";
+"download.cluster.tip.title" = "Gebiete im Voraus herunterladen";
+"download.cluster.tip.message" = "Überspringe Ladezeiten und verwende Austrian.rocks ohne Internetverbindung.";
+"download.remove.title" = "Download löschen?";
+"download.remove.action" = "Löschen";
+"download.cancel.title" = "Download stoppen?";
+"download.cancel.action" = "Download stoppen";
+"download.zoom" = "Zoome auf der Karte, um Gebiete herunterzuladen.";
+
+// MARK: Top areas
+"top_areas.level.title" = "Für deine Schwierigkeit";
+"top_areas.level.level" = "Schwierigkeit";
+"top_areas.level.beginner" = "Anfänger";
+"top_areas.level.intermediate" = "Fortgeschritten";
+"top_areas.level.advanced" = "Experte";
+"top_areas.level.description.beginner" = "Diese Gebiete bieten viele Boulder der Schwierigkeiten 2 und 3, mit niedrigen Bouldern und guten Landungen.";
+"top_areas.level.description.intermediate" = "Diese Gebiete bieten viele Boulder der Schwierigkeiten 4 und 5.";
+"top_areas.level.description.advanced" = "Diese Gebiete bieten viele Boulder der Schwierigkeiten 6 und höher.";
+"top_areas.level.intermediate.warning" = "Vorsicht: Die Bewertungen können je nach Gebiet variieren.";
+"top_areas.level.read_guide" = "Anfänger-Guide lesen";
+"top_areas.groups.title" = "Für Gruppen";
+"top_areas.groups.description" = "Diese Gebiete bieten viele Boulder in allen Schwierigkeiten von 2 bis 7.";
+"top_areas.train.title" = "Zug + Rad";
+"top_areas.dry_fast.title" = "Trocknet schnell";
+"top_areas.dry_fast.description" = "Diese Gebiete trocknen schneller als die meisten anderen dank der Sonnen- und Windexposition";
+"top_areas.dry_fast.warning" = "Klettere nicht, wenn der Fels noch nass ist, du könntest ihn beschädigen.";
+"top_areas.dry_fast.useful_link" = "Nützlicher Link:";
+"all_areas.map.title" = "Alle Gebiete";
+"all_areas.map.problems" = "%@ Boulder";
+
+// MARK: Steepness
+"steepness.wall" = "Wand";
+"steepness.slab" = "Platte";
+"steepness.overhang" = "Überhang";
+"steepness.roof" = "Dach";
+"steepness.traverse" = "Traverse";
+"steepness.other" = "Andere";
+
+// MARK: Problem details
+"problem.no_name" = "Kein Name";
+"problem.sit_start" = "Sitzstart";
+"problem.action.save" = "Speichern";
+"problem.action.saved" = "Gespeichert";
+"problem.action.share" = "Teilen";
+"problem.action.report" = "Melden";
+"problem.action.edit" = "Bearbeiten";
+"problem.action.favorite.add" = "Zu Projekten hinzufügen";
+"problem.action.favorite.remove" = "Aus Projekten entfernen";
+"problem.action.tick" = "Abhaken";
+"problem.action.untick" = "Tick entfernen";
+"problem.action.share.description" = ""%@" bei %@";
+"problem.image.loading" = "Lade Gebiet...";
+"problem.pagination" = "%d von %d";
+"problem.variants" = "%d Varianten";
+"problem.missing_line" = "Fehlende Linie";
+"problem.topo.no_internet" = "Keine Internetverbindung";
+"problem.topo.timeout" = "Überprüfe deine Internetverbindung";
+"problem.topo.error" = "Foto konnte nicht geladen werden";
+"problem.topo.retry" = "Erneut versuchen";
+
+// MARK: Tick List
+"ticklist.title" = "Tickliste";
+"ticklist.empty_state_title" = "Bereit zum Klettern?";
+"ticklist.empty_state_body" = "Deine Projekte und Ticks werden hier angezeigt.";
+
+// MARK: Contribute
+"contribute.title" = "Zu Austrian.rocks beitragen";
+"contribute.intro" = "Hilf uns, den besten kollaborativen Kletterführer für Österreich zu erstellen!";
+"contribute.photo" = "Mache Fotos von fehlenden Bouldern";
+"contribute.location" = "GPS-Position eingeben";
+"contribute.line" = "Routenlinie zeichnen";
+"contribute.report" = "Fehler melden";
+"contribute.cta" = "Jetzt beitragen";
+"contribute.learn_more" = "Mehr über Austrian.rocks erfahren";

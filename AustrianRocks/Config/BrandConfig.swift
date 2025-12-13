@@ -1,0 +1,56 @@
+//
+//  BrandConfig.swift
+//  Austrian.rocks
+//
+//  Copyright © 2025 Austrian.rocks. All rights reserved.
+//
+
+import Foundation
+import SwiftUI
+
+struct BrandConfig {
+    static let name = "Austrian.rocks"
+    static let slug = "austrian-rocks"
+
+    struct Brand {
+        // Brand color - currently using the existing AppGreen color
+        // Update these values to change the app's brand color
+        static let color = Color("AppGreen")
+
+        // Alternative: Define custom color directly
+        // static let color = Color(red: 0.396, green: 0.769, blue: 0.400)
+    }
+
+    struct Domains {
+        static let main = "austrian.rocks"
+        static let www = "www.austrian.rocks"
+        static let assets = "assets.austrian.rocks"
+    }
+
+    struct Contact {
+        static let email = "hello@austrian.rocks"
+    }
+
+    struct AppStore {
+        static let appID = "TBD" // New App Store ID - to be updated when app is published
+    }
+
+    struct Mapbox {
+        static let account = "dgtlntv"
+        static let styleID = "cmi0wnif6004t01r0araj0ts0"
+        static let problemsTilesetID = "74oi43iu"
+        static let problemsSourceLayer = "problems-8pdvh4"
+
+        static var styleURL: String {
+            "mapbox://styles/\(account)/\(styleID)"
+        }
+
+        static var problemsTilesetURL: String {
+            "mapbox://\(account).\(problemsTilesetID)"
+        }
+    }
+
+    struct Database {
+        static let filename = "austrian-rocks"
+    }
+}
