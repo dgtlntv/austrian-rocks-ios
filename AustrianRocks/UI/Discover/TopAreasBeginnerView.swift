@@ -37,15 +37,9 @@ struct TopAreasBeginnerView: View {
                                     Text(area.name)
                                         .multilineTextAlignment(.leading)
                                 }
-                                
+
                                 Spacer()
-                                
-                                HStack {
-                                    ForEach(area.circuits.filter{$0.beginnerFriendly}) { circuit in
-                                        CircleView(number: "", color: circuit.color.uicolor, showStroke: false, height: 16)
-                                    }
-                                }
-                                
+
                                 Image(systemName: "chevron.right")
                                     .font(.caption.weight(.bold))
                                     .foregroundColor(.gray.opacity(0.7))

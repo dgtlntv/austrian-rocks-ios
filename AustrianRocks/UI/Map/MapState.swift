@@ -47,7 +47,12 @@ class MapState {
             selectedCluster = cluster
         }
     }
-    
+
+    func selectRegion(_ region: Region) {
+        // When a region is selected, we just zoom to it
+        // No state is stored for selected region currently
+    }
+
     func unselectArea() {
         selectedArea = nil
     }

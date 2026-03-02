@@ -11,23 +11,18 @@ import SwiftUI
 struct ProblemCircleView: View {
     var problem: Problem
     var isDisplayedOnPhoto = false
-    
+
     var body: some View {
-        CircleView(number: problem.circuitNumber,
-                   color: isDisplayedOnPhoto ? problem.circuitUIColorForPhotoOverlay : problem.circuitUIColor,
-                   showStroke: problem.circuitColor == .white && !isDisplayedOnPhoto,
+        CircleView(number: "",
+                   color: UIColor(Color.appBrandColor),
+                   showStroke: !isDisplayedOnPhoto,
                    showShadow: isDisplayedOnPhoto,
                    scaleEffect: scaleEffect
         )
     }
-    
+
     var scaleEffect: CGFloat {
-        if isDisplayedOnPhoto {
-            0.7
-        }
-        else {
-            problem.circuitNumber.isEmpty ? 0.7 : 1.0
-        }
+        0.7
     }
 }
 //

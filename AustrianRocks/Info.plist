@@ -28,12 +28,16 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MBXAccessToken</key>
-	<string></string>
 	<key>NSCameraUsageDescription</key>
-	<string>You&apos;ll be able to take photos of problems.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Your location will be displayed on the map to help you find your way around.</string>
+	<string>You'll be able to take photos of problems.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Your location will be displayed on the map to help you find your way around.</string>
+	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
+	<dict>
+		<key>LocationAccuracyAuthorizationDescription</key>
+		<string>Please enable precise location. The map works best only when precise location data is available.</string>
+	</dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Your location will be displayed on the map to help you find your way around.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
@@ -72,10 +76,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
-	<dict>
-		<key>LocationAccuracyAuthorizationDescription</key>
-		<string>Please enable precise location. The map works best only when precise location data is available.</string>
-	</dict>
 </dict>
 </plist>

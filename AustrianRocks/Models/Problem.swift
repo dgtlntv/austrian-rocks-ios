@@ -16,7 +16,7 @@ struct Problem : Identifiable {
     let name: String?
     let nameEn: String?
     let nameSearchable: String?
-    let grade: Grade
+    let grade: Grade?
     let coordinate: CLLocationCoordinate2D
     let steepness: Steepness
     let sitStart: Bool
@@ -105,7 +105,7 @@ extension Problem {
     static let name = Expression<String?>("name")
     static let nameEn = Expression<String?>("name_en")
     static let nameSearchable = Expression<String?>("name_searchable")
-    static let grade = Expression<String>("grade")
+    static let grade = Expression<String?>("grade")
     static let steepness = Expression<String>("steepness")
     static let problemDescription = Expression<String?>("description")
     static let videoLinks = Expression<String?>("video_links")
@@ -134,7 +134,7 @@ extension Problem {
                     name: p[name],
                     nameEn: p[nameEn],
                     nameSearchable: p[nameSearchable],
-                    grade: Grade(p[grade]),
+                    grade: p[grade].map { Grade($0) },
                     coordinate: CLLocationCoordinate2D(latitude: p[latitude], longitude: p[longitude]),
                     steepness: Steepness(rawValue: p[steepness]) ?? .other,
                     sitStart: p[sitStart] == 1,

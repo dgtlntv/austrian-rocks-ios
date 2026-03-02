@@ -50,14 +50,6 @@ struct MapContainerView: View {
                 mapState.centerOnArea(area)
             }
         }
-        .onChange(of: appState.selectedCircuit) { oldValue, newValue in
-            if let circuitWithArea = appState.selectedCircuit {
-                mapState.selectArea(circuitWithArea.area)
-                mapState.selectAndCenterOnCircuit(circuitWithArea.circuit)
-                mapState.displayCircuitStartButton = true
-                mapState.presentAreaView = false
-            }
-        }
     }
     
     var mapbox : some View {

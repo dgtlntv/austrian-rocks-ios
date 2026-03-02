@@ -59,11 +59,6 @@ extension Color {
     static var appBrandColor: Color {
         BrandConfig.Brand.color
     }
-
-    // Legacy support - to be removed after migration
-    static var appGreen: Color {
-        appBrandColor
-    }
 }
 
 // Locale to use when redirecting to URLs hosted on austrian.rocks

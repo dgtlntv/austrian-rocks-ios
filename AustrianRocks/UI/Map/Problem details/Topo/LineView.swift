@@ -18,7 +18,7 @@ struct LineView: View {
         ResizablePath(path: linePath)
             .trim(from: 0, to: drawPercentage) // make the path animatable chunk by chunk
             .stroke(
-                Color(problem.circuitUIColorForPhotoOverlay),
+                Color.appBrandColor,
                 style: StrokeStyle(lineWidth: 4 * counterZoomScale, lineCap: .round, lineJoin: .round)
             )
             .modifier(DropShadow())

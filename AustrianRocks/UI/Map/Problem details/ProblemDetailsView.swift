@@ -99,7 +99,7 @@ struct ProblemDetailsView: View {
                                 Button {
                                     mapState.selectProblem(p)
                                 } label: {
-                                    Text("\(p.localizedName) \(p.grade.string)")
+                                    Text("\(p.localizedName) \(p.grade?.string ?? "")")
                                 }
                             }
                         } label: {
@@ -157,10 +157,12 @@ struct ProblemDetailsView: View {
                             .minimumScaleFactor(0.5)
                         
                         Spacer()
-                        
-                        Text(problem.grade.string)
-                            .font(.title)
-                            .fontWeight(.bold)
+
+                        if let grade = problem.grade {
+                            Text(grade.string)
+                                .font(.title)
+                                .fontWeight(.bold)
+                        }
                     }
                     .padding(.top, 4)
                 }

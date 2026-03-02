@@ -71,8 +71,8 @@ struct TickList: View {
                                                 Image(systemName: "star.fill")
                                                     .foregroundColor(Color.yellow)
                                             }
-                                            
-                                            Text(problem.grade.string)
+
+                                            Text(problem.grade?.string ?? "")
                                         }
                                         .foregroundColor(.primary)
                                     }
@@ -109,10 +109,20 @@ struct TickList: View {
         
         areas.forEach { area in
             problemsGroupedByAreas[area] = problemsGroupedByAreas[area]!.sorted { (problem1, problem2) -> Bool in
-                if problem1.grade == problem2.grade {
+                // Handle nil grades - put them at the end
+                switch (problem1.grade, problem2.grade) {
+                case (nil, nil):
                     return problem1.localizedName < problem2.localizedName
+                case (nil, _):
+                    return false
+                case (_, nil):
+                    return true
+                case let (g1?, g2?):
+                    if g1 == g2 {
+                        return problem1.localizedName < problem2.localizedName
+                    }
+                    return g1 > g2
                 }
-                return problem1.grade > problem2.grade
             }
         }
         

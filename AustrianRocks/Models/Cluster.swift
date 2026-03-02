@@ -16,9 +16,9 @@ struct Cluster : Identifiable, Hashable {
     let name: String
     let mainAreaId: Int
     let regionId: Int?
-    let slug: String
+    let slug: String?
     let tags: [String]
-    let published: Bool
+    let published: Bool?
 
     var mainArea: Area {
         Area.load(id: mainAreaId) ?? areas.first!
@@ -48,9 +48,9 @@ extension Cluster {
     static let name = Expression<String>("name")
     static let mainAreaId = Expression<Int>("main_area_id")
     static let regionId = Expression<Int?>("region_id")
-    static let slug = Expression<String>("slug")
+    static let slug = Expression<String?>("slug")
     static let tags = Expression<String?>("tags")
-    static let published = Expression<Bool>("published")
+    static let published = Expression<Bool?>("published")
 
     static func load(id: Int) -> Cluster? {
 

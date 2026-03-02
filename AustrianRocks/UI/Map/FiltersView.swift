@@ -20,7 +20,7 @@ struct FiltersView: View {
             
             List {
                 Section {
-                    ForEach([GradeRange.beginner, GradeRange.level4, GradeRange.level5, GradeRange.level6, GradeRange.level7], id: \.self) { range in
+                    ForEach([GradeRange.beginner, GradeRange.level4, GradeRange.level5, GradeRange.level6, GradeRange.level7, GradeRange.level8], id: \.self) { range in
                         Button {
                             if filters.gradeRange == range {
                                 filters.gradeRange = nil
@@ -62,7 +62,6 @@ struct FiltersView: View {
             .navigationBarItems(
                 leading: Button {
                     mapState.clearFilters()
-                    mapState.unselectCircuit()
                     presentationMode.wrappedValue.dismiss()
                 } label: {
                     Text("filters.clear")

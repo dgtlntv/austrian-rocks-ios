@@ -143,7 +143,7 @@
 "problem.action.favorite.remove" = "Aus Projekten entfernen";
 "problem.action.tick" = "Abhaken";
 "problem.action.untick" = "Tick entfernen";
-"problem.action.share.description" = ""%@" bei %@";
+"problem.action.share.description" = "\"%@\" bei %@";
 "problem.image.loading" = "Lade Gebiet...";
 "problem.pagination" = "%d von %d";
 "problem.variants" = "%d Varianten";

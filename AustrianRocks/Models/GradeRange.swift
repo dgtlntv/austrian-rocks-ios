@@ -42,7 +42,7 @@ struct GradeRange : Equatable, Hashable {
             return NSLocalizedString("filters.grade.range.level8", comment: "")
         }
         else {
-            return "\(min.string) → \(max.advanced(by: -1).string)"
+            return "\(min.string) → \(max.advanced(by: -2).string)"
         }
     }
         

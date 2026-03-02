@@ -37,7 +37,7 @@ struct CircularProgressView: View {
     }
 }
 
-#Preview {
+#Preview("CircularProgressView") {
     List {
         HStack {
             Text("coucou")

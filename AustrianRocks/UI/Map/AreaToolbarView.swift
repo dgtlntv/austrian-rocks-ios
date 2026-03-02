@@ -53,11 +53,11 @@ struct AreaToolbarView: View {
                                 .truncationMode(.head)
                             
                             if let area = mapState.selectedArea {
-                                if let _ = area.warningFr, let _ = area.warningEn {
+                                if let _ = area.warningDe, let _ = area.warningEn {
                                     Image(systemName: "exclamationmark.triangle.fill")
                                         .foregroundColor(.yellow)
                                 }
-                                
+
                                 Image(systemName: "info.circle")
                             }
                         }
@@ -140,7 +140,6 @@ struct AreaToolbarView: View {
                         else {
                             let previous = mapState.filters.favorite
                             mapState.clearFilters()
-                            mapState.unselectCircuit()
                             mapState.filters.favorite = !previous
                             mapState.filtersRefresh()
                         }
@@ -174,7 +173,6 @@ struct AreaToolbarView: View {
                         else {
                             let previous = mapState.filters.ticked
                             mapState.clearFilters()
-                            mapState.unselectCircuit()
                             mapState.filters.ticked = !previous
                             mapState.filtersRefresh()
                         }

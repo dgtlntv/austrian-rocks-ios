@@ -45,7 +45,7 @@ struct AreaProblemsView: View {
                                 if(problem.featured) {
                                     Image(systemName: "heart.fill").foregroundColor(.pink)
                                 }
-                                Text(problem.grade.string)
+                                Text(problem.grade?.string ?? "")
                             }
                             .foregroundColor(.primary)
                         }

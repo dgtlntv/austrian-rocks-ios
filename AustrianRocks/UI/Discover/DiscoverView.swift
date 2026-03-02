@@ -14,8 +14,8 @@ struct DiscoverView: View {
     @State var presentArea = false
     @State private var presentWebView = false
 
-    @State private var popularRegions = [Region]()
-    @State private var regions = [Region]()
+    @State private var popularRegions: [Region] = []
+    @State private var regions: [Region] = []
 
     @Environment(AppState.self) private var appState: AppState
     

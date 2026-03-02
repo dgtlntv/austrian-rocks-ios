@@ -277,10 +277,38 @@ class MapboxViewController: UIViewController {
         
         mapView.mapboxMap.queryRenderedFeatures(
             with: tapPoint,
-            options: RenderedQueryOptions(layerIds: ["clusters"], filter: nil)) { [weak self] result in
-                
+            options: RenderedQueryOptions(layerIds: ["regions"], filter: nil)) { [weak self] result in
+
                 guard let self = self else { return }
-                
+
+                switch result {
+                case .success(let queriedfeatures):
+
+                    if let feature = queriedfeatures.first?.queriedFeature.feature,
+                       case .number(let id) = feature.properties?["regionId"],
+                       case .string(let southWestLon) = feature.properties?["southWestLon"],
+                       case .string(let southWestLat) = feature.properties?["southWestLat"],
+                       case .string(let northEastLon) = feature.properties?["northEastLon"],
+                       case .string(let northEastLat) = feature.properties?["northEastLat"]
+                    {
+                        let coords = coordinatesFrom(southWestLat: southWestLat, southWestLon: southWestLon, northEastLat: northEastLat, northEastLon: northEastLon)
+
+                        if let cameraOptions = self.cameraOptionsFor(coords) {
+                            self.flyTo(cameraOptions)
+                            self.delegate?.selectRegion(id: Int(id))
+                        }
+                    }
+                case .failure(let error):
+                    print("An error occurred: \(error.localizedDescription)")
+                }
+            }
+
+        mapView.mapboxMap.queryRenderedFeatures(
+            with: tapPoint,
+            options: RenderedQueryOptions(layerIds: ["clusters"], filter: nil)) { [weak self] result in
+
+                guard let self = self else { return }
+
                 switch result {
                 case .success(let queriedfeatures):
                     
@@ -399,42 +427,6 @@ class MapboxViewController: UIViewController {
                     print("An error occurred: \(error.localizedDescription)")
                 }
             }
-        
-        // TODO: make this DRY with problems layer
-        // Note: I already tried using the same query for both problems and circuit-problems layer, but taps work better with tapPoint than with a rect => I prefered to keep a tapPoint for circuit-problem
-        // Careful: the order between problems and circuit problems is important!
-        mapView.mapboxMap.queryRenderedFeatures(
-            with: tapPoint,
-            options: RenderedQueryOptions(layerIds: ["circuit-problems"], filter: nil)) { [weak self] result in
-                
-                guard let self = self else { return }
-                
-                if self.mapView.mapboxMap.cameraState.zoom < 19 { return }
-                
-                switch result {
-                case .success(let queriedfeatures):
-                    
-                    if let feature = queriedfeatures.first?.queriedFeature.feature,
-                       case .number(let id) = feature.properties?["id"],
-                       case .point(let point) = feature.geometry
-                    {
-                        self.delegate?.selectProblem(id: Int(id))
-                        self.setProblemAsSelected(problemFeatureId: String(Int(id)))
-                        
-                        // if problem is hidden by the bottom sheet
-                        if tapPoint.y >= (self.mapView.bounds.height/2 - 40) {
-                            
-                            let cameraOptions = CameraOptions(
-                                center: point.coordinates,
-                                padding: self.safePaddingForBottomSheet
-                            )
-                            self.easeTo(cameraOptions)
-                        }
-                    }
-                case .failure(let error):
-                    print("An error occurred: \(error.localizedDescription)")
-                }
-            }
     }
     
     func inferAreaFromMap() {
@@ -548,8 +540,11 @@ class MapboxViewController: UIViewController {
         do {
             let gradeMin = filters.gradeRange?.min ?? Grade.min
             let gradeMax = filters.gradeRange?.max ?? Grade.max
-            
+
             let gradesArray = (gradeMin...gradeMax).map{ $0.string }
+
+            print("🔍 Filter Debug: min=\(gradeMin.string), max=\(gradeMax.string)")
+            print("🔍 Grades array (\(gradesArray.count)): \(gradesArray)")
             
             try ["problems", "problems-texts", "problems-names", "problems-names-antioverlap"].forEach { layerId in
                 try mapView.mapboxMap.updateLayer(withId: layerId, type: CircleLayer.self) { layer in
@@ -767,9 +762,9 @@ protocol MapBoxViewDelegate {
     func selectPoi(name: String, location: CLLocationCoordinate2D, googleUrl: String)
     func selectArea(id: Int)
     func selectCluster(id: Int)
+    func selectRegion(id: Int)
     func unselectArea()
     func unselectCluster()
-    func unselectCircuit()
     func cameraChanged(state: CameraState)
     func dismissProblemDetails()
 }

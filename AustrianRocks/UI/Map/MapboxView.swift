@@ -57,37 +57,7 @@ struct MapboxView: UIViewControllerRepresentable {
             context.coordinator.lastCurrentLocationCount = mapState.currentLocationCount
             vc.centerOnCurrentLocation()
         }
-        
-        // Handle centerOnCircuit changes
-        if let centerOnCircuit = mapState.centerOnCircuit {
-            let centerOnCircuitId = centerOnCircuit.id
-            if context.coordinator.lastCenterOnCircuitId != centerOnCircuitId {
-                context.coordinator.lastCenterOnCircuitId = centerOnCircuitId
-                vc.centerOnCircuit(centerOnCircuit)
-            }
-        }
-        else {
-            if context.coordinator.lastSelectedCircuitId != 0 {
-                context.coordinator.lastSelectedCircuitId = 0
-                vc.unselectCircuit()
-            }
-        }
 
-        // Handle selectedCircuit changes
-        if let selectedCircuit = mapState.selectedCircuit {
-            let selectedCircuitId = selectedCircuit.id
-            if context.coordinator.lastSelectedCircuitId != selectedCircuitId {
-                context.coordinator.lastSelectedCircuitId = selectedCircuitId
-                vc.setCircuitAsSelected(circuit: selectedCircuit)
-            }
-        }
-        else {
-            if context.coordinator.lastSelectedCircuitId != 0 {
-                context.coordinator.lastSelectedCircuitId = 0
-                vc.unselectCircuit()
-            }
-        }
-        
         // Handle refreshFilters changes
         if mapState.refreshFiltersCount != context.coordinator.lastRefreshFiltersCount {
             context.coordinator.lastRefreshFiltersCount = mapState.refreshFiltersCount
@@ -109,8 +79,6 @@ struct MapboxView: UIViewControllerRepresentable {
         var lastCenterOnProblemId: Int = 0
         var lastCenterOnAreaId: Int = 0
         var lastCurrentLocationCount: Int = 0
-        var lastCenterOnCircuitId: Int = 0
-        var lastSelectedCircuitId: Int = 0
         var lastRefreshFiltersCount: Int = 0
 
         init(_ parent: MapboxView) {
@@ -135,7 +103,13 @@ struct MapboxView: UIViewControllerRepresentable {
                 parent.mapState.selectCluster(cluster)
             }
         }
-        
+
+        func selectRegion(id: Int) {
+            if let region = Region.load(id: id) {
+                parent.mapState.selectRegion(region)
+            }
+        }
+
         func unselectArea() {
             parent.mapState.unselectArea()
         }
@@ -143,11 +117,7 @@ struct MapboxView: UIViewControllerRepresentable {
         func unselectCluster() {
             parent.mapState.unselectCluster()
         }
-        
-        func unselectCircuit() {
-            parent.mapState.unselectCircuit()
-        }
-        
+
         func selectPoi(name: String, location: CLLocationCoordinate2D, googleUrl: String) {
             // FIXME: use short name or long name?
             // FIXME: don't use id=0
@@ -161,10 +131,6 @@ struct MapboxView: UIViewControllerRepresentable {
         }
         
         func cameraChanged(state: MapboxMaps.CameraState) {
-            if parent.mapState.displayCircuitStartButton {
-                parent.mapState.displayCircuitStartButton = false
-            }
-            
             // TODO: deal with padding
             parent.mapState.updateCameraState(center: state.center, zoom: state.zoom)
         }
