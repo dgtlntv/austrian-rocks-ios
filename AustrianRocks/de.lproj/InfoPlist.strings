@@ -1,0 +1,11 @@
+/*
+  InfoPlist.strings
+  Austrian.rocks
+
+  Created by Austrian.rocks
+  Copyright © 2025 Austrian.rocks. All rights reserved.
+*/
+
+NSLocationWhenInUseUsageDescription = "Dein Standort wird auf der Karte angezeigt, um dir bei der Orientierung zu helfen.";
+LocationAccuracyAuthorizationDescription = "Bitte aktiviere die genaue Standortbestimmung. Die Karte funktioniert am besten mit präzisen Standortdaten.";
+NSCameraUsageDescription = "Du kannst Fotos von Bouldern machen.";

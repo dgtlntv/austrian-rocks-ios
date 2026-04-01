@@ -1,0 +1,353 @@
+//
+//  Problem.swift
+//  Austrian.rocks
+//
+//  Created by Nicolas Mondollot on 09/05/2020.
+//  Copyright © 2020 Nicolas Mondollot. All rights reserved.
+//
+
+import UIKit
+import CoreLocation
+import CoreData
+import SQLite
+
+struct Problem : Identifiable {
+    let id: Int
+    let name: String?
+    let nameEn: String?
+    let nameSearchable: String?
+    let grade: Grade?
+    let coordinate: CLLocationCoordinate2D
+    let steepness: Steepness
+    let sitStart: Bool
+    let areaId: Int
+    let problemDescription: String?
+    let videoLinks: [String]?
+    let featured: Bool
+    let popularity: Int?
+    let parentId: Int?
+
+    // TODO: remove
+    static let empty = Problem(id: 0, name: "", nameEn: "", nameSearchable: "", grade: Grade.min, coordinate: CLLocationCoordinate2D(latitude: 0, longitude: 0), steepness: .other, sitStart: false, areaId: 0, problemDescription: nil, videoLinks: nil, featured: false, popularity: 0, parentId: nil)
+
+    var localizedName: String {
+        if NSLocale.websiteLocale == "de" {
+            return name ?? ""
+        }
+        else {
+            return nameEn ?? ""
+        }
+    }
+    
+    var topoId: Int? {
+        line?.topoId
+    }
+    
+    var topo: Topo? {
+        guard let topoId = topoId else { return nil }
+        
+        return Topo(id: topoId, areaId: areaId)
+    }
+    
+    var onDiskPhoto: UIImage? {
+        topo?.onDiskPhoto
+    }
+    
+    var variants: [Problem] {
+        if let parent = parent {
+            return parent.variants
+        }
+        else {
+            return [self] + children
+        }
+    }
+    
+    var zIndex: Double {
+        let tiebreaker = Double(id) / 100
+        return Double(popularity ?? 0) + tiebreaker
+    }
+
+    // TODO: move to Line
+    var lineFirstPoint: Line.PhotoPercentCoordinate? {
+        guard let line = line else { return nil }
+        guard let coordinates = line.coordinates else { return nil }
+        guard let firstPoint = coordinates.first else { return nil }
+        
+        return firstPoint
+    }
+    
+    
+    var isFavorite: Bool {
+        favorite != nil
+    }
+    
+    var favorite: Favorite? {
+        favorites.first { (favorite: Favorite) -> Bool in
+            return Int(favorite.problemId) == id
+        }
+    }
+    
+    var isTicked: Bool {
+        tick != nil
+    }
+    
+    var tick: Tick? {
+        ticks.first { (tick: Tick) -> Bool in
+            return Int(tick.problemId) == id
+        }
+    }
+}
+
+// MARK: SQLite
+extension Problem {
+    static let id = Expression<Int>("id")
+    static let areaId = Expression<Int>("area_id")
+    static let name = Expression<String?>("name")
+    static let nameEn = Expression<String?>("name_en")
+    static let nameSearchable = Expression<String?>("name_searchable")
+    static let grade = Expression<String?>("grade")
+    static let steepness = Expression<String>("steepness")
+    static let problemDescription = Expression<String?>("description")
+    static let videoLinks = Expression<String?>("video_links")
+    static let parentId = Expression<Int?>("parent_id")
+    static let latitude = Expression<Double>("latitude")
+    static let longitude = Expression<Double>("longitude")
+    static let sitStart = Expression<Int>("sit_start")
+    static let featured = Expression<Int>("featured")
+    static let popularity = Expression<Int?>("popularity")
+    
+    static func load(id: Int) -> Problem? {
+        do {
+            let problems = Table("problems").filter(self.id == id)
+
+            if let p = try SqliteStore.shared.db.pluck(problems) {
+                // Parse video links from JSON string if present
+                var parsedVideoLinks: [String]? = nil
+                if let videoLinksString = p[videoLinks],
+                   let data = videoLinksString.data(using: .utf8),
+                   let links = try? JSONDecoder().decode([String].self, from: data) {
+                    parsedVideoLinks = links
+                }
+
+                return Problem(
+                    id: id,
+                    name: p[name],
+                    nameEn: p[nameEn],
+                    nameSearchable: p[nameSearchable],
+                    grade: p[grade].map { Grade($0) },
+                    coordinate: CLLocationCoordinate2D(latitude: p[latitude], longitude: p[longitude]),
+                    steepness: Steepness(rawValue: p[steepness]) ?? .other,
+                    sitStart: p[sitStart] == 1,
+                    areaId: p[areaId],
+                    problemDescription: p[problemDescription],
+                    videoLinks: parsedVideoLinks,
+                    featured: p[featured] == 1,
+                    popularity: p[popularity],
+                    parentId: p[parentId]
+                )
+            }
+
+            return nil
+        }
+        catch {
+            print (error)
+            return nil
+        }
+    }
+    
+    static func search(_ text: String) -> [Problem] {
+        let query = Table("problems")
+            .order(popularity.desc)
+            .filter(nameSearchable.like("%\(text.normalized)%"))
+            .limit(20)
+        
+        do {
+            return try SqliteStore.shared.db.prepare(query).map { p in
+                Problem.load(id: p[id])
+            }.compactMap{$0}
+        }
+        catch {
+            print (error)
+            return []
+        }
+    }
+    
+    // TODO: handle multiple lines
+    var line: Line? {
+        let lines = Table("lines")
+            .filter(Line.problemId == id)
+        
+        do {
+            if let l = try SqliteStore.shared.db.pluck(lines) {
+                return Line.load(id: l[Line.id])
+            }
+            
+            return nil
+        }
+        catch {
+            print (error)
+            return nil
+        }
+    }
+    
+    var otherProblemsOnSameTopo: [Problem] {
+        guard let l = line else { return [] }
+        
+        let lines = Table("lines")
+            .filter(Line.topoId == l.topoId)
+
+        do {
+            let problemsOnSameTopo = try SqliteStore.shared.db.prepare(lines).map { l in
+                Self.load(id: l[Line.problemId])
+            }
+            
+            return problemsOnSameTopo.compactMap{$0}
+                .filter { $0.topoId == self.topoId } // to avoid showing multi-lines problems (eg. traverses) that don't actually *start* on the same topo
+                .filter { $0.line?.coordinates != nil }
+        }
+        catch {
+            print (error)
+            return []
+        }
+    }
+    
+    // TODO: move to Topo
+    var startGroups: [StartGroup] {
+        var groups = [StartGroup]()
+        
+        otherProblemsOnSameTopo.forEach { p in
+            let overlapping = groups.filter{$0.overlaps(with: p)}
+            
+            let newGroup = StartGroup(problem: p)
+            
+            // we merge the groups that overlap with the current problem
+            overlapping.forEach { group in
+                group.problems.forEach{ newGroup.addProblem($0)}
+                groups.remove(at: groups.firstIndex(of: group)!)
+            }
+            
+            groups.append(newGroup)
+        }
+        
+        return groups
+    }
+    
+    var startGroup : StartGroup? {
+        startGroups.first { $0.problems.contains(self) }
+    }
+
+    var children: [Problem] {
+        let problems = Table("problems")
+            .filter(Problem.parentId == id)
+
+        do {
+            return try SqliteStore.shared.db.prepare(problems).map { problem in
+                Self.load(id: problem[Problem.id])
+            }.compactMap{$0}
+        }
+        catch {
+            print (error)
+            return []
+        }
+    }
+    
+    var parent: Problem? {
+        guard let parentId = parentId else { return nil }
+
+        return Self.load(id: parentId)
+    }
+}
+
+// MARK: CoreData
+extension Problem {
+    var favorites: [Favorite] {
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        
+        let request: NSFetchRequest<Favorite> = Favorite.fetchRequest()
+        request.sortDescriptors = []
+        
+        do {
+            return try context.fetch(request)
+        } catch {
+            fatalError("Failed to fetch favorites: \(error)")
+        }
+    }
+    
+    var ticks: [Tick] {
+        let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        
+        let request: NSFetchRequest<Tick> = Tick.fetchRequest()
+        request.sortDescriptors = []
+        
+        do {
+            return try context.fetch(request)
+        } catch {
+            fatalError("Failed to fetch ticks: \(error)")
+        }
+    }
+}
+
+extension Problem: CustomStringConvertible {
+    var description: String {
+        return "Problem \(id)"
+    }
+}
+
+extension Problem : Hashable {
+    static func == (lhs: Problem, rhs: Problem) -> Bool {
+        lhs.id == rhs.id
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}
+
+// TODO: move to Topo
+class StartGroup: Identifiable, Equatable {
+    private(set) var problems: [Problem]
+
+    init(problem: Problem) {
+        self.problems = [problem]
+    }
+
+    func overlaps(with problem: Problem) -> Bool {
+        return problems.contains { p in
+            guard let a = p.lineFirstPoint, let b = problem.lineFirstPoint else { return false }
+            return a.distance(to: b) < 0.03
+        }
+    }
+    
+    func distance(to point: Line.PhotoPercentCoordinate) -> Double {
+        let distances = problems.map { p in
+            guard let b = p.lineFirstPoint else { return 1.0 }
+            return point.distance(to: b)
+        }
+        
+        return distances.min() ?? 1.0
+    }
+
+    func addProblem(_ problem: Problem) {
+        problems.append(problem)
+    }
+    
+    func next(after: Problem) -> Problem? {
+        if let index = sortedProblems.firstIndex(of: after) {
+            return sortedProblems[(index + 1) % sortedProblems.count]
+        }
+        
+        return nil
+    }
+    
+    var topProblem: Problem? {
+        sortedProblems.first
+    }
+    
+    var sortedProblems: [Problem] {
+        problems.sorted { $0.zIndex > $1.zIndex }
+    }
+    
+    static func == (lhs: StartGroup, rhs: StartGroup) -> Bool {
+        Set(lhs.problems.map{$0.id}) == Set(rhs.problems.map{$0.id})
+    }
+}
