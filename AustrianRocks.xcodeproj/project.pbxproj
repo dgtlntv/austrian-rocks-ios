@@ -171,6 +171,10 @@
 		452F760A2EEEC98400F65113 /* RegionsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 452F76062EEEC98400F65113 /* RegionsListView.swift */; };
 		452F760B2EEEC98400F65113 /* RegionCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 452F76042EEEC98400F65113 /* RegionCardView.swift */; };
 		452F760C2EEEC98400F65113 /* RegionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 452F76052EEEC98400F65113 /* RegionDetailView.swift */; };
+		4551BE302F957D8A0092DF01 /* Secrets.sample.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 4551BE2F2F957D8A0092DF01 /* Secrets.sample.xcconfig */; };
+		4551BE312F957D8A0092DF01 /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 4551BE2E2F957D8A0092DF01 /* Secrets.xcconfig */; };
+		4551BE322F957D8A0092DF01 /* Secrets.sample.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 4551BE2F2F957D8A0092DF01 /* Secrets.sample.xcconfig */; };
+		4551BE332F957D8A0092DF01 /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 4551BE2E2F957D8A0092DF01 /* Secrets.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -260,6 +264,8 @@
 		452F76062EEEC98400F65113 /* RegionsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionsListView.swift; sourceTree = "<group>"; };
 		452F76162EEECBC600F65113 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		452F76172EEECBCF00F65113 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		4551BE2E2F957D8A0092DF01 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
+		4551BE2F2F957D8A0092DF01 /* Secrets.sample.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.sample.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -513,6 +519,8 @@
 		452F76012EEEC82200F65113 /* Config */ = {
 			isa = PBXGroup;
 			children = (
+				4551BE2E2F957D8A0092DF01 /* Secrets.xcconfig */,
+				4551BE2F2F957D8A0092DF01 /* Secrets.sample.xcconfig */,
 				452F76002EEEC82200F65113 /* BrandConfig.swift */,
 			);
 			path = Config;
@@ -618,6 +626,8 @@
 				37379A15258E619400711EDA /* Preview Assets.xcassets in Resources */,
 				37379A3D258E619400711EDA /* Assets.xcassets in Resources */,
 				37379A46258E619400711EDA /* Localizable.strings in Resources */,
+				4551BE302F957D8A0092DF01 /* Secrets.sample.xcconfig in Resources */,
+				4551BE312F957D8A0092DF01 /* Secrets.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -632,6 +642,8 @@
 				37A8C6332453263400DC161F /* Preview Assets.xcassets in Resources */,
 				37379A9A258F4C3000711EDA /* Assets.xcassets in Resources */,
 				37A6572524BDC00500273A9A /* Localizable.strings in Resources */,
+				4551BE322F957D8A0092DF01 /* Secrets.sample.xcconfig in Resources */,
+				4551BE332F957D8A0092DF01 /* Secrets.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -921,6 +933,7 @@
 		};
 		37A8C6382453263400DC161F /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4551BE2E2F957D8A0092DF01 /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -986,6 +999,7 @@
 		};
 		37A8C6392453263400DC161F /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4551BE2E2F957D8A0092DF01 /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
