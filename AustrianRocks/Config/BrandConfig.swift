@@ -38,11 +38,17 @@ struct BrandConfig {
     struct Mapbox {
         static let account = "dgtlntv"
         static let styleID = "cmi0wnif6004t01r0araj0ts0"
+        // TODO: create a dedicated dark-mode style; for now, fall back to the light style.
+        static let darkStyleID = styleID
         static let problemsTilesetID = "74oi43iu"
         static let problemsSourceLayer = "problems-8pdvh4"
 
         static var styleURL: String {
             "mapbox://styles/\(account)/\(styleID)"
+        }
+
+        static var darkStyleURL: String {
+            "mapbox://styles/\(account)/\(darkStyleID)"
         }
 
         static var problemsTilesetURL: String {

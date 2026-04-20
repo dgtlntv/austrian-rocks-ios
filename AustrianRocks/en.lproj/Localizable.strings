@@ -22,7 +22,7 @@
 "filters.level" = "Level";
 "filters.levels" = "Levels";
 "filters.popular" = "Popular";
-"filters.favorite" = "Projects";
+"filters.favorite" = "Project";
 "filters.ticked" = "Ticked";
 "filters.no_favorites_alert.title" = "You don't have any projects yet";
 "filters.no_favorites_alert.message" = "Add your first project to use this filter.";
@@ -50,6 +50,8 @@
 "search.no_results" = "No results";
 "search.request_error" = "Connection issue";
 "search.examples" = "Examples:";
+"search.popular_areas" = "Popular areas";
+"search.popular_problems" = "Popular problems";
 
 // MARK: Discover view
 "discover.title" = "Discover";
@@ -145,13 +147,18 @@
 "problem.action.untick" = "Untick";
 "problem.action.share.description" = "“%@” at %@";
 "problem.image.loading" = "Loading area...";
-"problem.pagination" = "%d on %d";
 "problem.variants" = "%d variants";
+"problem.startgroup.pagination" = "%d/%d";
+"problem.startgroup.variants.singular" = "%d variant";
+"problem.startgroup.variants.plural" = "%d variants";
 "problem.missing_line" = "Missing line";
 "problem.topo.no_internet" = "No Internet connection";
 "problem.topo.timeout" = "Check your Internet connection";
 "problem.topo.error" = "Failed to load the photo";
 "problem.topo.retry" = "Retry";
+"problem.action.see_circuit" = "Circuit";
+"problem.action.see_circuit_on_map" = "See the circuit on the map";
+"problem.action.hide_circuit_on_map" = "Hide the circuit on the map";
 
 // MARK: Tick List
 "ticklist.title" = "Tick List";
@@ -167,3 +174,7 @@
 "contribute.report" = "Report errors";
 "contribute.cta" = "Start contributing";
 "contribute.learn_more" = "Learn more about Austrian.rocks";
+
+// MARK: Boulder
+"boulder.info_basic" = "%d problems";
+"boulder.info_basic_singular" = "%d problem";

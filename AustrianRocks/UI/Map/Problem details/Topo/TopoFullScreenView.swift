@@ -9,69 +9,82 @@
 import SwiftUI
 
 struct TopoFullScreenView: View {
-    @Environment(\.presentationMode) var presentationMode
-    
-    @Binding var problem: Problem
-    @State private var zoomScale: CGFloat = 1
-    
-    // drag gesture (to dismiss the sheet)
-    @State var dragOffset: CGSize = CGSize.zero
-    @State var dragOffsetPredicted: CGSize = CGSize.zero
+    @Environment(\.dismiss) private var dismiss
+    @Environment(MapState.self) private var mapState: MapState
     
     var body: some View {
-        VStack {
-            ZStack {
-                VStack {
-                    HStack {
+        if let problem = mapState.selectedProblem {
+            VStack {
+                ZStack {
+                    VStack {
+                        ZStack {
+                            HStack {
+                                Spacer()
+                                
+                                if #available(iOS 26, *) {
+                                    Button(action: { dismiss() }) {
+                                        Image(systemName: "xmark")
+                                            .font(.system(size: UIFontMetrics.default.scaledValue(for: 24)))
+                                            .padding(4)
+                                    }
+                                    .buttonStyle(.glass)
+                                    .buttonBorderShape(.circle)
+                                }
+                                else {
+                                    Button(action: { dismiss() }) {
+                                        Image(systemName: "xmark")
+                                            .foregroundColor(.primary)
+                                            .font(.system(size: UIFontMetrics.default.scaledValue(for: 16)))
+                                            .frame(width: 32, height: 32)
+                                            .background(.regularMaterial, in: Circle())
+                                    }
+                                }
+                            }
+                        }
+                        .padding()
+                        
                         Spacer()
                         
-                        Button(action: { presentationMode.wrappedValue.dismiss() }) {
-                            Image(systemName: "xmark")
-                                .foregroundColor(Color(UIColor.white))
-                                .font(.system(size: UIFontMetrics.default.scaledValue(for: 24)))
+                        if mapState.isInTopoMode {
+                            TopoCarouselView(problem: problem, style: .overlay)
+                                .transition(.move(edge: .bottom).combined(with: .opacity))
+                        } else {
+                            overlayInfos(problem: problem)
+                                .transition(.move(edge: .bottom).combined(with: .opacity))
                         }
                     }
+                    .animation(.easeInOut(duration: 0.3), value: mapState.isInTopoMode)
+                    .edgesIgnoringSafeArea(.bottom)
+                    .zIndex(2)
                     
-                    Spacer()
+                    TopoSwipeContentView(problem: problem, zoomable: true)
+                        .zIndex(1)
+                        .background(Color.systemBackground)
+                        .edgesIgnoringSafeArea(.all)
                 }
-                .padding()
-                .zIndex(2)
-                
-                ZoomableScrollView(zoomScale: $zoomScale) {
-                    TopoView(problem: $problem, zoomScale: $zoomScale)
-                }
-                .containerRelativeFrame(.horizontal)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                
-                .zIndex(1)
-                .offset(x: 0, y: self.dragOffset.height) // drag gesture
-                .gesture(DragGesture()
-                    .onChanged { value in
-                        self.dragOffset = value.translation
-                        self.dragOffsetPredicted = value.predictedEndTranslation
-                    }
-                    .onEnded { value in
-                        if(self.dragOffset.height > 200
-                           || (self.dragOffsetPredicted.height > 0 && abs(self.dragOffsetPredicted.height) / abs(self.dragOffset.height) > 3)) {
-                            withAnimation(.spring()) {
-                                self.dragOffset = self.dragOffsetPredicted
-                            }
-                            presentationMode.wrappedValue.dismiss()
-                            
-                            return
-                        }
-                        withAnimation(.interactiveSpring()) {
-                            self.dragOffset = .zero
-                        }
-                    }
-                )
-                .background(Color.black)
-                .edgesIgnoringSafeArea(.all)
-                
+                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
             }
-            .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.2)))
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
+    private func overlayInfos(problem: Problem) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            ProblemInfoView(problem: problem)
+                .foregroundColor(.primary.opacity(0.8))
+            
+            ProblemActionButtonsView(problem: problem, withHorizontalPadding: false, onCircuitSelected: { dismiss() })
+        }
+        .padding()
+        .frame(minHeight: 150, alignment: .top)
+        .modify {
+            if #available(iOS 26, *) {
+                $0.background(.regularMaterial, in: RoundedRectangle(cornerRadius: 0))
+            }
+            else {
+                $0.background(Color.systemBackground)
+            }
+        }
     }
 }
 

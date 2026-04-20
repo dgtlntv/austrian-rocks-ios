@@ -58,6 +58,10 @@ struct Area : Identifiable {
         return warningEn
     }
     
+    static var popularAreas: [Area] {
+        all.filter { $0.popular }
+    }
+    
     var popularProblems: [Problem] {
         problems.filter{$0.featured}
     }
@@ -227,10 +231,10 @@ extension Area {
         
         do {
             let topos = try SqliteStore.shared.db.prepare(query).map { line in
-                Topo(id: line[Line.topoId], areaId: id)
+                Topo.load(id: line[Line.topoId])
             }
             
-            return Array(Set(topos)).sorted{$0.id < $1.id}
+            return Array(Set(topos.compactMap{$0})).sorted{$0.id < $1.id}
         }
         catch {
             print (error)

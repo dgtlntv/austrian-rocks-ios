@@ -23,20 +23,38 @@ struct MapContainerView: View {
     @State private var presentDownloadsPlaceholder = false
     
     var body: some View {
+        @Bindable var mapState = mapState
         
         ZStack {
             mapbox
 
-            fabButtons
+            // fake view acting as an anchor point for poi sheet
+            Color.clear.frame(width: 10, height: 10).allowsHitTesting(false)
+                .poiActionSheet(selectedPoi: $mapState.selectedPoi)
+
+            aboveSheetNavigationButtons
+                .opacity(mapState.presentProblemDetails ? 1 : 0)
+
+            fabButtonsContainer
                 .zIndex(10)
             
-            SearchView()
-                .zIndex(20)
-                .opacity(mapState.selectedArea != nil ? 0 : 1)
+            if mapState.selectedArea == nil {
+                searchButtonOverlay
+                    .zIndex(20)
+            }
             
             AreaToolbarView()
+                .frame(maxWidth: 600)
                 .zIndex(30)
                 .opacity(mapState.selectedArea != nil ? 1 : 0)
+        }
+        .sheet(isPresented: $mapState.presentSearch) {
+            SearchSheetView()
+        }
+        .onChange(of: mapState.presentProblemDetails) { oldValue, newValue in
+            if !newValue {
+                mapState.deselectTopo()
+            }
         }
         .onChange(of: appState.selectedProblem) { oldValue, newValue in
             if let problem = appState.selectedProblem {
@@ -55,26 +73,29 @@ struct MapContainerView: View {
     var mapbox : some View {
         @Bindable var mapState = mapState
         return MapboxView(mapState: mapState)
-            .edgesIgnoringSafeArea(.top)
+            .modify {
+                if #available(iOS 26, *) {
+                    $0.edgesIgnoringSafeArea(.vertical)
+                }
+                else {
+                    $0.edgesIgnoringSafeArea(.top)
+                }
+            }
             .ignoresSafeArea(.keyboard)
-            .background(
-                PoiActionSheet(
-                    name: (mapState.selectedPoi?.name ?? ""),
-                    googleUrl: URL(string: mapState.selectedPoi?.googleUrl ?? ""),
-                    coordinates: mapState.selectedPoi?.coordinate ?? CLLocationCoordinate2D(),
-                    presentPoiActionSheet: $mapState.presentPoiActionSheet
-                )
-            )
-            .sheet(isPresented: $mapState.presentProblemDetails) {
-                ProblemDetailsView(
-                    problem: $mapState.selectedProblem
-                )
-                .presentationDetents([detent])
-//                .presentationDetents([.medium])
-                .presentationBackgroundInteraction(
-                    .enabled(upThrough: detent)
-                )
-                .presentationDragIndicator(.hidden)
+            .modify {
+                if #available(iOS 26, *) {
+                    $0 // Sheet presented via overlay for iOS 26
+                }
+                else {
+                    $0.sheet(isPresented: $mapState.presentProblemDetails) {
+                        ProblemDetailsView()
+                        .presentationDetents([detent])
+                        .presentationBackgroundInteraction(
+                            .enabled(upThrough: detent)
+                        )
+                        .presentationDragIndicator(.hidden)
+                    }
+                }
             }
     }
     
@@ -89,42 +110,156 @@ struct MapContainerView: View {
     
     var offsetToBeOnTopOfSheet: CGFloat {
         if UIScreen.main.bounds.height <= 667 { // iPhone SE (all generations) & iPhone 8 and earlier
-            return -104
+            if #available(iOS 26, *) {
+                return -80
+            }
+            else {
+                return -104
+            }
         }
         else {
-            return -48
+            if #available(iOS 26, *) {
+                return -32
+            }
+            else {
+                return -48
+            }
         }
     }
     
-    var fabButtons: some View {
+    var aboveSheetNavigationButtons : some View {
+        VStack {
+            HStack {
+                Spacer()
+
+                if mapState.presentProblemDetails {
+                    fullScreenButton
+                }
+            }
+            .padding(.horizontal)
+            .padding(.top, 8)
+            .padding(.bottom, 16)
+        }
+        .offset(CGSize(width: 0, height: offsetToBeOnTopOfSheet)) // FIXME: might break in the future (we assume the sheet is exactly half the screen height)
+    }
+
+    var fullScreenButton: some View {
+        Button(action: {
+            mapState.requestTopoFullScreenPresentation()
+        }) {
+            Image(systemName: "arrow.down.left.and.arrow.up.right")
+                .adaptiveCircleButtonIcon()
+        }
+        .adaptiveCircleButtonStyle()
+    }
+
+    var searchButtonOverlay: some View {
+        VStack {
+            HStack {
+                Spacer()
+                Button {
+                    mapState.presentProblemDetails = false
+                    mapState.presentSearch = true
+                } label: {
+                    HStack {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundColor(Color(.secondaryLabel))
+                        Text("search.placeholder")
+                            .foregroundColor(Color(.secondaryLabel))
+                        Spacer()
+                    }
+                    .frame(maxWidth: 600)
+                    .modify {
+                        if #available(iOS 26, *) {
+                            $0.padding(.vertical, 4)
+                        } else {
+                            $0
+                                .padding(10)
+                                .padding(.horizontal, 25)
+                        }
+                    }
+                }
+                .modify {
+                    if #available(iOS 26, *) {
+                        $0.buttonStyle(.glass)
+                    } else {
+                        $0
+                            .background(Color(.systemBackground))
+                            .cornerRadius(12)
+                            .shadow(color: Color(.secondaryLabel).opacity(0.5), radius: 5)
+                    }
+                }
+                .contentShape(Rectangle())
+
+                Spacer()
+            }
+            .padding(.horizontal)
+            .padding(.top, 8)
+
+            Spacer()
+        }
+    }
+
+    var fabButtonsContainer: some View {
         HStack {
             Spacer()
             
             VStack(alignment: .trailing) {
                 Spacer()
                 
-                if let cluster = mapState.selectedCluster {
-                    DownloadButtonView(cluster: cluster, presentDownloads: $presentDownloads, clusterDownloader: ClusterDownloader(cluster: cluster, mainArea: areaBestGuess(in: cluster) ?? cluster.mainArea))
+                if #available(iOS 26.0, *) {
+                    GlassEffectContainer {
+                        fabButtons
+                    }
+                } else {
+                    fabButtons
                 }
-                else {
-                    DownloadButtonPlaceholderView(presentDownloadsPlaceholder: $presentDownloadsPlaceholder)
-
-                }
-                
-                Button(action: {
-                    mapState.centerOnCurrentLocation()
-                }) {
-                    Image(systemName: "location")
-                        .offset(x: -1, y: 0)
-//                        .font(.system(size: 20, weight: .regular))
-                }
-                .buttonStyle(FabButton())
-                
             }
             .padding(.trailing)
         }
         .padding(.bottom)
         .ignoresSafeArea(.keyboard)
+    }
+
+    var fabButtons: some View {
+        Group {
+            Group {
+                if let cluster = mapState.selectedCluster {
+                    DownloadButtonView(cluster: cluster, presentDownloads: $presentDownloads, clusterDownloader: ClusterDownloader(cluster: cluster, mainArea: areaBestGuess(in: cluster) ?? cluster.mainArea))
+                }
+                else {
+                    DownloadButtonPlaceholderView(presentDownloadsPlaceholder: $presentDownloadsPlaceholder)
+                    
+                }
+            }
+            .foregroundColor(.primary)
+            .adaptiveFabStyle()
+            
+            Button {
+                print("location")
+                mapState.centerOnCurrentLocation()
+            } label: {
+                Image(systemName: "location")
+//                    .frame(width: 22, height: 22)
+                    .padding(12)
+                    .foregroundColor(.primary)
+                    
+//                    .offset(x: -1, y: 0)
+                //                        .font(.system(size: 20, weight: .regular))
+            }
+            .adaptiveFabStyle()
+        }
+    }
+    
+    
+    // TODO: remove after October 2024
+    private var userDidUseOldOfflineMode: Bool {
+        if let data = UserDefaults.standard.data(forKey: "offline-photos/areasIds"),
+           let decodedSet = try? JSONDecoder().decode(Set<Int>.self, from: data) {
+            return decodedSet.count > 0
+        }
+        
+        return false
     }
 
     private func areaBestGuess(in cluster: Cluster) -> Area? {
@@ -148,6 +283,7 @@ struct MapContainerView: View {
             $0.center.distance(from: center) < $1.center.distance(from: center)
         }.first
     }
+    
 }
 
 //struct MapView_Previews: PreviewProvider {

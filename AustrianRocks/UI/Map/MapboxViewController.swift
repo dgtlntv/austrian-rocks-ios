@@ -15,6 +15,17 @@ class MapboxViewController: UIViewController {
     var delegate: MapBoxViewDelegate?
     var cancelables = Set<AnyCancelable>()
     
+    private var currentFilters: Filters?
+
+
+    // Map styles for light and dark mode
+    private let lightStyleURI = StyleURI(rawValue: BrandConfig.Mapbox.styleURL)!
+    private let darkStyleURI = StyleURI(rawValue: BrandConfig.Mapbox.darkStyleURL)!
+
+    private var currentStyleURI: StyleURI {
+        traitCollection.userInterfaceStyle == .dark ? darkStyleURI : lightStyleURI
+    }
+    
     override public func viewDidLoad() {
         super.viewDidLoad()
         
@@ -25,7 +36,7 @@ class MapboxViewController: UIViewController {
 
         let myMapInitOptions = MapInitOptions(
             cameraOptions: cameraOptions,
-            styleURI: StyleURI(rawValue: BrandConfig.Mapbox.styleURL)
+            styleURI: currentStyleURI
         )
         
         mapView = MapView(frame: view.bounds, mapInitOptions: myMapInitOptions)
@@ -43,18 +54,31 @@ class MapboxViewController: UIViewController {
         mapView.ornaments.options.scaleBar.visibility = .hidden
         
         mapView.ornaments.options.compass.position = .bottomLeft
-        mapView.ornaments.options.compass.margins = CGPoint(x: 8, y: 40)
+        mapView.ornaments.options.compass.margins = CGPoint(x: 12, y: 72)
         
         mapView.ornaments.options.attributionButton.position = .bottomLeading
-        mapView.ornaments.options.attributionButton.margins = CGPoint(x: -4, y: 6)
-        mapView.ornaments.options.logo.margins = CGPoint(x: 36, y: 8)
+        mapView.ornaments.options.attributionButton.margins = CGPoint(x: 4, y: 0)
+        mapView.ornaments.options.logo.margins = CGPoint(x: 16, y: 8)
         
-        // Wait for the map to load its style before adding data.
-        mapView.mapboxMap.onStyleLoaded.observeNext { [weak self] _ in
+        // Make attribution elements less noticeable
+        mapView.ornaments.logoView.alpha = 0.5
+        mapView.ornaments.attributionButton.alpha = 0.2
+        
+        // Re-add sources, layers, and filters every time the style is (re)loaded.
+        // This covers the initial load, dark/light mode switches, and background/foreground
+        // transitions where Mapbox silently reloads the style after the Metal context is released.
+        mapView.mapboxMap.onStyleLoaded.observe { [weak self] _ in
             guard let self = self else { return }
             self.addSources()
             self.addLayers()
+            if let filters = self.currentFilters {
+                self.applyFilters(filters)
+            }
         }.store(in: &cancelables)
+        
+        registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: MapboxViewController, _) in
+            self.updateMapStyle()
+        }
         
         mapView.mapboxMap.addInteraction(TapInteraction { context in
             self.findFeatures(tapPoint: context.point)
@@ -79,6 +103,10 @@ class MapboxViewController: UIViewController {
             }.store(in: &cancelables)
         
         self.view.addSubview(mapView)
+    }
+    
+    private func updateMapStyle() {
+        mapView.mapboxMap.loadStyle(currentStyleURI)
     }
 
     let problemsSourceLayerId = BrandConfig.Mapbox.problemsSourceLayer // name of the layer in the mapbox tileset
@@ -134,9 +162,11 @@ class MapboxViewController: UIViewController {
             }
         )
         
-        problemsLayer.circleStrokeColor = .constant(StyleColor(UIColor(resource: .appGreen)))
 
         problemsLayer.circleSortKey = .constant(1)
+
+        problemsLayer.circleEmissiveStrength = .constant(0.9)
+
 
         // ===========================
 
@@ -185,8 +215,9 @@ class MapboxViewController: UIViewController {
                 1.5
             }
         )
-        problemsNamesLayer.textHaloColor = .constant(.init(.white))
+        problemsNamesLayer.textHaloColor = .constant(.init(traitCollection.userInterfaceStyle == .dark ? .black : .white))
         problemsNamesLayer.textHaloWidth = .constant(1)
+        problemsNamesLayer.textColor = .constant(.init(traitCollection.userInterfaceStyle == .dark ? .white : .black))
         
         problemsNamesLayer.textAllowOverlap = .constant(false)
         problemsNamesLayer.textOptional = .constant(true)
@@ -537,6 +568,8 @@ class MapboxViewController: UIViewController {
     }
 
     func applyFilters(_ filters: Filters) {
+        currentFilters = filters
+        
         do {
             let gradeMin = filters.gradeRange?.min ?? Grade.min
             let gradeMax = filters.gradeRange?.max ?? Grade.max
@@ -546,7 +579,7 @@ class MapboxViewController: UIViewController {
             print("🔍 Filter Debug: min=\(gradeMin.string), max=\(gradeMax.string)")
             print("🔍 Grades array (\(gradesArray.count)): \(gradesArray)")
             
-            try ["problems", "problems-texts", "problems-names", "problems-names-antioverlap"].forEach { layerId in
+            try ["problems", "problems-names", "problems-names-antioverlap"].forEach { layerId in
                 try mapView.mapboxMap.updateLayer(withId: layerId, type: CircleLayer.self) { layer in
                     let gradeFilter = Exp(.match) {
                         Exp(.get) { "grade" }
@@ -638,9 +671,50 @@ class MapboxViewController: UIViewController {
         }
     }
     
+    func centerOnBoulderCoordinates(_ coordinates: [CLLocationCoordinate2D]) {
+        guard !coordinates.isEmpty else { return }
+        
+        let padding = safePaddingForBoulder
+        let paddedRect = CGRect(
+            x: padding.left,
+            y: padding.top,
+            width: view.bounds.width - padding.left - padding.right,
+            height: view.bounds.height - padding.top - padding.bottom
+        )
+        
+        // Check if all coordinates are already visible within the padded area
+        let allVisible = coordinates.allSatisfy { coord in
+            let point = mapView.mapboxMap.point(for: coord)
+            return paddedRect.contains(point)
+        }
+        
+        guard !allVisible else { return }
+        
+        let currentZoom = mapView.mapboxMap.cameraState.zoom
+        
+        // Fit all coordinates within the padded area, keeping the current zoom
+        // unless it's too tight (maxZoom caps the zoom so it only pans or zooms out).
+        if let fittedCamera = try? mapView.mapboxMap.camera(
+            for: coordinates,
+            camera: CameraOptions(padding: UIEdgeInsets(), bearing: 0, pitch: 0),
+            coordinatesPadding: padding,
+            maxZoom: currentZoom,
+            offset: nil
+        ) {
+            flyTo(fittedCamera)
+        }
+    }
+
     private var previouslyTappedProblemId: String = ""
+    private var previouslySelectedTopoIds: [String] = []
+    /// Pre-cached problem IDs for the currently selected topo.
+    /// Set from MapboxView using cached data – avoids SQLite in the hot path.
+    var selectedTopoProblemIds: [String] = []
     
     func setProblemAsSelected(problemFeatureId: String) {
+        // Unselect previously selected topo problems
+        unselectPreviousTopoProblems()
+        
         self.mapView.mapboxMap.setFeatureState(sourceId: "problems",
                                                sourceLayerId: problemsSourceLayerId,
                                                featureId: problemFeatureId,
@@ -653,6 +727,24 @@ class MapboxViewController: UIViewController {
         }
         
         self.previouslyTappedProblemId = problemFeatureId
+        
+        // Also select all sibling problems on the same topo (using pre-cached IDs)
+        if !selectedTopoProblemIds.isEmpty {
+            var selectedIds: [String] = []
+            
+            for featureId in selectedTopoProblemIds {
+                if featureId != problemFeatureId {
+                    self.mapView.mapboxMap.setFeatureState(sourceId: "problems",
+                                                           sourceLayerId: problemsSourceLayerId,
+                                                           featureId: featureId,
+                                                           state: ["selected": true]) { result in
+                    }
+                    selectedIds.append(featureId)
+                }
+            }
+            
+            previouslySelectedTopoIds = selectedIds
+        }
     }
     
     func unselectPreviousProblem() {
@@ -664,6 +756,17 @@ class MapboxViewController: UIViewController {
                 
             }
         }
+    }
+    
+    private func unselectPreviousTopoProblems() {
+        for featureId in previouslySelectedTopoIds {
+            self.mapView.mapboxMap.setFeatureState(sourceId: "problems",
+                                                   sourceLayerId: problemsSourceLayerId,
+                                                   featureId: featureId,
+                                                   state: ["selected": false]) { result in
+            }
+        }
+        previouslySelectedTopoIds = []
     }
     
     func flyTo(_ cameraOptions: CameraOptions) {
@@ -698,9 +801,12 @@ class MapboxViewController: UIViewController {
     
     var flyinToSomething = false // TODO: replace with MapboxMap.isAnimationInProgress in v11 (probably more reliable)
     let flyinDuration = 0.5
-    let safePadding = UIEdgeInsets(top: 180, left: 20, bottom: 80, right: 20)
+    let safePadding = UIEdgeInsets(top: 180, left: 20, bottom: 180, right: 20)
     var safePaddingForBottomSheet : UIEdgeInsets {
-        UIEdgeInsets(top: 60, left: 0, bottom: view.bounds.height/2, right: 0)
+        UIEdgeInsets(top: 100, left: 0, bottom: view.bounds.height/2 + 40, right: 0)
+    }
+    var safePaddingForBoulder: UIEdgeInsets {
+        UIEdgeInsets(top: 100, left: 20, bottom: view.bounds.height/2 + 40, right: 20)
     }
     let safePaddingYForAreaDetector : CGFloat = 30 // TODO: check if it works
     

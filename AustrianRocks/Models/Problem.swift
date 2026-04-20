@@ -46,7 +46,7 @@ struct Problem : Identifiable {
     var topo: Topo? {
         guard let topoId = topoId else { return nil }
         
-        return Topo(id: topoId, areaId: areaId)
+        return Topo.load(id: topoId)
     }
     
     var onDiskPhoto: UIImage? {
@@ -76,6 +76,25 @@ struct Problem : Identifiable {
         return firstPoint
     }
     
+    var lineLastPoint: Line.PhotoPercentCoordinate? {
+        guard let line = line else { return nil }
+        guard let coordinates = line.coordinates else { return nil }
+        guard let lastPoint = coordinates.last else { return nil }
+        
+        return lastPoint
+    }
+    
+    var lineGradePoint: Line.PhotoPercentCoordinate? {
+        guard let line = line else { return nil }
+        
+        // quick hack
+        if parentId != nil {
+            return line.overlayPoint(at: 0.25)
+        }
+        else {
+            return line.overlayPoint(at: 0.4)
+        }
+    }
     
     var isFavorite: Bool {
         favorite != nil
@@ -153,6 +172,37 @@ extension Problem {
             print (error)
             return nil
         }
+    }
+    
+    static func popular(limit: Int = 10) -> [Problem] {
+        let query = Table("problems")
+            .order(popularity.desc)
+            .limit(limit)
+        
+        do {
+            return try SqliteStore.shared.db.prepare(query).map { p in
+                Problem.load(id: p[id])
+            }.compactMap { $0 }
+        }
+        catch {
+            print(error)
+            return []
+        }
+    }
+    
+    /// Returns popular problems with at most one problem per area, for variety in search suggestions.
+    static func popularUniqueAreas(limit: Int = 10) -> [Problem] {
+        let all = popular(limit: 100)
+        var result: [Problem] = []
+        var seenAreaIds: Set<Int> = []
+        for problem in all {
+            if result.count >= limit { break }
+            if !seenAreaIds.contains(problem.areaId) {
+                seenAreaIds.insert(problem.areaId)
+                result.append(problem)
+            }
+        }
+        return result
     }
     
     static func search(_ text: String) -> [Problem] {
@@ -306,6 +356,10 @@ extension Problem : Hashable {
 // TODO: move to Topo
 class StartGroup: Identifiable, Equatable {
     private(set) var problems: [Problem]
+    
+    var id: String {
+        problems.map { String($0.id) }.sorted().joined(separator: "-")
+    }
 
     init(problem: Problem) {
         self.problems = [problem]
@@ -345,6 +399,16 @@ class StartGroup: Identifiable, Equatable {
     
     var sortedProblems: [Problem] {
         problems.sorted { $0.zIndex > $1.zIndex }
+    }
+    
+    var paginationPosition: Line.PhotoPercentCoordinate? {
+        let points = problems.compactMap { $0.lineFirstPoint }
+        guard !points.isEmpty else { return nil }
+        
+        let avgX = points.map { $0.x }.reduce(0, +) / Double(points.count)
+        let maxY = points.map { $0.y }.max() ?? 0
+        
+        return Line.PhotoPercentCoordinate(x: avgX, y: maxY)
     }
     
     static func == (lhs: StartGroup, rhs: StartGroup) -> Bool {
