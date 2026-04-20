@@ -14,7 +14,8 @@ struct ProblemDetailsView: View {
     @AppStorage("problemDetails/viewCount") var viewCount = 0
     @AppStorage("lastVersionPromptedForReview") var lastVersionPromptedForReview = ""
     @Environment(\.requestReview) private var requestReview
-    
+    @Environment(\.openURL) private var openURL
+
     @Environment(MapState.self) private var mapState: MapState
     
     @State private var presentTopoFullScreenView = false
@@ -65,7 +66,9 @@ struct ProblemDetailsView: View {
                                 ProblemInfoView(problem: problem)
                                     .padding(.top, 4)
                                     .padding(.horizontal)
-                                
+
+                                descriptionAndVideos(for: problem)
+
                                 ProblemActionButtonsView(problem: problem)
                             }
                             .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -93,6 +96,51 @@ struct ProblemDetailsView: View {
                 }
             }
         }
+    }
+
+    @ViewBuilder
+    private func descriptionAndVideos(for problem: Problem) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            if let description = problem.problemDescription, !description.isEmpty {
+                Text(description)
+                    .font(.body)
+                    .foregroundColor(.primary)
+                    .padding(.horizontal)
+            }
+
+            if let videoLinks = problem.videoLinks, !videoLinks.isEmpty {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Videos")
+                        .font(.headline)
+                        .padding(.horizontal)
+
+                    ForEach(videoLinks, id: \.self) { link in
+                        if let url = URL(string: link) {
+                            Button {
+                                openURL(url)
+                            } label: {
+                                HStack {
+                                    Image(systemName: "play.circle.fill")
+                                        .foregroundColor(.appBrandColor)
+                                    Text("Watch video")
+                                        .foregroundColor(.primary)
+                                    Spacer()
+                                    Image(systemName: "arrow.up.forward")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                .padding(.horizontal)
+                                .padding(.vertical, 8)
+                                .background(Color.secondary.opacity(0.1))
+                                .cornerRadius(8)
+                            }
+                            .padding(.horizontal)
+                        }
+                    }
+                }
+            }
+        }
+        .padding(.vertical, 4)
     }
 
     private func presentReview() {
