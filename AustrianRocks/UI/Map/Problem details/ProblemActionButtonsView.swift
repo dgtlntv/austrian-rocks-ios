@@ -1,6 +1,6 @@
 //
 //  ProblemActionButtonsView.swift
-//  Boolder
+//  Austrian.rocks
 //
 //  Created by Nicolas Mondollot on 15/01/2026.
 //  Copyright © 2026 Nicolas Mondollot. All rights reserved.
@@ -14,21 +14,18 @@ struct ProblemActionButtonsView: View {
     @Environment(MapState.self) private var mapState: MapState
     @FetchRequest(entity: Favorite.entity(), sortDescriptors: []) var favorites: FetchedResults<Favorite>
     @FetchRequest(entity: Tick.entity(), sortDescriptors: []) var ticks: FetchedResults<Tick>
-    
+
     let problem: Problem
     let withHorizontalPadding: Bool
-    let onCircuitSelected: (() -> Void)?
-    
+
     @State private var presentSaveActionsheet = false
     @State private var presentSharesheet = false
-    @State private var presentCircuitActionsheet = false
-    
-    init(problem: Problem, withHorizontalPadding: Bool = true, onCircuitSelected: (() -> Void)? = nil) {
+
+    init(problem: Problem, withHorizontalPadding: Bool = true) {
         self.problem = problem
         self.withHorizontalPadding = withHorizontalPadding
-        self.onCircuitSelected = onCircuitSelected
     }
-    
+
     private var saveManager: ProblemSaveManager {
         ProblemSaveManager(
             problem: problem,
@@ -37,32 +34,19 @@ struct ProblemActionButtonsView: View {
             managedObjectContext: managedObjectContext
         )
     }
-    
+
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(alignment: .center, spacing: 12) {
-                
-                if problem.bleauInfoId != nil && problem.bleauInfoId != "" {
-                    Button(action: {
-                        openURL(URL(string: "https://bleau.info/a/\(problem.bleauInfoId ?? "").html")!)
-                    }) {
-                        HStack(alignment: .center, spacing: 8) {
-                            Image(systemName: "info.circle")
-                            Text("Bleau.info").fixedSize(horizontal: true, vertical: true)
-                        }
-                        .adaptivePillPadding()
-                    }
-                    .adaptivePillStyle(fill: true)
-                }
-                
+
                 if problem.variants.count > 1 {
                     Menu {
-                        ForEach(problem.variants.sorted { $0.grade < $1.grade }) { variant in
+                        ForEach(problem.variants.sorted { ($0.grade ?? Grade.min) < ($1.grade ?? Grade.min) }) { variant in
                             Button {
                                 mapState.selectProblem(variant)
                             } label: {
                                 HStack {
-                                    Text("\(variant.grade.string) - \(variant.localizedName)")
+                                    Text("\(variant.grade?.string ?? "") - \(variant.localizedName)")
                                     if variant.id == problem.id {
                                         Image(systemName: "checkmark")
                                     }
@@ -79,36 +63,7 @@ struct ProblemActionButtonsView: View {
                     }
                     .adaptivePillStyle()
                 }
-                
-                if let circuitId = problem.circuitId, let circuit = Circuit.load(id: circuitId) {
-                    Button(action: {
-                        presentCircuitActionsheet = true
-                    }) {
-                        HStack(alignment: .center, spacing: 8) {
-                            Image("circuit")
-                            Text("problem.action.see_circuit").fixedSize(horizontal: true, vertical: true)
-                        }
-                        .adaptivePillPadding()
-                    }
-                    .adaptivePillStyle()
-                    .actionSheet(isPresented: $presentCircuitActionsheet) {
-                        ActionSheet(
-                            title: Text(circuit.color.longName),
-                            buttons: [
-                                .default(Text(mapState.selectedCircuit?.id == circuitId ? "problem.action.hide_circuit_on_map" : "problem.action.see_circuit_on_map")) {
-                                    if mapState.selectedCircuit?.id == circuitId {
-                                        mapState.unselectCircuit()
-                                    } else {
-                                        mapState.selectCircuit(circuit)
-                                        onCircuitSelected?()
-                                    }
-                                },
-                                .cancel()
-                            ]
-                        )
-                    }
-                }
-                
+
                 Button(action: {
                     presentSaveActionsheet = true
                 }) {
@@ -123,7 +78,7 @@ struct ProblemActionButtonsView: View {
                 .actionSheet(isPresented: $presentSaveActionsheet) {
                     ActionSheet(title: Text("problem.action.save"), buttons: saveManager.saveButtons())
                 }
-                
+
                 Button(action: {
                     presentSharesheet = true
                 }) {
@@ -136,7 +91,7 @@ struct ProblemActionButtonsView: View {
                 .adaptivePillStyle()
                 .sheet(isPresented: $presentSharesheet,
                        content: {
-                    ActivityView(activityItems: [boolderURL] as [Any], applicationActivities: nil)
+                    ActivityView(activityItems: [problemURL] as [Any], applicationActivities: nil)
                 })
             }
             .modify {
@@ -151,9 +106,9 @@ struct ProblemActionButtonsView: View {
         }
         .scrollClipDisabled()
     }
-    
-    private var boolderURL: URL {
-        URL(string: "https://www.boolder.com/\(NSLocale.websiteLocale)/p/\(String(problem.id))")!
+
+    private var problemURL: URL {
+        URL(string: "https://\(BrandConfig.Domains.www)/\(NSLocale.websiteLocale)/p/\(String(problem.id))")!
     }
 }
 

@@ -24,11 +24,7 @@ struct ProblemNameLabelView: View {
     }
     
     var readableColor: UIColor {
-        if color == Circuit.CircuitColor.white.uicolorForPhotoOverlay {
-            return .black
-        } else {
-            return .white
-        }
+        color == .white ? .black : .white
     }
 }
 

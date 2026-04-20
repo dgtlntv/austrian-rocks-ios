@@ -122,8 +122,8 @@ class MapState {
     private func clearFiltersIfProblemHidden(_ problem: Problem) {
         var hidden = false
         
-        if let range = filters.gradeRange {
-            if problem.grade < range.min || problem.grade >= range.max {
+        if let range = filters.gradeRange, let grade = problem.grade {
+            if grade < range.min || grade >= range.max {
                 hidden = true
             }
         }

@@ -33,10 +33,6 @@ struct ProblemInfoView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
-                if problem.circuitId != nil {
-                    ProblemCircleView(problem: problem)
-                }
-                
                 Text(problem.localizedName)
                     .font(titleFont)
                     .fontWeight(.semibold)
@@ -45,13 +41,15 @@ struct ProblemInfoView: View {
                     .truncationMode(.middle)
                     .fixedSize(horizontal: false, vertical: true)
                     .minimumScaleFactor(0.5)
-                
+
                 Spacer()
-                
-                Text(problem.grade.string)
-                    .font(titleFont)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.primary)
+
+                if let grade = problem.grade {
+                    Text(grade.string)
+                        .font(titleFont)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                }
             }
             
             HStack(alignment: .firstTextBaseline) {

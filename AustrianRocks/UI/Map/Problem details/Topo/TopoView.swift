@@ -194,7 +194,7 @@ struct TopoView: View {
         }
         
         if !showAllLines, let gradePoint = problem.lineGradePoint {
-            GradeLabelView(grade: problem.grade.string, color: problem.circuitUIColorForPhotoOverlay)
+            GradeLabelView(grade: problem.grade?.string ?? "", color: UIColor.white)
                 .scaleEffect(counterZoomScale.wrappedValue)
                 .position(x: gradePoint.x * geo.size.width, y: gradePoint.y * geo.size.height)
                 .allowsHitTesting(false)
@@ -202,7 +202,7 @@ struct TopoView: View {
         
         if !showAllLines, showProblemNameLabel, let lastPoint = problem.lineLastPoint, !problem.localizedName.isEmpty {
             let labelPos = clampedNameLabelPosition(name: problem.localizedName, lastPoint: lastPoint, geoSize: geo.size, scale: counterZoomScale.wrappedValue)
-            ProblemNameLabelView(name: problem.localizedName, color: problem.circuitUIColorForPhotoOverlay)
+            ProblemNameLabelView(name: problem.localizedName, color: UIColor.white)
                 .scaleEffect(counterZoomScale.wrappedValue)
                 .position(x: labelPos.x, y: labelPos.y)
                 .allowsHitTesting(false)
@@ -249,7 +249,7 @@ struct TopoView: View {
             ZStack {
                 ForEach(otherProblems, id: \.id) { p in
                     if let gradePoint = p.lineGradePoint {
-                        GradeLabelView(grade: p.grade.string, color: p.circuitUIColorForPhotoOverlay)
+                        GradeLabelView(grade: p.grade?.string ?? "", color: UIColor.white)
                             .scaleEffect(counterZoomScale.wrappedValue)
                             .position(x: gradePoint.x * geo.size.width, y: gradePoint.y * geo.size.height)
                             .zIndex(p.zIndex)
@@ -278,7 +278,7 @@ struct TopoView: View {
                     if let lastPoint = lastPoints[p.id], !p.localizedName.isEmpty {
                         let isVisible = visibleIds.contains(p.id)
                         let labelPos = clampedNameLabelPosition(name: p.localizedName, lastPoint: lastPoint, geoSize: geo.size, scale: counterZoomScale.wrappedValue)
-                        ProblemNameLabelView(name: p.localizedName, color: p.circuitUIColorForPhotoOverlay)
+                        ProblemNameLabelView(name: p.localizedName, color: UIColor.white)
                             .scaleEffect(counterZoomScale.wrappedValue)
                             .position(x: labelPos.x, y: labelPos.y)
                             .zIndex(p.zIndex)

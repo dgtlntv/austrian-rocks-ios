@@ -113,7 +113,7 @@ struct SearchSheetView: View {
             HStack {
                 ProblemCircleView(problem: problem)
                 Text(problem.localizedName).foregroundColor(.primary)
-                Text(problem.grade.string).foregroundColor(Color(.secondaryLabel)).padding(.leading, 2)
+                Text(problem.grade?.string ?? "").foregroundColor(Color(.secondaryLabel)).padding(.leading, 2)
                 Spacer()
                 Text(Area.load(id: problem.areaId)?.name ?? "").foregroundColor(Color(.secondaryLabel)).font(.caption)
             }
@@ -123,7 +123,6 @@ struct SearchSheetView: View {
     private func selectArea(_ area: Area) {
         dismiss()
         mapState.clearFilters()
-        mapState.unselectCircuit()
         mapState.selectArea(area)
         mapState.centerOnArea(area)
     }
@@ -131,7 +130,6 @@ struct SearchSheetView: View {
     private func selectProblem(_ problem: Problem) {
         dismiss()
         mapState.clearFilters()
-        mapState.unselectCircuit()
         mapState.selectAndPresentAndCenterOnProblem(problem)
     }
 }

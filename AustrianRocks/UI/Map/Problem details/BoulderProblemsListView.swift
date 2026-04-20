@@ -18,7 +18,7 @@ struct BoulderProblemsListView: View {
     
     private var topoProblems: [Problem] {
         guard let topoId = currentTopoId else { return [] }
-        return problems.filter { $0.topoId == topoId }.sorted { $0.grade < $1.grade }
+        return problems.filter { $0.topoId == topoId }.sorted { ($0.grade ?? Grade.min) < ($1.grade ?? Grade.min) }
     }
     
     private var topoProblemsTitle: String {
@@ -68,7 +68,7 @@ struct BoulderProblemsListView: View {
                 if problem.featured {
                     Image(systemName: "heart.fill").foregroundColor(.pink)
                 }
-                Text(problem.grade.string)
+                Text(problem.grade?.string ?? "")
             }
             .foregroundColor(.primary)
         }
