@@ -1,0 +1,4 @@
+- Wenn man auf schelierwasserfall zum reinzoomen drückt wird der download button weiß und ma sieht ihn nimmer
+- ich muss in den daten die problem punkte weiter in the fells reinziehn damit die problems list net leer is und dann den geo rake laufen lassen
+- die ia is a bissl falsch ma klickt auf malattal und kommt direkt zum download
+- die breadcrumbs irgendow sind ein bissl weird
