@@ -16,11 +16,12 @@ struct DiscoverView: View {
 
     @State private var popularRegions: [Region] = []
     @State private var regions: [Region] = []
+    @State private var router = DiscoverRouter()
 
     @Environment(AppState.self) private var appState: AppState
-    
+
     var body: some View {
-        NavigationView {
+        NavigationStack(path: $router.path) {
             GeometryReader { geo in
                 ScrollView {
                     VStack(alignment: .leading) {
@@ -56,7 +57,7 @@ struct DiscoverView: View {
 
                                 }
                                 
-                                NavigationLink(destination: TopAreasLevelView()) {
+                                NavigationLink(value: DiscoverRoute.topAreasLevel) {
                                     
                                     VStack(alignment: .leading) {
                                         HStack {
@@ -82,7 +83,7 @@ struct DiscoverView: View {
                             }
                             
                             HStack {
-                                NavigationLink(destination: TopAreasDryFast()) {
+                                NavigationLink(value: DiscoverRoute.topAreasDryFast) {
 
                                     VStack(alignment: .leading) {
                                         HStack {
@@ -142,9 +143,7 @@ struct DiscoverView: View {
                                                 .padding(.leading, 8)
 
                                             ForEach(popularRegions) { region in
-                                                NavigationLink {
-                                                    RegionDetailView(region: region)
-                                                } label: {
+                                                NavigationLink(value: DiscoverRoute.region(region.id)) {
                                                     RegionCardView(region: region, width: abs(geo.size.width-16*2-8)/2, height: abs(geo.size.width-16*2-8)/2*9/16)
                                                         .padding(.leading, 8)
                                                         .contentShape(Rectangle())
@@ -179,9 +178,7 @@ struct DiscoverView: View {
 
                                 ForEach(regions) { region in
 
-                                    NavigationLink {
-                                        RegionDetailView(region: region)
-                                    } label: {
+                                    NavigationLink(value: DiscoverRoute.region(region.id)) {
                                         HStack {
                                             VStack(alignment: .leading, spacing: 6) {
                                                 Text(region.name)
@@ -266,7 +263,7 @@ struct DiscoverView: View {
                             VStack(alignment: .leading) {
                                 Divider()
                                 
-                                NavigationLink(destination: SettingsView()) {
+                                NavigationLink(value: DiscoverRoute.settings) {
                                     HStack {
                                         Image(systemName: "gearshape")
                                         Text("Settings")
@@ -286,6 +283,9 @@ struct DiscoverView: View {
                     }
                 }
                 .navigationBarTitle(Text("discover.title"))
+                .navigationDestination(for: DiscoverRoute.self) { route in
+                    destination(for: route)
+                }
                 .task {
                     popularRegions = Region.all.filter{$0.popular}
 
@@ -295,7 +295,33 @@ struct DiscoverView: View {
                 }
             }
         }
-        .phoneOnlyStackNavigationView()
+        .environment(\.discoverRouter, router)
+    }
+
+    @ViewBuilder
+    private func destination(for route: DiscoverRoute) -> some View {
+        switch route {
+        case .region(let id):
+            if let region = Region.load(id: id) {
+                RegionDetailView(region: region)
+            }
+        case .cluster(let id):
+            if let cluster = Cluster.load(id: id) {
+                ClusterDetailView(cluster: cluster)
+            }
+        case .area(let id):
+            if let area = Area.load(id: id) {
+                AreaView(area: area, linkToMap: true)
+            }
+        case .topAreasLevel:
+            TopAreasLevelView()
+        case .topAreasDryFast:
+            TopAreasDryFast()
+        case .topAreasBeginner:
+            TopAreasBeginnerView()
+        case .settings:
+            SettingsView()
+        }
     }
     
     var contributeURL: URL {

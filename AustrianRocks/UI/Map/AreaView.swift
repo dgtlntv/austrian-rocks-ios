@@ -13,7 +13,8 @@ import CoreLocation
 struct AreaView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) var openURL
-    
+    @Environment(\.discoverRouter) private var router
+
     let area: Area
     @Environment(AppState.self) private var appState: AppState
     let linkToMap: Bool
@@ -28,35 +29,6 @@ struct AreaView: View {
     var body: some View {
         ZStack {
             List {
-                // Breadcrumb navigation
-                if let cluster = area.cluster, let region = cluster.region {
-                    Section {
-                        HStack(spacing: 4) {
-                            NavigationLink(destination: RegionDetailView(region: region)) {
-                                Text(region.name)
-                                    .font(.caption)
-                                    .foregroundColor(.appBrandColor)
-                            }
-
-                            Image(systemName: "chevron.right")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-
-                            Text(cluster.name)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-
-                            Image(systemName: "chevron.right")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-
-                            Text(area.name)
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                }
-
                 if area.tags.count > 0 || area.localizedDescription != nil || area.localizedWarning != nil {
                     Section {
                         tagsWithFlowLayout
@@ -120,17 +92,20 @@ struct AreaView: View {
             popularProblems = area.popularProblems
             
             chartData = [
-                .init(name: "1", count: min(150, area.level1Count)),
-                .init(name: "2", count: min(150, area.level2Count)),
-                .init(name: "3", count: min(150, area.level3Count)),
-                .init(name: "4", count: min(150, area.level4Count)),
-                .init(name: "5", count: min(150, area.level5Count)),
-                .init(name: "6", count: min(150, area.level6Count)),
-                .init(name: "7", count: min(150, area.level7Count)),
-                .init(name: "8", count: min(150, area.level8Count)),
+                .init(name: "1", count: min(100, area.level1Count)),
+                .init(name: "2", count: min(100, area.level2Count)),
+                .init(name: "3", count: min(100, area.level3Count)),
+                .init(name: "4", count: min(100, area.level4Count)),
+                .init(name: "5", count: min(100, area.level5Count)),
+                .init(name: "6", count: min(100, area.level6Count)),
+                .init(name: "7", count: min(100, area.level7Count)),
+                .init(name: "8", count: min(100, area.level8Count)),
             ]
             
             poiRoutes = area.poiRoutes
+        }
+        .safeAreaInset(edge: .top, spacing: 0) {
+            breadcrumb
         }
         .navigationTitle(area.name)
         .navigationBarTitleDisplayMode(.inline)
@@ -160,6 +135,57 @@ struct AreaView: View {
         
     }
     
+    @ViewBuilder
+    var breadcrumb: some View {
+        if let cluster = area.cluster, let region = cluster.region {
+            HStack(spacing: 6) {
+                breadcrumbSegment(label: region.name, route: .region(region.id)) {
+                    RegionDetailView(region: region)
+                }
+
+                Image(systemName: "chevron.right")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+
+                breadcrumbSegment(label: cluster.name, route: .cluster(cluster.id)) {
+                    ClusterDetailView(cluster: cluster)
+                }
+
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 8)
+            .background(.bar)
+            .overlay(alignment: .bottom) {
+                Divider()
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func breadcrumbSegment<Destination: View>(
+        label: String,
+        route: DiscoverRoute,
+        @ViewBuilder fallback: () -> Destination
+    ) -> some View {
+        if let router {
+            Button {
+                router.navigate(to: route)
+            } label: {
+                Text(label)
+                    .font(.caption)
+                    .foregroundColor(.appBrandColor)
+            }
+            .buttonStyle(.plain)
+        } else {
+            NavigationLink(destination: fallback()) {
+                Text(label)
+                    .font(.caption)
+                    .foregroundColor(.appBrandColor)
+            }
+        }
+    }
+
     var tags: some View {
         ForEach(area.tags, id: \.self) { tag in
             Text(NSLocalizedString("area.tags.\(tag)", comment: ""))
@@ -234,7 +260,7 @@ struct AreaView: View {
                             )
                         }
                     }
-                    .chartYScale(domain: 0...150)
+                    .chartYScale(domain: 0...100)
                     .foregroundColor(.levelGreen)
                     .frame(height: 150)
                     .padding(.vertical)

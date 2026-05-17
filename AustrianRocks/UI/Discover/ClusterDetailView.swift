@@ -1,0 +1,82 @@
+//
+//  ClusterDetailView.swift
+//  Austrian.rocks
+//
+//  Copyright © 2026 Austrian.rocks. All rights reserved.
+//
+
+import SwiftUI
+
+struct ClusterDetailView: View {
+    let cluster: Cluster
+
+    @Environment(\.discoverRouter) private var router
+
+    @State private var areas: [Area] = []
+    @State private var presentDownloadSheet = false
+
+    private var clusterDownloader: ClusterDownloader {
+        ClusterDownloader(cluster: cluster, mainArea: cluster.mainArea)
+    }
+
+    var body: some View {
+        List {
+            Section(header: Text("Areas")) {
+                if areas.isEmpty {
+                    Text("No areas available")
+                        .foregroundColor(.secondary)
+                } else {
+                    ForEach(areas) { area in
+                        areaRow(area)
+                    }
+                }
+            }
+        }
+        .navigationTitle(cluster.name)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    presentDownloadSheet = true
+                } label: {
+                    Image(systemName: "icloud.and.arrow.down")
+                }
+                .accessibilityLabel(Text("download.cluster.download"))
+            }
+        }
+        .sheet(isPresented: $presentDownloadSheet) {
+            ClusterViewWithActionsheet(clusterDownloader: clusterDownloader)
+                .presentationDetents([.medium, .large])
+        }
+        .task {
+            areas = cluster.areas
+        }
+    }
+
+    @ViewBuilder
+    private func areaRow(_ area: Area) -> some View {
+        let label = HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(area.name)
+                    .font(.headline)
+
+                Text("\(area.problemsCount) problems")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            Spacer()
+        }
+
+        if router != nil {
+            NavigationLink(value: DiscoverRoute.area(area.id)) {
+                label
+            }
+        } else {
+            NavigationLink {
+                AreaView(area: area, linkToMap: true)
+            } label: {
+                label
+            }
+        }
+    }
+}

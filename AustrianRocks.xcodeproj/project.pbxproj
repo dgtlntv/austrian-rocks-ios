@@ -199,6 +199,10 @@
 		452F760A2EEEC98400F65113 /* RegionsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 452F76062EEEC98400F65113 /* RegionsListView.swift */; };
 		452F760B2EEEC98400F65113 /* RegionCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 452F76042EEEC98400F65113 /* RegionCardView.swift */; };
 		452F760C2EEEC98400F65113 /* RegionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 452F76052EEEC98400F65113 /* RegionDetailView.swift */; };
+		452F76212EEEC98400F65113 /* ClusterDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 452F76202EEEC98400F65113 /* ClusterDetailView.swift */; };
+		452F76222EEEC98400F65113 /* ClusterDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 452F76202EEEC98400F65113 /* ClusterDetailView.swift */; };
+		452F76242EEEC98400F65113 /* DiscoverRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 452F76232EEEC98400F65113 /* DiscoverRouter.swift */; };
+		452F76252EEEC98400F65113 /* DiscoverRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 452F76232EEEC98400F65113 /* DiscoverRouter.swift */; };
 		4551BE302F957D8A0092DF01 /* Secrets.sample.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 4551BE2F2F957D8A0092DF01 /* Secrets.sample.xcconfig */; };
 		4551BE312F957D8A0092DF01 /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 4551BE2E2F957D8A0092DF01 /* Secrets.xcconfig */; };
 		4551BE322F957D8A0092DF01 /* Secrets.sample.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 4551BE2F2F957D8A0092DF01 /* Secrets.sample.xcconfig */; };
@@ -304,6 +308,8 @@
 		452F76042EEEC98400F65113 /* RegionCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionCardView.swift; sourceTree = "<group>"; };
 		452F76052EEEC98400F65113 /* RegionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionDetailView.swift; sourceTree = "<group>"; };
 		452F76062EEEC98400F65113 /* RegionsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionsListView.swift; sourceTree = "<group>"; };
+		452F76202EEEC98400F65113 /* ClusterDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterDetailView.swift; sourceTree = "<group>"; };
+		452F76232EEEC98400F65113 /* DiscoverRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverRouter.swift; sourceTree = "<group>"; };
 		452F76162EEECBC600F65113 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		452F76172EEECBCF00F65113 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		4551BE2E2F957D8A0092DF01 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
@@ -427,6 +433,8 @@
 				030AC19F27B1257200AF85E7 /* TopAreasLevelView.swift */,
 				452F76042EEEC98400F65113 /* RegionCardView.swift */,
 				452F76052EEEC98400F65113 /* RegionDetailView.swift */,
+				452F76202EEEC98400F65113 /* ClusterDetailView.swift */,
+				452F76232EEEC98400F65113 /* DiscoverRouter.swift */,
 				452F76062EEEC98400F65113 /* RegionsListView.swift */,
 				031A4CA42968D06D002CBF52 /* TopAreasBeginnerView.swift */,
 				030AC1A827BAFBFE00AF85E7 /* TopAreasDryFast.swift */,
@@ -802,6 +810,8 @@
 				452F760A2EEEC98400F65113 /* RegionsListView.swift in Sources */,
 				452F760B2EEEC98400F65113 /* RegionCardView.swift in Sources */,
 				452F760C2EEEC98400F65113 /* RegionDetailView.swift in Sources */,
+				452F76222EEEC98400F65113 /* ClusterDetailView.swift in Sources */,
+				452F76252EEEC98400F65113 /* DiscoverRouter.swift in Sources */,
 				375397C925AC6CEF00430BF4 /* Extensions.swift in Sources */,
 				031F36B1291CE56100BD0C2B /* MapState.swift in Sources */,
 				0314FFE0295054C500B7E249 /* AreaView.swift in Sources */,
@@ -895,6 +905,8 @@
 				452F76072EEEC98400F65113 /* RegionsListView.swift in Sources */,
 				452F76082EEEC98400F65113 /* RegionCardView.swift in Sources */,
 				452F76092EEEC98400F65113 /* RegionDetailView.swift in Sources */,
+				452F76212EEEC98400F65113 /* ClusterDetailView.swift in Sources */,
+				452F76242EEEC98400F65113 /* DiscoverRouter.swift in Sources */,
 				03D199152C5565A50082B56C /* DownloadButtonPlaceholderView.swift in Sources */,
 				37379904258E157D00711EDA /* LargeButton.swift in Sources */,
 				3790C3602456008F005E786E /* CubicCurveAlgorithm.swift in Sources */,

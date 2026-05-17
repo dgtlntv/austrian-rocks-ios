@@ -68,7 +68,7 @@ struct RegionDetailView: View {
                     .foregroundColor(.secondary)
             } else {
                 ForEach(clusters) { cluster in
-                    NavigationLink(destination: ClusterViewWithActionsheet(clusterDownloader: ClusterDownloader(cluster: cluster, mainArea: cluster.mainArea))) {
+                    NavigationLink(value: DiscoverRoute.cluster(cluster.id)) {
                         HStack {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(cluster.name)
