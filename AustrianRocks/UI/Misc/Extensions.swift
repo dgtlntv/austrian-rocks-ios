@@ -134,9 +134,27 @@ extension View {
     func adaptiveFabStyle() -> some View {
         modify {
             if #available(iOS 26, *) {
-                $0.glassEffect(.regular.interactive(), in: .circle)
+                // System glass button: lets Liquid Glass apply its automatic
+                // vibrancy to the symbol (color/brightness/saturation adapt to
+                // the backdrop). No decorative tint — per Apple guidance tint
+                // is reserved for semantic prominence, not contrast hacks.
+                $0.buttonStyle(.glass)
+                    .buttonBorderShape(.circle)
             } else {
                 $0.buttonStyle(FabButton())
+            }
+        }
+    }
+
+    // iOS 26 system glass applies its own vibrancy, so the symbol must NOT
+    // have an explicit color. Older iOS has a solid opaque FAB backing, so
+    // keep `.primary` there for contrast.
+    func adaptiveFabForeground() -> some View {
+        modify {
+            if #available(iOS 26, *) {
+                $0
+            } else {
+                $0.foregroundColor(.primary)
             }
         }
     }

@@ -163,10 +163,16 @@ struct MapContainerView: View {
                 } label: {
                     HStack {
                         Image(systemName: "magnifyingglass")
-                            .foregroundColor(Color(.secondaryLabel))
                         Text("search.placeholder")
-                            .foregroundColor(Color(.secondaryLabel))
                         Spacer()
+                    }
+                    .modify {
+                        if #available(iOS 26, *) {
+                            // Let Liquid Glass vibrancy color the placeholder.
+                            $0
+                        } else {
+                            $0.foregroundColor(Color(.secondaryLabel))
+                        }
                     }
                     .frame(maxWidth: 600)
                     .modify {
@@ -232,9 +238,9 @@ struct MapContainerView: View {
                     
                 }
             }
-            .foregroundColor(.primary)
+            .adaptiveFabForeground()
             .adaptiveFabStyle()
-            
+
             Button {
                 print("location")
                 mapState.centerOnCurrentLocation()
@@ -242,7 +248,7 @@ struct MapContainerView: View {
                 Image(systemName: "location")
 //                    .frame(width: 22, height: 22)
                     .padding(12)
-                    .foregroundColor(.primary)
+                    .adaptiveFabForeground()
                     
 //                    .offset(x: -1, y: 0)
                 //                        .font(.system(size: 20, weight: .regular))

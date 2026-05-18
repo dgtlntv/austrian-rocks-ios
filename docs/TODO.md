@@ -4,7 +4,7 @@ Detailed steps for each item live in `docs/todo/`. Tick the box when the linked 
 
 ## Bugs / polish
 
-- [ ] [Schleierwasserfall: download button vanishes on zoom-in](todo/schleierwasserfall-download-button.md)
+- [x] [Schleierwasserfall: download button vanishes on zoom-in](todo/schleierwasserfall-download-button.md)
 - [ ] [Pull problem coordinates into the rock + re-run geo rake](todo/problem-points-data.md)
 - [x] [Maltatal: tap goes straight to download sheet](todo/maltatal-navigation.md)
 - [x] [Breadcrumbs feel weird](todo/breadcrumbs.md)
