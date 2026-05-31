@@ -32,7 +32,13 @@ struct BrandConfig {
     }
 
     struct AppStore {
-        static let appID = "TBD" // New App Store ID - to be updated when app is published
+        // Intentionally absent until App Store release; setting this enables the rate/review link.
+        static let appID: String? = nil
+
+        static var reviewURL: URL? {
+            guard let appID, !appID.isEmpty else { return nil }
+            return URL(string: "https://itunes.apple.com/app/id\(appID)?action=write-review")
+        }
     }
 
     struct Mapbox {

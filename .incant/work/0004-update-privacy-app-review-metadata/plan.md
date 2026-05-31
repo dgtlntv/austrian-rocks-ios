@@ -3,8 +3,8 @@ id: "0004"
 slug: update-privacy-app-review-metadata
 branch: incant/0004-update-privacy-app-review-metadata
 title: Update Privacy App Review Metadata
-stage: plan
-status: awaiting-approval
+stage: review
+status: pending-review
 created: 2026-05-31
 commit: 6bfb9bf2
 updated: 2026-05-31
@@ -13,10 +13,14 @@ updated: 2026-05-31
 # Update Privacy App Review Metadata — plan
 
 ## Status
-- Phase: 0004-P1 (of 3) · stage: plan
+- Phase: 0004-P1 (of 3) · stage: review
 - Branch: incant/0004-update-privacy-app-review-metadata
-- Next: human approval of this plan; after approval run `/incant:implement 0004` and start Phase 0004-P1.
+- Next: run `/incant:review 0004` for the Phase 0004-P1 gate before continuing to Phase 0004-P2.
 - Blockers: none
+- Completed this session:
+  - 0004-P1 implemented App Store review configuration and Discover support-row behavior.
+- Quality gate evidence (2026-05-31):
+  - `! rg -n "1506614493|appID = \"" AustrianRocks/Config/BrandConfig.swift AustrianRocks/UI/Discover/DiscoverView.swift && xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -configuration Debug -destination 'generic/platform=iOS Simulator' build` passed; `xcodebuild` ended with `** BUILD SUCCEEDED **`.
 - Decisions:
   - `BrandConfig.AppStore.appID` will be optional and default to `nil` until Austrian.rocks has a real App Store ID.
   - The Discover support section will render the rate/review row only when `BrandConfig.AppStore.reviewURL` can be formed from the configured ID.
@@ -37,12 +41,12 @@ updated: 2026-05-31
 ## Phase 0004-P1 — App Store review configuration and Discover behavior
 Goal: Remove the stale Boolder App Store review link from runtime code and make the rate action absent while Austrian.rocks is unpublished.
 
-- [ ] Read `AustrianRocks/Config/BrandConfig.swift` and `AustrianRocks/UI/Discover/DiscoverView.swift` before editing.
-- [ ] In `AustrianRocks/Config/BrandConfig.swift`, change `BrandConfig.AppStore.appID` from a shippable string value to `static let appID: String? = nil`.
-- [ ] In `AustrianRocks/Config/BrandConfig.swift`, add `static var reviewURL: URL?` inside `BrandConfig.AppStore` that returns `nil` when `appID` is `nil` or empty and otherwise builds the write-review URL by interpolating the configured ID into the `https://itunes.apple.com/app/id` path only.
-- [ ] In `AustrianRocks/Config/BrandConfig.swift`, add a short comment next to `appID` explaining that it is intentionally absent until App Store release and setting it enables the rate/review link.
-- [ ] In `AustrianRocks/UI/Discover/DiscoverView.swift`, replace the unconditional rate button with `if let reviewURL = BrandConfig.AppStore.reviewURL { ... }` so the “Rate app” row and its divider are omitted when no URL exists.
-- [ ] In `AustrianRocks/UI/Discover/DiscoverView.swift`, update the rate button action to call `openURL(reviewURL)` and remove all local hardcoded App Store IDs and URL strings for the review action.
+- [x] Read `AustrianRocks/Config/BrandConfig.swift` and `AustrianRocks/UI/Discover/DiscoverView.swift` before editing.
+- [x] In `AustrianRocks/Config/BrandConfig.swift`, change `BrandConfig.AppStore.appID` from a shippable string value to `static let appID: String? = nil`.
+- [x] In `AustrianRocks/Config/BrandConfig.swift`, add `static var reviewURL: URL?` inside `BrandConfig.AppStore` that returns `nil` when `appID` is `nil` or empty and otherwise builds the write-review URL by interpolating the configured ID into the `https://itunes.apple.com/app/id` path only.
+- [x] In `AustrianRocks/Config/BrandConfig.swift`, add a short comment next to `appID` explaining that it is intentionally absent until App Store release and setting it enables the rate/review link.
+- [x] In `AustrianRocks/UI/Discover/DiscoverView.swift`, replace the unconditional rate button with `if let reviewURL = BrandConfig.AppStore.reviewURL { ... }` so the “Rate app” row and its divider are omitted when no URL exists.
+- [x] In `AustrianRocks/UI/Discover/DiscoverView.swift`, update the rate button action to call `openURL(reviewURL)` and remove all local hardcoded App Store IDs and URL strings for the review action.
 
 **Quality gate:** `! rg -n "1506614493|appID = \"" AustrianRocks/Config/BrandConfig.swift AustrianRocks/UI/Discover/DiscoverView.swift && xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -configuration Debug -destination 'generic/platform=iOS Simulator' build` → stale Boolder ID and hardcoded non-optional App Store ID assignment search returns no matches; `xcodebuild` completes successfully for the production scheme.
 
