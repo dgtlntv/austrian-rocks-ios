@@ -3,7 +3,7 @@ id: "0001"
 slug: attribution-acknowledgements
 branch: incant/0001-attribution-acknowledgements
 title: Attribution Acknowledgements
-stage: plan
+stage: implement
 status: in-progress
 created: 2026-05-30
 commit: b3731aec
@@ -13,10 +13,11 @@ updated: 2026-05-31
 # Attribution Acknowledgements — plan
 
 ## Status
-- Phase: 0001-P1 (of 3) · stage: plan
+- Phase: 0001-P1 (of 3) · stage: review
 - Branch: incant/0001-attribution-acknowledgements
-- Next: human approves this plan, then implement 0001-P1.
+- Next: `/incant:review 0001` for the 0001-P1 phase gate; after review approval, resume 0001-P2.
 - Blockers: none.
+- Fresh verification (2026-05-31): `python3 -m json.tool AustrianRocks/Acknowledgements.json >/tmp/acknowledgements-json.txt && xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'generic/platform=iOS Simulator' build` → JSON parsed and `** BUILD SUCCEEDED **` (warnings only: missing local Mapbox token/run-script output dependency).
 - Decisions:
   - The production entry lives in the existing Discover support section, not in the `#if DEVELOPMENT` settings section.
   - A bundled `Acknowledgements.json` is the legal-content source of truth; Swift owns decoding, fallback handling, and rendering only.
@@ -34,13 +35,13 @@ updated: 2026-05-31
 - `AustrianRocks.xcodeproj/project.pbxproj` (edit) — add the new Swift files to both app source phases and the JSON resource to both app resource phases.
 
 ## Phase 0001-P1 — acknowledgement data and loader
-- [ ] Read `LICENSE.md`, `AustrianRocks.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved`, and the resolved package license files before editing: Mapbox Maps iOS `LICENSE.md`, Mapbox Common iOS `LICENSE.md`, Mapbox Core Maps iOS `LICENSE.md`, Turf Swift `LICENSE.md`, and SQLite.swift `LICENSE.txt` from Xcode's `SourcePackages/checkouts`.
-- [ ] Add `AustrianRocks/Acknowledgements.json` with this schema: top-level `schemaVersion` integer, `audit` object containing `packageResolvedOriginHash`, `auditedPackagePins`, `sourceFiles`, and `omissions`, and `sections` array; each section has `id`, `titleKey`, and `entries`; each entry has `id`, `name`, `version`, `licenseName`, `copyright`, `url`, and `notice`.
-- [ ] Populate `AustrianRocks/Acknowledgements.json` with the Boolder MIT notice from `LICENSE.md` and all required notice text discovered for the currently pinned non-Apple dependencies: `mapbox-maps-ios` 11.19.0, `mapbox-common-ios` 24.19.0, `mapbox-core-maps-ios` 11.19.0, `turf-swift` 4.0.0, and `sqlite.swift` 0.15.5.
-- [ ] Record any audited dependency or bundled Mapbox sub-notice that is intentionally omitted in the JSON `audit.omissions` array with the dependency name and a concrete reason derived from the audited license text or package relationship.
-- [ ] Add `AustrianRocks/Models/AcknowledgementCatalog.swift` defining `AcknowledgementCatalog`, `AcknowledgementAudit`, `AcknowledgementSection`, `AcknowledgementEntry`, `AcknowledgementOmission`, `AcknowledgementCatalog.LoadError`, and `AcknowledgementCatalog.load(from bundle: Bundle = .main, resourceName: String = "Acknowledgements") throws -> AcknowledgementCatalog`.
-- [ ] Include a file-level comment in `AcknowledgementCatalog.swift` documenting the JSON schema, the source files to re-audit after dependency changes, and the Mapbox-to-MapLibre update path.
-- [ ] Edit `AustrianRocks.xcodeproj/project.pbxproj` so `AcknowledgementCatalog.swift` is compiled by both `AustrianRocks` and `AustrianRocks dev`, and `Acknowledgements.json` is copied as a resource by both targets.
+- [x] Read `LICENSE.md`, `AustrianRocks.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved`, and the resolved package license files before editing: Mapbox Maps iOS `LICENSE.md`, Mapbox Common iOS `LICENSE.md`, Mapbox Core Maps iOS `LICENSE.md`, Turf Swift `LICENSE.md`, and SQLite.swift `LICENSE.txt` from Xcode's `SourcePackages/checkouts`.
+- [x] Add `AustrianRocks/Acknowledgements.json` with this schema: top-level `schemaVersion` integer, `audit` object containing `packageResolvedOriginHash`, `auditedPackagePins`, `sourceFiles`, and `omissions`, and `sections` array; each section has `id`, `titleKey`, and `entries`; each entry has `id`, `name`, `version`, `licenseName`, `copyright`, `url`, and `notice`.
+- [x] Populate `AustrianRocks/Acknowledgements.json` with the Boolder MIT notice from `LICENSE.md` and all required notice text discovered for the currently pinned non-Apple dependencies: `mapbox-maps-ios` 11.19.0, `mapbox-common-ios` 24.19.0, `mapbox-core-maps-ios` 11.19.0, `turf-swift` 4.0.0, and `sqlite.swift` 0.15.5.
+- [x] Record any audited dependency or bundled Mapbox sub-notice that is intentionally omitted in the JSON `audit.omissions` array with the dependency name and a concrete reason derived from the audited license text or package relationship.
+- [x] Add `AustrianRocks/Models/AcknowledgementCatalog.swift` defining `AcknowledgementCatalog`, `AcknowledgementAudit`, `AcknowledgementSection`, `AcknowledgementEntry`, `AcknowledgementOmission`, `AcknowledgementCatalog.LoadError`, and `AcknowledgementCatalog.load(from bundle: Bundle = .main, resourceName: String = "Acknowledgements") throws -> AcknowledgementCatalog`.
+- [x] Include a file-level comment in `AcknowledgementCatalog.swift` documenting the JSON schema, the source files to re-audit after dependency changes, and the Mapbox-to-MapLibre update path.
+- [x] Edit `AustrianRocks.xcodeproj/project.pbxproj` so `AcknowledgementCatalog.swift` is compiled by both `AustrianRocks` and `AustrianRocks dev`, and `Acknowledgements.json` is copied as a resource by both targets.
 **Quality gate:** `python3 -m json.tool AustrianRocks/Acknowledgements.json >/tmp/acknowledgements-json.txt && xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'generic/platform=iOS Simulator' build` → JSON parses successfully and the production app target builds.
 
 ## Phase 0001-P2 — production Discover route and localized screen
