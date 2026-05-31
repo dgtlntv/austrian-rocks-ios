@@ -13,15 +13,16 @@ updated: 2026-05-31
 # Remove Bleau Leftovers — plan
 
 ## Status
-- Phase: 0002-P1 (of 3) · stage: review
+- Phase: 0002-P2 (of 3) · stage: review
 - Branch: incant/0002-remove-bleau-leftovers
-- Next: run `/incant:review 0002` for the 0002-P1 phase gate.
+- Next: run `/incant:review 0002` for the 0002-P2 phase gate.
 - Blockers: none
 - Evidence:
   - 2026-05-31 0002-P1 quality gate passed: `rg -n "Boolder|Fontainebleau|Bleau|boolder|fontainebleau|bleau|hello@boolder.com" README.md AustrianRocks/en.lproj/Localizable.strings AustrianRocks/de.lproj/Localizable.strings AustrianRocks/UI/Discover/TopAreasDryFast.swift` produced no output (exit 1 from no matches).
+  - 2026-05-31 0002-P2 quality gate passed: `rg -n "fontainebleauBounds|Fontainebleau|fontainebleau|Bleau Météo|Bleau-Meteo|//  Boolder$" AustrianRocks AustrianRocks.xcodeproj/xcshareddata/xcschemes AustrianRocks.xcodeproj/project.pbxproj Dev-Info.plist` produced no output (exit 1 from no matches).
 - Decisions:
   - The spec's `commit: 749c1f20` is behind current `HEAD` (`c6de6dd4`) because the approved spec was committed on this branch; affected files were re-read/grepped while planning and the spec still holds.
-  - For Swift headers with stale `//  Boolder` app-name lines, update the app name to `//  Austrian.rocks` and clarify provenance with `//  Originally created for Boolder by Nicolas Mondollot.` while preserving copyright lines and license/acknowledgement references.
+  - For Swift headers with stale `//  Boolder` app-name lines, update the app name to `//  Austrian.rocks` and clarify provenance with `//  Originally created for Boolder by Nicolas Mondollot.` while preserving existing original dates, copyright lines, and license/acknowledgement references.
   - If no Austria-appropriate drying/weather link is already available during implementation, remove the dry-fast useful-link row instead of inventing an unverified replacement.
 
 ## Files touched
@@ -65,12 +66,12 @@ updated: 2026-05-31
 **Quality gate:** `rg -n "Boolder|Fontainebleau|Bleau|boolder|fontainebleau|bleau|hello@boolder.com" README.md AustrianRocks/en.lproj/Localizable.strings AustrianRocks/de.lproj/Localizable.strings AustrianRocks/UI/Discover/TopAreasDryFast.swift` → no output.
 
 ## Phase 0002-P2 — map fallback geography and launch-facing metadata/header sweep
-- [ ] Read `AustrianRocks/UI/Map/MapboxViewController.swift` before editing `centerOnCurrentLocation()`.
-- [ ] Replace `fontainebleauBounds` in `centerOnCurrentLocation()` with a single named Austria fallback bounds value using southwest latitude `46.372276`, southwest longitude `9.530748`, northeast latitude `49.020530`, and northeast longitude `17.160776`; use identifiers such as `austriaBounds`/`austriaFallbackBounds`, not Fontainebleau names.
-- [ ] Read each Swift file listed in Files touched with a stale `//  Boolder` app header, then update the header to use `//  Austrian.rocks` and replace the `Created by Nicolas Mondollot ...` line with `//  Originally created for Boolder by Nicolas Mondollot.`; keep copyright lines unchanged.
-- [ ] Read `AustrianRocks.xcodeproj/project.pbxproj`, both shared scheme files under `AustrianRocks.xcodeproj/xcshareddata/xcschemes/`, `AustrianRocks/Info.plist`, `Dev-Info.plist`, and the four listed asset-catalog `Contents.json` files; verify app icon names, launch asset names, bundle IDs, and scheme buildable names contain no stale Boolder/Fontainebleau/Bleau references.
-- [ ] If the metadata/asset inspection finds a stale non-attribution old app/place reference, replace it with the existing AustrianRocks/Austrian.rocks naming used elsewhere in that same file; do not churn `xcuserdata` files.
-- [ ] Run `rg -n "fontainebleauBounds|Fontainebleau|fontainebleau|Bleau Météo|Bleau-Meteo|//  Boolder$" AustrianRocks AustrianRocks.xcodeproj/xcshareddata/xcschemes AustrianRocks.xcodeproj/project.pbxproj Dev-Info.plist` and confirm no stale non-attribution matches remain.
+- [x] Read `AustrianRocks/UI/Map/MapboxViewController.swift` before editing `centerOnCurrentLocation()`.
+- [x] Replace `fontainebleauBounds` in `centerOnCurrentLocation()` with a single named Austria fallback bounds value using southwest latitude `46.372276`, southwest longitude `9.530748`, northeast latitude `49.020530`, and northeast longitude `17.160776`; use identifiers such as `austriaBounds`/`austriaFallbackBounds`, not Fontainebleau names.
+- [x] Read each Swift file listed in Files touched with a stale `//  Boolder` app header, then update the header to use `//  Austrian.rocks` and replace the `Created by Nicolas Mondollot ...` line with `//  Originally created for Boolder by Nicolas Mondollot.`; keep existing original dates and copyright lines unchanged.
+- [x] Read `AustrianRocks.xcodeproj/project.pbxproj`, both shared scheme files under `AustrianRocks.xcodeproj/xcshareddata/xcschemes/`, `AustrianRocks/Info.plist`, `Dev-Info.plist`, and the four listed asset-catalog `Contents.json` files; verify app icon names, launch asset names, bundle IDs, and scheme buildable names contain no stale Boolder/Fontainebleau/Bleau references.
+- [x] If the metadata/asset inspection finds a stale non-attribution old app/place reference, replace it with the existing AustrianRocks/Austrian.rocks naming used elsewhere in that same file; do not churn `xcuserdata` files.
+- [x] Run `rg -n "fontainebleauBounds|Fontainebleau|fontainebleau|Bleau Météo|Bleau-Meteo|//  Boolder$" AustrianRocks AustrianRocks.xcodeproj/xcshareddata/xcschemes AustrianRocks.xcodeproj/project.pbxproj Dev-Info.plist` and confirm no stale non-attribution matches remain.
 **Quality gate:** `rg -n "fontainebleauBounds|Fontainebleau|fontainebleau|Bleau Météo|Bleau-Meteo|//  Boolder$" AustrianRocks AustrianRocks.xcodeproj/xcshareddata/xcschemes AustrianRocks.xcodeproj/project.pbxproj Dev-Info.plist` → no output.
 
 ## Phase 0002-P3 — final classification and build verification

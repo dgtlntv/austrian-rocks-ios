@@ -643,14 +643,14 @@ class MapboxViewController: UIViewController {
     func centerOnCurrentLocation() {
         if let location = mapView.location.latestLocation {
             
-            let fontainebleauBounds = CoordinateBounds(
-                southwest: CLLocationCoordinate2D(latitude: 48.241596, longitude: 2.3936456),
-                northeast: CLLocationCoordinate2D(latitude: 48.5075073, longitude: 2.7616875)
+            let austriaFallbackBounds = CoordinateBounds(
+                southwest: CLLocationCoordinate2D(latitude: 46.372276, longitude: 9.530748),
+                northeast: CLLocationCoordinate2D(latitude: 49.020530, longitude: 17.160776)
             )
             
             let currentZoomLevel = mapView.mapboxMap.cameraState.zoom
             
-            if fontainebleauBounds.contains(forPoint: location.coordinate, wrappedCoordinates: false) {
+            if austriaFallbackBounds.contains(forPoint: location.coordinate, wrappedCoordinates: false) {
                 let cameraOptions = CameraOptions(
                     center: location.coordinate,
                     padding: safePadding,
@@ -660,7 +660,7 @@ class MapboxViewController: UIViewController {
                 flyTo(cameraOptions)
             }
             else {
-                let bounds = fontainebleauBounds.extend(forPoint: location.coordinate)
+                let bounds = austriaFallbackBounds.extend(forPoint: location.coordinate)
                 
                 let coords = [bounds.southwest, bounds.northeast]
                 

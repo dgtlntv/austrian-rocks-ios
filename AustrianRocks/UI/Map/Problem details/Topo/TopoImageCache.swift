@@ -1,8 +1,8 @@
 //
 //  TopoImageCache.swift
-//  Boolder
+//  Austrian.rocks
 //
-//  Created by Nicolas Mondollot on 15/07/2024.
+//  Originally created for Boolder by Nicolas Mondollot on 15/07/2024.
 //  Copyright © 2024 Nicolas Mondollot. All rights reserved.
 //
 

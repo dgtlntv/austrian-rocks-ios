@@ -1,17 +1,17 @@
 //
 //  SegmentType.swift
-//  Boolder
+//  Austrian.rocks
 //
-//  Created by Nicolas Mondollot on 17/01/2026.
+//  Originally created for Boolder by Nicolas Mondollot on 17/01/2026.
 //  Copyright © 2026 Nicolas Mondollot. All rights reserved.
 //
 
 
 //
 //  CGPathExtensions.swift
-//  Boolder
+//  Austrian.rocks
 //
-//  Created by Nicolas Mondollot on 03/03/2025.
+//  Originally created for Boolder by Nicolas Mondollot on 03/03/2025.
 //  Copyright © 2025 Nicolas Mondollot. All rights reserved.
 //
 

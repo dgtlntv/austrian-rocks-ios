@@ -1,8 +1,8 @@
 //
 //  BottomSheetView.swift
-//  Boolder
+//  Austrian.rocks
 //
-//  Created by Nicolas Mondollot on 04/01/2026.
+//  Originally created for Boolder by Nicolas Mondollot on 04/01/2026.
 //  Copyright © 2026 Nicolas Mondollot. All rights reserved.
 //
 
