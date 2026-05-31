@@ -13,15 +13,20 @@ updated: 2026-05-31
 # Update Privacy App Review Metadata — plan
 
 ## Status
-- Phase: 0004-P2 (of 3) · stage: review
+- Phase: 0004-P3 (of 3) · stage: review
 - Branch: incant/0004-update-privacy-app-review-metadata
-- Next: run `/incant:review 0004` for the Phase 0004-P2 gate before continuing to Phase 0004-P3.
+- Next: run `/incant:review 0004` for the Phase 0004-P3 gate before finalizing the item.
 - Blockers: none
 - Completed this session:
-  - 0004-P2 removed unused camera permission metadata, fixed the dev precise-location plist structure, updated dev bundle identifiers, preserved the privacy manifest, and added the Austrian.rocks license notice.
+  - 0004-P3 completed final static and build verification with no source or metadata changes required.
 - Quality gate evidence (2026-05-31):
-  - `rg -n "UIImagePicker|AVCapture|NSCameraUsageDescription|PHPhoto|PhotosUI|camera|Camera" AustrianRocks Dev-Info.plist` found no live photo/camera capture APIs; matches were permission metadata scheduled for removal and Mapbox map camera APIs only.
-  - `plutil -lint AustrianRocks/Info.plist Dev-Info.plist PrivacyInfo.xcprivacy && ! rg -n "NSCameraUsageDescription|com\\.nicolasmondollot\\.austrian-rocks-dev" AustrianRocks Dev-Info.plist AustrianRocks.xcodeproj/project.pbxproj && rg -n "NSLocationWhenInUseUsageDescription|NSLocationAlwaysAndWhenInUseUsageDescription|LocationAccuracyAuthorizationDescription|com\\.maxblazek\\.austrian-rocks|Copyright \\(c\\)" AustrianRocks/Info.plist Dev-Info.plist AustrianRocks.xcodeproj/project.pbxproj LICENSE.md` passed; plist/privacy files linted OK, stale camera/fork bundle-ID search returned no matches, and evidence showed preserved location metadata, `com.maxblazek` bundle IDs, and both license copyright notices.
+  - `xcodebuild -list -project AustrianRocks.xcodeproj` passed and listed schemes `AustrianRocks`, `AustrianRocks dev`, and `MapboxMaps`.
+  - `rg -n "1506614493|NSCameraUsageDescription|com\\.nicolasmondollot\\.austrian-rocks-dev" .` returned no matches.
+  - `rg -n "NSPrivacyAccessedAPICategoryUserDefaults|UserDefaults\\.standard|NSLocationWhenInUseUsageDescription|NSLocationAlwaysAndWhenInUseUsageDescription|LocationAccuracyAuthorizationDescription|com\\.maxblazek\\.austrian-rocks-dev|com\\.maxblazek\\.austrian-rocks" AustrianRocks Dev-Info.plist PrivacyInfo.xcprivacy AustrianRocks.xcodeproj/project.pbxproj` showed UserDefaults privacy manifest and source usage, location permission metadata, development bundle IDs under `com.maxblazek.austrian-rocks-dev`, and production bundle IDs under `com.maxblazek.austrian-rocks`.
+  - `plutil -lint AustrianRocks/Info.plist Dev-Info.plist PrivacyInfo.xcprivacy` passed for all three files.
+  - `xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -configuration Debug -destination 'generic/platform=iOS Simulator' build` passed with `** BUILD SUCCEEDED **`; only pre-existing warnings about the run script phase and missing local Mapbox access token were emitted.
+  - Manual inspection of `AustrianRocks/UI/Discover/DiscoverView.swift` confirmed the rate row remains guarded by `if let reviewURL = BrandConfig.AppStore.reviewURL` and opens only that configured URL.
+  - Final quality gate `xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -configuration Debug -destination 'generic/platform=iOS Simulator' build && plutil -lint AustrianRocks/Info.plist Dev-Info.plist PrivacyInfo.xcprivacy && ! rg -n "1506614493|NSCameraUsageDescription|com\\.nicolasmondollot\\.austrian-rocks-dev" AustrianRocks Dev-Info.plist AustrianRocks.xcodeproj/project.pbxproj` passed: build succeeded, plist/privacy lint passed, and stale active source/metadata search returned no matches.
 - Decisions:
   - `BrandConfig.AppStore.appID` will be optional and default to `nil` until Austrian.rocks has a real App Store ID.
   - The Discover support section will render the rate/review row only when `BrandConfig.AppStore.reviewURL` can be formed from the configured ID.
@@ -69,12 +74,12 @@ Goal: Make release metadata match current app behavior and current ownership wit
 ## Phase 0004-P3 — Final static and build verification
 Goal: Prove the repository meets all App Review metadata acceptance criteria after the runtime and metadata slices are complete.
 
-- [ ] Run and read `xcodebuild -list -project AustrianRocks.xcodeproj` to confirm the available schemes still include `AustrianRocks` and `AustrianRocks dev`.
-- [ ] Run and read `rg -n "1506614493|NSCameraUsageDescription|com\.nicolasmondollot\.austrian-rocks-dev" .` from the repository root; investigate and remove any active metadata/code matches, while ignoring only historical `.incant` spec/plan references if they are the sole remaining matches.
-- [ ] Run and read `rg -n "NSPrivacyAccessedAPICategoryUserDefaults|UserDefaults\.standard|NSLocationWhenInUseUsageDescription|NSLocationAlwaysAndWhenInUseUsageDescription|LocationAccuracyAuthorizationDescription|com\.maxblazek\.austrian-rocks-dev|com\.maxblazek\.austrian-rocks" AustrianRocks Dev-Info.plist PrivacyInfo.xcprivacy AustrianRocks.xcodeproj/project.pbxproj` and confirm privacy, location, dev bundle ID, and production bundle ID evidence is present.
-- [ ] Run and read `plutil -lint AustrianRocks/Info.plist Dev-Info.plist PrivacyInfo.xcprivacy` and fix any syntax errors before review.
-- [ ] Run and read `xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -configuration Debug -destination 'generic/platform=iOS Simulator' build`; if the local environment cannot complete this exact build for signing, SDK, or secret-injection reasons, run the closest available `xcodebuild` build-equivalent, capture the exact failure/output, and document why it still covers the changed surface.
-- [ ] Manually inspect `AustrianRocks/UI/Discover/DiscoverView.swift` after edits and confirm the rate row is guarded by `BrandConfig.AppStore.reviewURL` so the default `nil` app ID cannot display or open an App Store review URL.
+- [x] Run and read `xcodebuild -list -project AustrianRocks.xcodeproj` to confirm the available schemes still include `AustrianRocks` and `AustrianRocks dev`.
+- [x] Run and read `rg -n "1506614493|NSCameraUsageDescription|com\.nicolasmondollot\.austrian-rocks-dev" .` from the repository root; investigate and remove any active metadata/code matches, while ignoring only historical `.incant` spec/plan references if they are the sole remaining matches.
+- [x] Run and read `rg -n "NSPrivacyAccessedAPICategoryUserDefaults|UserDefaults\.standard|NSLocationWhenInUseUsageDescription|NSLocationAlwaysAndWhenInUseUsageDescription|LocationAccuracyAuthorizationDescription|com\.maxblazek\.austrian-rocks-dev|com\.maxblazek\.austrian-rocks" AustrianRocks Dev-Info.plist PrivacyInfo.xcprivacy AustrianRocks.xcodeproj/project.pbxproj` and confirm privacy, location, dev bundle ID, and production bundle ID evidence is present.
+- [x] Run and read `plutil -lint AustrianRocks/Info.plist Dev-Info.plist PrivacyInfo.xcprivacy` and fix any syntax errors before review.
+- [x] Run and read `xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -configuration Debug -destination 'generic/platform=iOS Simulator' build`; if the local environment cannot complete this exact build for signing, SDK, or secret-injection reasons, run the closest available `xcodebuild` build-equivalent, capture the exact failure/output, and document why it still covers the changed surface.
+- [x] Manually inspect `AustrianRocks/UI/Discover/DiscoverView.swift` after edits and confirm the rate row is guarded by `BrandConfig.AppStore.reviewURL` so the default `nil` app ID cannot display or open an App Store review URL.
 
 **Quality gate:** `xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -configuration Debug -destination 'generic/platform=iOS Simulator' build && plutil -lint AustrianRocks/Info.plist Dev-Info.plist PrivacyInfo.xcprivacy && ! rg -n "1506614493|NSCameraUsageDescription|com\.nicolasmondollot\.austrian-rocks-dev" AustrianRocks Dev-Info.plist AustrianRocks.xcodeproj/project.pbxproj` → build and plist/privacy lint pass; final stale-value search returns no active source or metadata matches.
 
