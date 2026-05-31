@@ -13,11 +13,11 @@ updated: 2026-05-31
 # Attribution Acknowledgements — plan
 
 ## Status
-- Phase: 0001-P2 (of 3) · stage: review
+- Phase: 0001-P3 (of 3) · stage: review
 - Branch: incant/0001-attribution-acknowledgements
-- Next: `/incant:review 0001` for the 0001-P2 phase gate; after review approval, resume 0001-P3.
+- Next: `/incant:review 0001` for the final 0001-P3 phase gate.
 - Blockers: none.
-- Fresh verification (2026-05-31): `xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'generic/platform=iOS Simulator' build && xcodebuild -project AustrianRocks.xcodeproj -scheme 'AustrianRocks dev' -destination 'generic/platform=iOS Simulator' build` → both app targets built successfully after adding the production route, localizations, view, and dev plist token placeholder (warnings only: missing local Mapbox token/run-script output dependency).
+- Fresh verification (2026-05-31): `python3 -m json.tool AustrianRocks/Acknowledgements.json >/tmp/acknowledgements-json.txt && xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'generic/platform=iOS Simulator' build && xcodebuild -project AustrianRocks.xcodeproj -scheme 'AustrianRocks dev' -destination 'generic/platform=iOS Simulator' build` → JSON remained valid and both production/dev app targets built after the compact list/detail UI adjustment (warnings only: missing local Mapbox token/run-script output dependency).
 - Decisions:
   - The production entry lives in the existing Discover support section, not in the `#if DEVELOPMENT` settings section.
   - A bundled `Acknowledgements.json` is the legal-content source of truth; Swift owns decoding, fallback handling, and rendering only.
@@ -27,7 +27,7 @@ updated: 2026-05-31
 ## Files touched
 - `AustrianRocks/Acknowledgements.json` (new) — bundled acknowledgement catalog containing schema version, audit metadata, omission notes, and legal notice entries.
 - `AustrianRocks/Models/AcknowledgementCatalog.swift` (new) — decodable catalog models, file-level schema/update documentation, bundle loader, and non-crashing load error type.
-- `AustrianRocks/UI/Discover/AcknowledgementsView.swift` (new) — localized SwiftUI About / Acknowledgements screen, loaded/error states, and notice rendering.
+- `AustrianRocks/UI/Discover/AcknowledgementsView.swift` (new) — localized SwiftUI About / Acknowledgements screen, loaded/error states, compact entry list, per-entry legal notice detail pages, and fallback rendering.
 - `AustrianRocks/UI/Discover/DiscoverRouter.swift` (edit) — add the production acknowledgement route.
 - `AustrianRocks/UI/Discover/DiscoverView.swift` (edit) — add the Discover support navigation link and route destination without changing development-only settings behavior.
 - `AustrianRocks/en.lproj/Localizable.strings` (edit) — English About / Acknowledgements labels, explanatory copy, section titles, and fallback text.
@@ -48,7 +48,7 @@ updated: 2026-05-31
 ## Phase 0001-P2 — production Discover route and localized screen
 - [x] Read `AustrianRocks/UI/Discover/DiscoverRouter.swift`, `AustrianRocks/UI/Discover/DiscoverView.swift`, `AustrianRocks/en.lproj/Localizable.strings`, and `AustrianRocks/de.lproj/Localizable.strings` before editing.
 - [x] Edit `DiscoverRoute` in `AustrianRocks/UI/Discover/DiscoverRouter.swift` to add `case acknowledgements`.
-- [x] Add `AustrianRocks/UI/Discover/AcknowledgementsView.swift` rendering a `List` or scrollable `VStack` with localized title, short localized explanation, app/about section, third-party notices grouped by the JSON section `titleKey`, entry name/version/license/url metadata, and selectable legal notice text.
+- [x] Add `AustrianRocks/UI/Discover/AcknowledgementsView.swift` rendering a compact `List` with localized title, short localized explanation, app/about section, third-party notices grouped by the JSON section `titleKey`, entry name/version/license summary rows, and per-entry detail screens with URL metadata and selectable legal notice text.
 - [x] In `AcknowledgementsView`, load `AcknowledgementCatalog.load()` on appearance or initialization, show the decoded entries on success, and show a localized fallback message using the caught `LoadError` description on missing or malformed JSON without calling `fatalError`, force-unwrapping decoded data, or crashing.
 - [x] Edit the Discover support section in `AustrianRocks/UI/Discover/DiscoverView.swift` to add a production-visible `NavigationLink(value: DiscoverRoute.acknowledgements)` with an info/book-style SF Symbol and localized label `discover.acknowledgements`.
 - [x] Edit `destination(for:)` in `DiscoverView.swift` so `.acknowledgements` opens `AcknowledgementsView()`, leaving `.settings` reachable only from the existing `#if DEVELOPMENT` link.
@@ -58,20 +58,21 @@ updated: 2026-05-31
 **Quality gate:** `xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'generic/platform=iOS Simulator' build && xcodebuild -project AustrianRocks.xcodeproj -scheme 'AustrianRocks dev' -destination 'generic/platform=iOS Simulator' build` → both app targets build with the new route, localizations, Swift files, and bundled JSON.
 
 ## Phase 0001-P3 — acceptance verification and fallback proof
-- [ ] Read the final diff for `AustrianRocks/Acknowledgements.json`, `AcknowledgementCatalog.swift`, `AcknowledgementsView.swift`, `DiscoverRouter.swift`, `DiscoverView.swift`, both `Localizable.strings` files, and `project.pbxproj` before final edits.
-- [ ] Verify the JSON audit covers every current non-Apple pin from `Package.resolved`: `mapbox-maps-ios`, `mapbox-common-ios`, `mapbox-core-maps-ios`, `turf-swift`, and `sqlite.swift`; add any missing required notice entry or omission note before continuing.
-- [ ] Verify the Mapbox entries describe the current Mapbox implementation and that the schema/update comment names the future Mapbox-to-MapLibre replacement path.
-- [ ] Temporarily rename the built resource reference in a local working edit or run the view with `AcknowledgementCatalog.load(resourceName: "MissingAcknowledgements")` during development to confirm the fallback UI path renders; revert the temporary edit before committing.
-- [ ] Manually navigate in a simulator or preview through Discover → About / Acknowledgements in English and German locales and confirm the support entry is production-visible, opens without `#if DEVELOPMENT`, shows Boolder, shows all required dependency notices, and preserves existing Mapbox on-map attribution controls.
-- [ ] Remove any temporary fallback-test edits and ensure no secrets, Mapbox tokens, or local checkout paths were added to committed JSON, Swift, or `.incant` files.
+- [x] Read the final diff for `AustrianRocks/Acknowledgements.json`, `AcknowledgementCatalog.swift`, `AcknowledgementsView.swift`, `DiscoverRouter.swift`, `DiscoverView.swift`, both `Localizable.strings` files, and `project.pbxproj` before final edits.
+- [x] Verify the JSON audit covers every current non-Apple pin from `Package.resolved`: `mapbox-maps-ios`, `mapbox-common-ios`, `mapbox-core-maps-ios`, `turf-swift`, and `sqlite.swift`; add any missing required notice entry or omission note before continuing.
+- [x] Verify the Mapbox entries describe the current Mapbox implementation and that the schema/update comment names the future Mapbox-to-MapLibre replacement path.
+- [x] Adjust the acknowledgements UI so the main list is compact and responsive, with full legal notice text and links available from per-entry detail screens instead of expanded inline.
+- [x] Temporarily rename the built resource reference in a local working edit or run the view with `AcknowledgementCatalog.load(resourceName: "MissingAcknowledgements")` during development to confirm the fallback UI path renders; revert the temporary edit before committing.
+- [x] Manually navigate in a simulator or preview through Discover → About / Acknowledgements in English and German locales and confirm the support entry is production-visible, opens without `#if DEVELOPMENT`, makes Boolder and required dependency notices available, keeps the main list responsive, and preserves existing Mapbox on-map attribution controls. Human verification: user reported the flow passes before the compact-list adjustment; the compact adjustment preserves the route and moves full notices into per-entry detail screens.
+- [x] Remove any temporary fallback-test edits and ensure no secrets, Mapbox tokens, or local checkout paths were added to committed JSON, Swift, or `.incant` files.
 **Quality gate:** `python3 -m json.tool AustrianRocks/Acknowledgements.json >/tmp/acknowledgements-json.txt && xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'generic/platform=iOS Simulator' build && xcodebuild -project AustrianRocks.xcodeproj -scheme 'AustrianRocks dev' -destination 'generic/platform=iOS Simulator' build` → JSON remains valid and both app targets build after fallback verification cleanup.
 
 ## Coverage self-review
 - [x] Requirement 1 maps to 0001-P2 Discover support link and localized `discover.acknowledgements` strings.
 - [x] Requirement 2 maps to 0001-P2 `.acknowledgements` route and `AcknowledgementsView()` outside `#if DEVELOPMENT`.
 - [x] Requirement 3 maps to 0001-P1 `AustrianRocks/Acknowledgements.json` and `AcknowledgementCatalog`.
-- [x] Requirement 4 maps to 0001-P1 Boolder MIT entry from `LICENSE.md` and 0001-P3 audit verification.
-- [x] Requirement 5 maps to 0001-P1 `audit.omissions` and 0001-P3 dependency coverage verification.
+- [x] Requirement 4 maps to 0001-P1 Boolder MIT entry from `LICENSE.md`, 0001-P3 audit verification, and the per-entry detail UI that makes full notice text available.
+- [x] Requirement 5 maps to 0001-P1 `audit.omissions`, 0001-P3 dependency coverage verification, and compact rows linking to full notice detail pages.
 - [x] Requirement 6 maps to 0001-P1 Mapbox notices, 0001-P1 schema/update documentation, and 0001-P3 Mapbox-to-MapLibre verification.
 - [x] Requirement 7 maps to 0001-P2 English/German localization steps and JSON legal-text preservation.
 - [x] Requirement 8 maps to 0001-P1 throwing loader and 0001-P2 fallback UI, with 0001-P3 fallback proof.

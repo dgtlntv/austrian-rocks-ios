@@ -39,54 +39,33 @@ struct AcknowledgementsView: View {
             ForEach(catalog.sections) { section in
                 Section {
                     ForEach(section.entries) { entry in
-                        entryView(entry)
+                        NavigationLink {
+                            AcknowledgementDetailView(entry: entry)
+                        } label: {
+                            entryRow(entry)
+                        }
                     }
                 } header: {
                     Text(LocalizedStringKey(section.titleKey))
                 }
             }
         }
-        .textSelection(.enabled)
     }
 
-    private func entryView(_ entry: AcknowledgementEntry) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
+    private func entryRow(_ entry: AcknowledgementEntry) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
             Text(entry.name)
                 .font(.headline)
-                .textSelection(.enabled)
 
-            metadataRow(labelKey: "acknowledgements.version", value: entry.version)
-            metadataRow(labelKey: "acknowledgements.license", value: entry.licenseName)
-
-            Link(destination: entry.url) {
-                Label(entry.url.absoluteString, systemImage: "link")
-                    .font(.footnote)
-                    .lineLimit(2)
-            }
-            .accessibilityLabel(Text("acknowledgements.website"))
-
-            Text(entry.copyright)
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-                .textSelection(.enabled)
-
-            Text(entry.notice)
-                .font(.footnote.monospaced())
-                .textSelection(.enabled)
-                .padding(.top, 4)
-        }
-        .padding(.vertical, 8)
-    }
-
-    private func metadataRow(labelKey: LocalizedStringKey, value: String) -> some View {
-        HStack(alignment: .firstTextBaseline, spacing: 4) {
-            Text(labelKey)
-                .font(.subheadline.weight(.semibold))
-            Text(value)
+            Text(entry.licenseName)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+
+            Text(entry.version)
+                .font(.caption)
+                .foregroundStyle(.secondary)
         }
-        .textSelection(.enabled)
+        .padding(.vertical, 4)
     }
 
     private func failureView(message: String) -> some View {
@@ -112,5 +91,49 @@ struct AcknowledgementsView: View {
         case loading
         case loaded(AcknowledgementCatalog)
         case failed(String)
+    }
+}
+
+private struct AcknowledgementDetailView: View {
+    let entry: AcknowledgementEntry
+
+    var body: some View {
+        List {
+            Section {
+                metadataRow(labelKey: "acknowledgements.version", value: entry.version)
+                metadataRow(labelKey: "acknowledgements.license", value: entry.licenseName)
+
+                Link(destination: entry.url) {
+                    Label(entry.url.absoluteString, systemImage: "link")
+                        .font(.footnote)
+                        .lineLimit(2)
+                }
+                .accessibilityLabel(Text("acknowledgements.website"))
+
+                Text(entry.copyright)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .textSelection(.enabled)
+            }
+
+            Section {
+                Text(entry.notice)
+                    .font(.footnote.monospaced())
+                    .textSelection(.enabled)
+            }
+        }
+        .navigationTitle(entry.name)
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func metadataRow(labelKey: LocalizedStringKey, value: String) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 4) {
+            Text(labelKey)
+                .font(.subheadline.weight(.semibold))
+            Text(value)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+        .textSelection(.enabled)
     }
 }

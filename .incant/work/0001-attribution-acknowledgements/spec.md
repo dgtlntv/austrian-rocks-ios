@@ -49,9 +49,9 @@ The user also captured a future Mapbox-to-MapLibre migration need in `.incant/in
 - Changing App Store privacy metadata — reason: tracked separately as backlog item `0004`.
 
 ## Approach
-Add a new production route from the Discover support section to an About / Acknowledgements SwiftUI view. The view will load a bundled JSON acknowledgements file through a small decoding model, render localized app/about headings and grouped acknowledgement entries, and show legal text/links in a readable scrollable layout.
+Add a new production route from the Discover support section to an About / Acknowledgements SwiftUI view. The view will load a bundled JSON acknowledgements file through a small decoding model, render localized app/about headings and grouped acknowledgement entries, and keep the main screen compact by showing full legal text and links on per-entry detail screens.
 
-The acknowledgements JSON will be the local source of truth for legal notice data. During implementation, audit `LICENSE.md`, `Package.resolved`, and the corresponding dependency license files/package metadata to decide which entries are required. Rejected alternatives: hardcoding notices directly in the SwiftUI screen was rejected because future Mapbox-to-MapLibre attribution changes should be data-oriented; making the existing developer Settings screen public was rejected because it mixes production legal information with development-only actions.
+The acknowledgements JSON will be the local source of truth for legal notice data. During implementation, audit `LICENSE.md`, `Package.resolved`, and the corresponding dependency license files/package metadata to decide which entries are required. Very large Mapbox bundled notices should remain available on demand rather than expanded inline on the main acknowledgements list, so the production screen stays responsive while preserving access to required notices. Rejected alternatives: hardcoding notices directly in the SwiftUI screen was rejected because future Mapbox-to-MapLibre attribution changes should be data-oriented; making the existing developer Settings screen public was rejected because it mixes production legal information with development-only actions.
 
 ## Considerations
 ### Config vs code
@@ -70,8 +70,8 @@ Document the JSON schema either in a concise file-level comment near the decoder
 - [ ] Discover contains a production-visible About / Acknowledgements support entry in English and German.
 - [ ] Tapping the entry opens an acknowledgements screen without enabling a development build flag.
 - [ ] A bundled JSON file is the source of truth for acknowledgement/license entries and is included in both app targets that ship the app UI.
-- [ ] The screen displays the Boolder MIT attribution notice required by `LICENSE.md`.
-- [ ] The implementation audit covers all currently resolved non-Apple Swift Package dependencies and displays every notice/license entry legally required by those licenses.
+- [ ] The screen makes the Boolder MIT attribution notice required by `LICENSE.md` available from the acknowledgements UI.
+- [ ] The implementation audit covers all currently resolved non-Apple Swift Package dependencies and makes every notice/license entry legally required by those licenses available from the acknowledgements UI.
 - [ ] Mapbox-related legal notices remain accurate for the current Mapbox implementation, with an obvious data path for replacing them during the later MapLibre migration.
 - [ ] English and German UI labels are localized; legal text/URLs remain accurate.
 - [ ] Missing or malformed acknowledgement JSON results in a user-visible fallback, not a crash.
