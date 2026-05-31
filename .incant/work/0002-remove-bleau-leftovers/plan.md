@@ -13,17 +13,24 @@ updated: 2026-05-31
 # Remove Bleau Leftovers — plan
 
 ## Status
-- Phase: 0002-P2 (of 3) · stage: review
+- Phase: 0002-P3 (of 3) · stage: review
 - Branch: incant/0002-remove-bleau-leftovers
-- Next: run `/incant:review 0002` for the 0002-P2 phase gate.
+- Next: run `/incant:review 0002` for the 0002-P3 phase gate.
 - Blockers: none
 - Evidence:
   - 2026-05-31 0002-P1 quality gate passed: `rg -n "Boolder|Fontainebleau|Bleau|boolder|fontainebleau|bleau|hello@boolder.com" README.md AustrianRocks/en.lproj/Localizable.strings AustrianRocks/de.lproj/Localizable.strings AustrianRocks/UI/Discover/TopAreasDryFast.swift` produced no output (exit 1 from no matches).
   - 2026-05-31 0002-P2 quality gate passed: `rg -n "fontainebleauBounds|Fontainebleau|fontainebleau|Bleau Météo|Bleau-Meteo|//  Boolder$" AustrianRocks AustrianRocks.xcodeproj/xcshareddata/xcschemes AustrianRocks.xcodeproj/project.pbxproj Dev-Info.plist` produced no output (exit 1 from no matches).
+  - 2026-05-31 0002-P3 required grep passed: `rg -n "boolder|fontainebleau|bleau|nmondollot|hello@" .` reported only `AustrianRocks/Acknowledgements.json:71` (`intentional attribution`) and `AustrianRocks/Config/BrandConfig.swift:31` (`current Austrian.rocks contact`); no `needs replacement` matches remain.
+  - 2026-05-31 0002-P3 supplemental grep passed: `rg -ni "boolder|fontainebleau|bleau|nmondollot|nicolas mondollot|hello@" . --glob '!**/xcuserdata/**'` reported only legal/provenance header lines, `AustrianRocks/Acknowledgements.json`, `LICENSE.md`, and the current Austrian.rocks contact; no launch-facing stale matches remain.
+  - 2026-05-31 0002-P3 build passed: `xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'generic/platform=iOS Simulator' build` exited 0 with `** BUILD SUCCEEDED **` (with expected missing local Mapbox token warning).
 - Decisions:
   - The spec's `commit: 749c1f20` is behind current `HEAD` (`c6de6dd4`) because the approved spec was committed on this branch; affected files were re-read/grepped while planning and the spec still holds.
   - For Swift headers with stale `//  Boolder` app-name lines, update the app name to `//  Austrian.rocks` and clarify provenance with `//  Originally created for Boolder by Nicolas Mondollot.` while preserving existing original dates, copyright lines, and license/acknowledgement references.
   - If no Austria-appropriate drying/weather link is already available during implementation, remove the dry-fast useful-link row instead of inventing an unverified replacement.
+  - The remaining lowercase `boolder` match is the acknowledgement entry ID in `AustrianRocks/Acknowledgements.json` and is classified as `intentional attribution`; its visible Boolder copyright, URL, and notice are `copyright/license` in the supplemental grep.
+  - `LICENSE.md` Boolder references and all Nicolas Mondollot created-by/copyright header lines are preserved as `copyright/license` or original provenance under the spec's out-of-scope legal/copyright rule.
+  - `AustrianRocks/Config/BrandConfig.swift` contains `hello@austrian.rocks`, classified as `current Austrian.rocks contact`, not an old Boolder contact.
+  - `AustrianRocks.xcodeproj/project.pbxproj` `ORGANIZATIONNAME` was changed from `Nicolas Mondollot` to `Austrian.rocks` so generated project metadata no longer carries stale original-author organization naming.
 
 ## Files touched
 - `README.md` (edit) — rewrite launch-facing project documentation for Austrian.rocks while keeping Mapbox token setup secret-safe.
@@ -75,12 +82,12 @@ updated: 2026-05-31
 **Quality gate:** `rg -n "fontainebleauBounds|Fontainebleau|fontainebleau|Bleau Météo|Bleau-Meteo|//  Boolder$" AustrianRocks AustrianRocks.xcodeproj/xcshareddata/xcschemes AustrianRocks.xcodeproj/project.pbxproj Dev-Info.plist` → no output.
 
 ## Phase 0002-P3 — final classification and build verification
-- [ ] Read `AustrianRocks/Acknowledgements.json`, `LICENSE.md`, `AustrianRocks/Config/BrandConfig.swift`, and any files still reported by the required grep before classifying remaining matches.
-- [ ] Run `rg -n "boolder|fontainebleau|bleau|nmondollot|hello@" .` and classify every remaining match in the implementation notes as `intentional attribution`, `copyright/license`, `current Austrian.rocks contact`, or `needs replacement`; fix every `needs replacement` match before continuing. The `current Austrian.rocks contact` bucket is allowed only for `hello@austrian.rocks`, because it is not an old Boolder contact.
-- [ ] Run supplemental case-insensitive evidence with `rg -ni "boolder|fontainebleau|bleau|nmondollot|nicolas mondollot|hello@" . --glob '!**/xcuserdata/**'` to prove capitalized launch-facing leftovers and preserved legal/copyright lines are classified.
-- [ ] Confirm the expected preserved references are limited to legal/provenance files such as `AustrianRocks/Acknowledgements.json`, `LICENSE.md`, and original created-by/copyright headers, plus the current `AustrianRocks/Config/BrandConfig.swift` contact if it still matches `hello@`.
-- [ ] Build the app for the simulator with `xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'generic/platform=iOS Simulator' build`.
-- [ ] Update `.incant/work/0002-remove-bleau-leftovers/plan.md` checkboxes/status with the grep and build evidence collected during implementation.
+- [x] Read `AustrianRocks/Acknowledgements.json`, `LICENSE.md`, `AustrianRocks/Config/BrandConfig.swift`, and any files still reported by the required grep before classifying remaining matches.
+- [x] Run `rg -n "boolder|fontainebleau|bleau|nmondollot|hello@" .` and classify every remaining match in the implementation notes as `intentional attribution`, `copyright/license`, `current Austrian.rocks contact`, or `needs replacement`; fix every `needs replacement` match before continuing. The `current Austrian.rocks contact` bucket is allowed only for `hello@austrian.rocks`, because it is not an old Boolder contact.
+- [x] Run supplemental case-insensitive evidence with `rg -ni "boolder|fontainebleau|bleau|nmondollot|nicolas mondollot|hello@" . --glob '!**/xcuserdata/**'` to prove capitalized launch-facing leftovers and preserved legal/copyright lines are classified.
+- [x] Confirm the expected preserved references are limited to legal/provenance files such as `AustrianRocks/Acknowledgements.json`, `LICENSE.md`, and original created-by/copyright headers, plus the current `AustrianRocks/Config/BrandConfig.swift` contact if it still matches `hello@`.
+- [x] Build the app for the simulator with `xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'generic/platform=iOS Simulator' build`.
+- [x] Update `.incant/work/0002-remove-bleau-leftovers/plan.md` checkboxes/status with the grep and build evidence collected during implementation.
 **Quality gate:** `xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'generic/platform=iOS Simulator' build` → exits 0 with `** BUILD SUCCEEDED **`; `rg -n "boolder|fontainebleau|bleau|nmondollot|hello@" .` → no `needs replacement` matches remain after classification.
 
 ## Coverage self-review
