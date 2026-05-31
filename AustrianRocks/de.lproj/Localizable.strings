@@ -67,6 +67,17 @@
 "discover.support" = "Möchtest du helfen?";
 "discover.rate" = "App bewerten";
 "discover.contribute" = "Beitragen";
+"discover.acknowledgements" = "Über / Danksagungen";
+
+// MARK: Acknowledgements
+"acknowledgements.title" = "Über / Danksagungen";
+"acknowledgements.intro" = "Austrian.rocks enthält Open-Source-Software und Kartenkomponenten. Diese Seite listet die erforderlichen Hinweise für die App und ihre aktuellen Drittanbieter-Abhängigkeiten.";
+"acknowledgements.section.app" = "App";
+"acknowledgements.section.third_party" = "Drittanbieter-Hinweise";
+"acknowledgements.license" = "Lizenz:";
+"acknowledgements.version" = "Version:";
+"acknowledgements.website" = "Website";
+"acknowledgements.load_failed" = "Die Danksagungen konnten nicht geladen werden. %@";
 
 // MARK: Area view
 "area.tags.popular" = "beliebt";

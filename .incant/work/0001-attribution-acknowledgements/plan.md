@@ -13,11 +13,11 @@ updated: 2026-05-31
 # Attribution Acknowledgements — plan
 
 ## Status
-- Phase: 0001-P1 (of 3) · stage: review
+- Phase: 0001-P2 (of 3) · stage: review
 - Branch: incant/0001-attribution-acknowledgements
-- Next: `/incant:review 0001` for the 0001-P1 phase gate; after review approval, resume 0001-P2.
+- Next: `/incant:review 0001` for the 0001-P2 phase gate; after review approval, resume 0001-P3.
 - Blockers: none.
-- Fresh verification (2026-05-31): `python3 -m json.tool AustrianRocks/Acknowledgements.json >/tmp/acknowledgements-json.txt && xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'generic/platform=iOS Simulator' build` → JSON parsed and `** BUILD SUCCEEDED **` (warnings only: missing local Mapbox token/run-script output dependency).
+- Fresh verification (2026-05-31): `xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'generic/platform=iOS Simulator' build && xcodebuild -project AustrianRocks.xcodeproj -scheme 'AustrianRocks dev' -destination 'generic/platform=iOS Simulator' build` → both app targets built successfully after adding the production route, localizations, view, and dev plist token placeholder (warnings only: missing local Mapbox token/run-script output dependency).
 - Decisions:
   - The production entry lives in the existing Discover support section, not in the `#if DEVELOPMENT` settings section.
   - A bundled `Acknowledgements.json` is the legal-content source of truth; Swift owns decoding, fallback handling, and rendering only.
@@ -33,6 +33,7 @@ updated: 2026-05-31
 - `AustrianRocks/en.lproj/Localizable.strings` (edit) — English About / Acknowledgements labels, explanatory copy, section titles, and fallback text.
 - `AustrianRocks/de.lproj/Localizable.strings` (edit) — German About / Acknowledgements labels, explanatory copy, section titles, and fallback text.
 - `AustrianRocks.xcodeproj/project.pbxproj` (edit) — add the new Swift files to both app source phases and the JSON resource to both app resource phases.
+- `Dev-Info.plist` (edit) — restore the dev target `MBXAccessToken` placeholder value so the required dev build gate can process the plist.
 
 ## Phase 0001-P1 — acknowledgement data and loader
 - [x] Read `LICENSE.md`, `AustrianRocks.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved`, and the resolved package license files before editing: Mapbox Maps iOS `LICENSE.md`, Mapbox Common iOS `LICENSE.md`, Mapbox Core Maps iOS `LICENSE.md`, Turf Swift `LICENSE.md`, and SQLite.swift `LICENSE.txt` from Xcode's `SourcePackages/checkouts`.
@@ -45,15 +46,15 @@ updated: 2026-05-31
 **Quality gate:** `python3 -m json.tool AustrianRocks/Acknowledgements.json >/tmp/acknowledgements-json.txt && xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'generic/platform=iOS Simulator' build` → JSON parses successfully and the production app target builds.
 
 ## Phase 0001-P2 — production Discover route and localized screen
-- [ ] Read `AustrianRocks/UI/Discover/DiscoverRouter.swift`, `AustrianRocks/UI/Discover/DiscoverView.swift`, `AustrianRocks/en.lproj/Localizable.strings`, and `AustrianRocks/de.lproj/Localizable.strings` before editing.
-- [ ] Edit `DiscoverRoute` in `AustrianRocks/UI/Discover/DiscoverRouter.swift` to add `case acknowledgements`.
-- [ ] Add `AustrianRocks/UI/Discover/AcknowledgementsView.swift` rendering a `List` or scrollable `VStack` with localized title, short localized explanation, app/about section, third-party notices grouped by the JSON section `titleKey`, entry name/version/license/url metadata, and selectable legal notice text.
-- [ ] In `AcknowledgementsView`, load `AcknowledgementCatalog.load()` on appearance or initialization, show the decoded entries on success, and show a localized fallback message using the caught `LoadError` description on missing or malformed JSON without calling `fatalError`, force-unwrapping decoded data, or crashing.
-- [ ] Edit the Discover support section in `AustrianRocks/UI/Discover/DiscoverView.swift` to add a production-visible `NavigationLink(value: DiscoverRoute.acknowledgements)` with an info/book-style SF Symbol and localized label `discover.acknowledgements`.
-- [ ] Edit `destination(for:)` in `DiscoverView.swift` so `.acknowledgements` opens `AcknowledgementsView()`, leaving `.settings` reachable only from the existing `#if DEVELOPMENT` link.
-- [ ] Add English strings in `AustrianRocks/en.lproj/Localizable.strings` for `discover.acknowledgements`, `acknowledgements.title`, `acknowledgements.intro`, `acknowledgements.section.app`, `acknowledgements.section.third_party`, `acknowledgements.license`, `acknowledgements.version`, `acknowledgements.website`, and `acknowledgements.load_failed`.
-- [ ] Add German strings in `AustrianRocks/de.lproj/Localizable.strings` for the same keys with production-ready German UI copy; keep license names, copyright notices, URLs, and legal notice bodies unchanged in the JSON.
-- [ ] Edit `AustrianRocks.xcodeproj/project.pbxproj` so `AcknowledgementsView.swift` is compiled by both `AustrianRocks` and `AustrianRocks dev`.
+- [x] Read `AustrianRocks/UI/Discover/DiscoverRouter.swift`, `AustrianRocks/UI/Discover/DiscoverView.swift`, `AustrianRocks/en.lproj/Localizable.strings`, and `AustrianRocks/de.lproj/Localizable.strings` before editing.
+- [x] Edit `DiscoverRoute` in `AustrianRocks/UI/Discover/DiscoverRouter.swift` to add `case acknowledgements`.
+- [x] Add `AustrianRocks/UI/Discover/AcknowledgementsView.swift` rendering a `List` or scrollable `VStack` with localized title, short localized explanation, app/about section, third-party notices grouped by the JSON section `titleKey`, entry name/version/license/url metadata, and selectable legal notice text.
+- [x] In `AcknowledgementsView`, load `AcknowledgementCatalog.load()` on appearance or initialization, show the decoded entries on success, and show a localized fallback message using the caught `LoadError` description on missing or malformed JSON without calling `fatalError`, force-unwrapping decoded data, or crashing.
+- [x] Edit the Discover support section in `AustrianRocks/UI/Discover/DiscoverView.swift` to add a production-visible `NavigationLink(value: DiscoverRoute.acknowledgements)` with an info/book-style SF Symbol and localized label `discover.acknowledgements`.
+- [x] Edit `destination(for:)` in `DiscoverView.swift` so `.acknowledgements` opens `AcknowledgementsView()`, leaving `.settings` reachable only from the existing `#if DEVELOPMENT` link.
+- [x] Add English strings in `AustrianRocks/en.lproj/Localizable.strings` for `discover.acknowledgements`, `acknowledgements.title`, `acknowledgements.intro`, `acknowledgements.section.app`, `acknowledgements.section.third_party`, `acknowledgements.license`, `acknowledgements.version`, `acknowledgements.website`, and `acknowledgements.load_failed`.
+- [x] Add German strings in `AustrianRocks/de.lproj/Localizable.strings` for the same keys with production-ready German UI copy; keep license names, copyright notices, URLs, and legal notice bodies unchanged in the JSON.
+- [x] Edit `AustrianRocks.xcodeproj/project.pbxproj` so `AcknowledgementsView.swift` is compiled by both `AustrianRocks` and `AustrianRocks dev`.
 **Quality gate:** `xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'generic/platform=iOS Simulator' build && xcodebuild -project AustrianRocks.xcodeproj -scheme 'AustrianRocks dev' -destination 'generic/platform=iOS Simulator' build` → both app targets build with the new route, localizations, Swift files, and bundled JSON.
 
 ## Phase 0001-P3 — acceptance verification and fallback proof
