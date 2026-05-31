@@ -3,7 +3,7 @@ id: "0002"
 slug: remove-bleau-leftovers
 branch: incant/0002-remove-bleau-leftovers
 title: Remove Bleau Leftovers
-stage: plan
+stage: implement
 status: in-progress
 created: 2026-05-31
 commit: c6de6dd4
@@ -13,10 +13,12 @@ updated: 2026-05-31
 # Remove Bleau Leftovers — plan
 
 ## Status
-- Phase: 0002-P1 (of 3) · stage: plan
+- Phase: 0002-P1 (of 3) · stage: review
 - Branch: incant/0002-remove-bleau-leftovers
-- Next: wait for human approval, then run `/incant:implement 0002` and start 0002-P1.
+- Next: run `/incant:review 0002` for the 0002-P1 phase gate.
 - Blockers: none
+- Evidence:
+  - 2026-05-31 0002-P1 quality gate passed: `rg -n "Boolder|Fontainebleau|Bleau|boolder|fontainebleau|bleau|hello@boolder.com" README.md AustrianRocks/en.lproj/Localizable.strings AustrianRocks/de.lproj/Localizable.strings AustrianRocks/UI/Discover/TopAreasDryFast.swift` produced no output (exit 1 from no matches).
 - Decisions:
   - The spec's `commit: 749c1f20` is behind current `HEAD` (`c6de6dd4`) because the approved spec was committed on this branch; affected files were re-read/grepped while planning and the spec still holds.
   - For Swift headers with stale `//  Boolder` app-name lines, update the app name to `//  Austrian.rocks` and clarify provenance with `//  Originally created for Boolder by Nicolas Mondollot.` while preserving copyright lines and license/acknowledgement references.
@@ -54,12 +56,12 @@ updated: 2026-05-31
 - `Dev-Info.plist` (inspect/edit if needed) — verify dev plist values contain no stale old app/place reference.
 
 ## Phase 0002-P1 — product-facing copy and dry-fast link cleanup
-- [ ] Read `README.md`, `AustrianRocks/en.lproj/Localizable.strings`, `AustrianRocks/de.lproj/Localizable.strings`, and `AustrianRocks/UI/Discover/TopAreasDryFast.swift` before editing.
-- [ ] Rewrite `README.md` with title `# Austrian.rocks iOS`, an Austrian.rocks app description, the existing Mapbox setup instructions using `YOUR_PUBLIC_MAPBOX_ACCESS_TOKEN` and `YOUR_SECRET_MAPBOX_ACCESS_TOKEN`, and contribution guidance that points to repository issues/pull requests without old Boolder URLs or `hello@boolder.com`.
-- [ ] In `AustrianRocks/en.lproj/Localizable.strings`, replace `top_areas.level.intermediate.warning` with neutral copy equivalent to the existing German value, e.g. `Careful: grades may vary by area.`
-- [ ] In `AustrianRocks/de.lproj/Localizable.strings`, confirm no stale localized value needs replacement; if the dry-fast useful-link key becomes unused because the link row is removed, leave the key unless a compiler warning or code search proves removing it is safe in both languages.
-- [ ] In `AustrianRocks/UI/Discover/TopAreasDryFast.swift`, remove the `HStack` containing `top_areas.dry_fast.useful_link`, `https://www.facebook.com/people/Bleau-Meteo/100055389702633/`, and `Text("Bleau Météo")` unless a verified Austria-appropriate static public drying/weather URL is available in the repository during implementation.
-- [ ] Run `rg -n "Boolder|Fontainebleau|Bleau|boolder|fontainebleau|bleau|hello@boolder.com" README.md AustrianRocks/en.lproj/Localizable.strings AustrianRocks/de.lproj/Localizable.strings AustrianRocks/UI/Discover/TopAreasDryFast.swift` and confirm it prints no stale product-copy or Bleau Météo matches.
+- [x] Read `README.md`, `AustrianRocks/en.lproj/Localizable.strings`, `AustrianRocks/de.lproj/Localizable.strings`, and `AustrianRocks/UI/Discover/TopAreasDryFast.swift` before editing.
+- [x] Rewrite `README.md` with title `# Austrian.rocks iOS`, an Austrian.rocks app description, the existing Mapbox setup instructions using `YOUR_PUBLIC_MAPBOX_ACCESS_TOKEN` and `YOUR_SECRET_MAPBOX_ACCESS_TOKEN`, and contribution guidance that points to repository issues/pull requests without old Boolder URLs or `hello@boolder.com`.
+- [x] In `AustrianRocks/en.lproj/Localizable.strings`, replace `top_areas.level.intermediate.warning` with neutral copy equivalent to the existing German value, e.g. `Careful: grades may vary by area.`
+- [x] In `AustrianRocks/de.lproj/Localizable.strings`, confirm no stale localized value needs replacement; if the dry-fast useful-link key becomes unused because the link row is removed, leave the key unless a compiler warning or code search proves removing it is safe in both languages.
+- [x] In `AustrianRocks/UI/Discover/TopAreasDryFast.swift`, remove the `HStack` containing `top_areas.dry_fast.useful_link`, `https://www.facebook.com/people/Bleau-Meteo/100055389702633/`, and `Text("Bleau Météo")` unless a verified Austria-appropriate static public drying/weather URL is available in the repository during implementation.
+- [x] Run `rg -n "Boolder|Fontainebleau|Bleau|boolder|fontainebleau|bleau|hello@boolder.com" README.md AustrianRocks/en.lproj/Localizable.strings AustrianRocks/de.lproj/Localizable.strings AustrianRocks/UI/Discover/TopAreasDryFast.swift` and confirm it prints no stale product-copy or Bleau Météo matches.
 **Quality gate:** `rg -n "Boolder|Fontainebleau|Bleau|boolder|fontainebleau|bleau|hello@boolder.com" README.md AustrianRocks/en.lproj/Localizable.strings AustrianRocks/de.lproj/Localizable.strings AustrianRocks/UI/Discover/TopAreasDryFast.swift` → no output.
 
 ## Phase 0002-P2 — map fallback geography and launch-facing metadata/header sweep
