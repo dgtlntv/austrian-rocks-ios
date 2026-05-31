@@ -1,10 +1,10 @@
 # State
-- Updated: 2026-05-31 (0002-P3 implemented)
-- Current focus: 0002 remove-bleau-leftovers — review
+- Updated: 2026-05-31 (0002 archived)
+- Current focus: none
 
 ## Active
 <!-- One line per active item: <id> <slug> — <stage> (Pn/total) -->
-- 0002 remove-bleau-leftovers — review (P3/3)
+- none
 
 ## Cross-cutting notes / blockers
 - none
