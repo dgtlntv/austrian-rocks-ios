@@ -110,7 +110,7 @@ struct ProblemDetailsView: View {
 
             if let videoLinks = problem.videoLinks, !videoLinks.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Videos")
+                    Text("problem.videos.title")
                         .font(.headline)
                         .padding(.horizontal)
 
@@ -122,7 +122,7 @@ struct ProblemDetailsView: View {
                                 HStack {
                                     Image(systemName: "play.circle.fill")
                                         .foregroundColor(.appBrandColor)
-                                    Text("Watch video")
+                                    Text("problem.videos.watch")
                                         .foregroundColor(.primary)
                                     Spacer()
                                     Image(systemName: "arrow.up.forward")

@@ -21,9 +21,9 @@ struct ClusterDetailView: View {
 
     var body: some View {
         List {
-            Section(header: Text("Areas")) {
+            Section(header: Text("discover.cluster.areas")) {
                 if areas.isEmpty {
-                    Text("No areas available")
+                    Text("discover.cluster.no_areas")
                         .foregroundColor(.secondary)
                 } else {
                     ForEach(areas) { area in
@@ -60,7 +60,7 @@ struct ClusterDetailView: View {
                 Text(area.name)
                     .font(.headline)
 
-                Text("\(area.problemsCount) problems")
+                Text(String(format: NSLocalizedString("discover.cluster.problems_count", comment: ""), area.problemsCount))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }

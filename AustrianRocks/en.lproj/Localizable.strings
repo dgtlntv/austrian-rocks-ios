@@ -56,6 +56,15 @@
 // MARK: Discover view
 "discover.title" = "Discover";
 "discover.all_areas" = "All areas";
+"discover.regions.all" = "All Regions";
+"discover.regions.title" = "Regions";
+"discover.regions.clusters" = "%d clusters";
+"discover.region.clusters" = "Clusters";
+"discover.region.no_clusters" = "No clusters available";
+"discover.cluster.areas" = "Areas";
+"discover.cluster.no_areas" = "No areas available";
+"discover.cluster.areas_count" = "%d areas";
+"discover.cluster.problems_count" = "%d problems";
 "discover.popular" = "Popular";
 "discover.beginners_guide" = "Beginner's guide";
 "discover.top_areas.level" = "For your level";
@@ -115,6 +124,7 @@
 "download.cancel.title" = "Stop download?";
 "download.cancel.action" = "Stop download";
 "download.zoom" = "Zoom on the map to download areas.";
+"download.area.delete" = "Delete";
 
 // MARK: Top areas
 "top_areas.level.title" = "For your level";
@@ -168,6 +178,8 @@
 "problem.topo.timeout" = "Check your Internet connection";
 "problem.topo.error" = "Failed to load the photo";
 "problem.topo.retry" = "Retry";
+"problem.videos.title" = "Videos";
+"problem.videos.watch" = "Watch video";
 
 // MARK: Tick List
 "ticklist.title" = "Tick List";

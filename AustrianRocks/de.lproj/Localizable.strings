@@ -56,6 +56,15 @@
 // MARK: Discover view
 "discover.title" = "Entdecken";
 "discover.all_areas" = "Alle Gebiete";
+"discover.regions.all" = "Alle Regionen";
+"discover.regions.title" = "Regionen";
+"discover.regions.clusters" = "%d Cluster";
+"discover.region.clusters" = "Cluster";
+"discover.region.no_clusters" = "Keine Cluster verfügbar";
+"discover.cluster.areas" = "Gebiete";
+"discover.cluster.no_areas" = "Keine Gebiete verfügbar";
+"discover.cluster.areas_count" = "%d Gebiete";
+"discover.cluster.problems_count" = "%d Boulder";
 "discover.popular" = "Beliebt";
 "discover.beginners_guide" = "Anfänger-Guide";
 "discover.top_areas.level" = "Für deine Schwierigkeit";
@@ -115,6 +124,7 @@
 "download.cancel.title" = "Download stoppen?";
 "download.cancel.action" = "Download stoppen";
 "download.zoom" = "Zoome auf der Karte, um Gebiete herunterzuladen.";
+"download.area.delete" = "Löschen";
 
 // MARK: Top areas
 "top_areas.level.title" = "Für deine Schwierigkeit";
@@ -168,6 +178,8 @@
 "problem.topo.timeout" = "Überprüfe deine Internetverbindung";
 "problem.topo.error" = "Foto konnte nicht geladen werden";
 "problem.topo.retry" = "Erneut versuchen";
+"problem.videos.title" = "Videos";
+"problem.videos.watch" = "Video ansehen";
 
 // MARK: Tick List
 "ticklist.title" = "Tickliste";

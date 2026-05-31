@@ -162,7 +162,7 @@ struct DiscoverView: View {
 
                         VStack(alignment: .leading) {
                             HStack {
-                                Text("All Regions")
+                                Text("discover.regions.all")
                                     .font(.title2.bold())
 
                                 Spacer()
@@ -187,7 +187,7 @@ struct DiscoverView: View {
 
                                             Spacer()
 
-                                            Text("\(region.clusters.count) clusters").foregroundColor(Color(.systemGray))
+                                            Text(String(format: NSLocalizedString("discover.regions.clusters", comment: ""), region.clusters.count)).foregroundColor(Color(.systemGray))
 
                                             Image(systemName: "chevron.right")
                                                 .font(.caption.weight(.bold))

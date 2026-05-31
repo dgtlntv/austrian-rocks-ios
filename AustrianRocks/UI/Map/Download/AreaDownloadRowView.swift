@@ -68,7 +68,7 @@ struct AreaDownloadRowView : View {
                     Button {
                         areaDownloader.remove()
                     } label: {
-                        Label("Delete", systemImage: "trash.fill")
+                        Label("download.area.delete", systemImage: "trash.fill")
                     }
                     .tint(.red)
                 }
