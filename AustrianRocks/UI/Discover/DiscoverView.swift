@@ -216,22 +216,21 @@ struct DiscoverView: View {
                             VStack(alignment: .leading) {
                                 Divider()
                                 
-                                Button(action: {
-                                    let appID = "1506614493"
-                                    let urlStr = "https://itunes.apple.com/app/id\(appID)?action=write-review"
-                                    guard let url = URL(string: urlStr) else { return }
-                                    openURL(url)
-                                }, label: {
-                                    HStack {
-                                        Image(systemName: "star")
-                                        Text("discover.rate")
-                                        Spacer()
-                                    }
-                                    .font(.body)
-                                    .foregroundColor(.primary)
-                                })
-                                
-                                Divider()
+                                if let reviewURL = BrandConfig.AppStore.reviewURL {
+                                    Button(action: {
+                                        openURL(reviewURL)
+                                    }, label: {
+                                        HStack {
+                                            Image(systemName: "star")
+                                            Text("discover.rate")
+                                            Spacer()
+                                        }
+                                        .font(.body)
+                                        .foregroundColor(.primary)
+                                    })
+                                    
+                                    Divider()
+                                }
                                 
                                 Button(action: {
                                     openURL(contributeURL)
