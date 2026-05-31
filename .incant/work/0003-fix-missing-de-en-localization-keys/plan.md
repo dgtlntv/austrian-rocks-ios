@@ -13,11 +13,11 @@ updated: 2026-05-31
 # Fix Missing De En Localization Keys — plan
 
 ## Status
-- Phase: 0003-P1 (of 2) · stage: plan
+- Phase: 0003-P1 (of 2) · stage: review
 - Branch: incant/0003-fix-missing-de-en-localization-keys
-- Next: get human approval for this plan, then run `/incant:implement 0003`.
+- Next: run `/incant:review 0003` for the 0003-P1 phase gate.
 - Blockers: none
-- Evidence: none yet; implementation phases must add fresh gate evidence before each phase is checked off.
+- Evidence: 2026-05-31 P1 gate passed — ad hoc key-parity check printed `OK: 155 shared Localizable.strings keys` and exited 0.
 - Decisions:
   - The spec frontmatter `commit: 3285ee60` is behind current `HEAD` (`6744350b`) because the approved spec was committed on this branch; `git diff --stat 3285ee60..HEAD -- . ':!.incant'` produced no code/resource diff, and the affected Swift/localization files were re-read while planning, so the spec still holds.
   - Use the existing `.strings` localization pattern; do not add String Catalogs, permanent audit scripts, or new repository tooling.
@@ -38,11 +38,11 @@ updated: 2026-05-31
 - `.incant/work/0003-fix-missing-de-en-localization-keys/plan.md` (edit during implementation) — keep phase status, evidence, and intentional-literal implementation notes current.
 
 ## Phase 0003-P1 — existing localization key parity
-- [ ] Read `AustrianRocks/en.lproj/Localizable.strings`, `AustrianRocks/de.lproj/Localizable.strings`, `AustrianRocks/UI/Discover/TopAreasBeginnerView.swift`, `AustrianRocks/UI/Map/Search/SearchSheetView.swift`, `AustrianRocks/UI/Map/Problem details/Topo/TopoCarouselView.swift`, `AustrianRocks/UI/Map/Problem details/Topo/StartGroupMenuView.swift`, and `AustrianRocks/UI/Map/Problem details/ProblemActionButtonsView.swift` before editing resources.
-- [ ] In `AustrianRocks/de.lproj/Localizable.strings`, add the missing counterparts for existing English keys: `search.popular_areas = "Beliebte Gebiete"`, `search.popular_problems = "Beliebte Boulder"`, `boulder.info_basic = "%d Boulder"`, `boulder.info_basic_singular = "%d Boulder"`, `problem.startgroup.pagination = "%d/%d"`, `problem.startgroup.variants.singular = "%d Variante"`, and `problem.startgroup.variants.plural = "%d Varianten"`.
-- [ ] In both `AustrianRocks/en.lproj/Localizable.strings` and `AustrianRocks/de.lproj/Localizable.strings`, add the missing shipped key `discover.top_areas.level.beginner.intro`; use English copy `These areas are a good starting point if you are new to bouldering or want easier problems.` and German copy `Diese Gebiete sind ein guter Einstieg, wenn du neu beim Bouldern bist oder leichtere Boulder suchst.`
-- [ ] Resolve the German-only `problem.pagination` parity mismatch by either deleting it from `AustrianRocks/de.lproj/Localizable.strings` if `rg -n 'problem\.pagination' AustrianRocks --glob '*.swift'` confirms it is unused, or adding the same key to English only if implementation discovers a shipped reference that needs it.
-- [ ] Run the ad hoc key-parity check from the repo root and fix every reported `EN-only` or `DE-only` key before checking off the phase:
+- [x] Read `AustrianRocks/en.lproj/Localizable.strings`, `AustrianRocks/de.lproj/Localizable.strings`, `AustrianRocks/UI/Discover/TopAreasBeginnerView.swift`, `AustrianRocks/UI/Map/Search/SearchSheetView.swift`, `AustrianRocks/UI/Map/Problem details/Topo/TopoCarouselView.swift`, `AustrianRocks/UI/Map/Problem details/Topo/StartGroupMenuView.swift`, and `AustrianRocks/UI/Map/Problem details/ProblemActionButtonsView.swift` before editing resources.
+- [x] In `AustrianRocks/de.lproj/Localizable.strings`, add the missing counterparts for existing English keys: `search.popular_areas = "Beliebte Gebiete"`, `search.popular_problems = "Beliebte Boulder"`, `boulder.info_basic = "%d Boulder"`, `boulder.info_basic_singular = "%d Boulder"`, `problem.startgroup.pagination = "%d/%d"`, `problem.startgroup.variants.singular = "%d Variante"`, and `problem.startgroup.variants.plural = "%d Varianten"`.
+- [x] In both `AustrianRocks/en.lproj/Localizable.strings` and `AustrianRocks/de.lproj/Localizable.strings`, add the missing shipped key `discover.top_areas.level.beginner.intro`; use English copy `These areas are a good starting point if you are new to bouldering or want easier problems.` and German copy `Diese Gebiete sind ein guter Einstieg, wenn du neu beim Bouldern bist oder leichtere Boulder suchst.`
+- [x] Resolve the German-only `problem.pagination` parity mismatch by either deleting it from `AustrianRocks/de.lproj/Localizable.strings` if `rg -n 'problem\.pagination' AustrianRocks --glob '*.swift'` confirms it is unused, or adding the same key to English only if implementation discovers a shipped reference that needs it.
+- [x] Run the ad hoc key-parity check from the repo root and fix every reported `EN-only` or `DE-only` key before checking off the phase:
   ```bash
   python3 - <<'PY'
   import re

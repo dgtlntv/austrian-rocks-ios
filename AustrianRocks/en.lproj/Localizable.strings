@@ -60,6 +60,7 @@
 "discover.beginners_guide" = "Beginner's guide";
 "discover.top_areas.level" = "For your level";
 "discover.top_areas.level.beginner_friendly" = "Beginner friendly";
+"discover.top_areas.level.beginner.intro" = "These areas are a good starting point if you are new to bouldering or want easier problems.";
 "discover.top_areas.train" = "Accessible by train + bike";
 "discover.top_areas.train.intro" = "Bike time from the station:";
 "discover.top_areas.see_in_google_maps" = "See in Google Maps";

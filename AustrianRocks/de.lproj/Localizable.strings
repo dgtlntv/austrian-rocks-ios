@@ -50,6 +50,8 @@
 "search.no_results" = "Keine Ergebnisse";
 "search.request_error" = "Verbindungsproblem";
 "search.examples" = "Beispiele:";
+"search.popular_areas" = "Beliebte Gebiete";
+"search.popular_problems" = "Beliebte Boulder";
 
 // MARK: Discover view
 "discover.title" = "Entdecken";
@@ -58,6 +60,7 @@
 "discover.beginners_guide" = "Anfänger-Guide";
 "discover.top_areas.level" = "Für deine Schwierigkeit";
 "discover.top_areas.level.beginner_friendly" = "Anfängerfreundlich";
+"discover.top_areas.level.beginner.intro" = "Diese Gebiete sind ein guter Einstieg, wenn du neu beim Bouldern bist oder leichtere Boulder suchst.";
 "discover.top_areas.train" = "Mit Zug + Rad erreichbar";
 "discover.top_areas.train.intro" = "Radzeit vom Bahnhof:";
 "discover.top_areas.see_in_google_maps" = "In Google Maps öffnen";
@@ -156,8 +159,10 @@
 "problem.action.untick" = "Tick entfernen";
 "problem.action.share.description" = "\"%@\" bei %@";
 "problem.image.loading" = "Lade Gebiet...";
-"problem.pagination" = "%d von %d";
 "problem.variants" = "%d Varianten";
+"problem.startgroup.pagination" = "%d/%d";
+"problem.startgroup.variants.singular" = "%d Variante";
+"problem.startgroup.variants.plural" = "%d Varianten";
 "problem.missing_line" = "Fehlende Linie";
 "problem.topo.no_internet" = "Keine Internetverbindung";
 "problem.topo.timeout" = "Überprüfe deine Internetverbindung";
@@ -178,3 +183,7 @@
 "contribute.report" = "Fehler melden";
 "contribute.cta" = "Jetzt beitragen";
 "contribute.learn_more" = "Mehr über Austrian.rocks erfahren";
+
+// MARK: Boulder
+"boulder.info_basic" = "%d Boulder";
+"boulder.info_basic_singular" = "%d Boulder";
