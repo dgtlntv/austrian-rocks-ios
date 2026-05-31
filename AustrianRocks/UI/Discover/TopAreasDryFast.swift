@@ -70,18 +70,6 @@ struct TopAreasDryFast: View {
                         .background(Color.yellow.opacity(0.2))
                         .cornerRadius(8)
                         
-                        HStack(alignment: .top, spacing: 4) {
-                            Text("top_areas.dry_fast.useful_link")
-                                .foregroundColor(.gray)
-                            
-                            Button(action: {
-                                openURL(URL(string: "https://www.facebook.com/people/Bleau-Meteo/100055389702633/")!)
-                            }) {
-                                Text("Bleau Météo")
-                                    .foregroundColor(Color.appBrandColor)
-                            }
-                        }
-                        .padding(.vertical)
                     }
                     .padding(.horizontal)
                     

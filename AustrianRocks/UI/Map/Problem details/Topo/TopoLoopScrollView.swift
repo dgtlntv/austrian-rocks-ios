@@ -1,8 +1,8 @@
 //
 //  TopoLoopScrollView.swift
-//  Boolder
+//  Austrian.rocks
 //
-//  Created by Nicolas Mondollot on 18/02/2026.
+//  Originally created for Boolder by Nicolas Mondollot on 18/02/2026.
 //  Copyright © 2026 Nicolas Mondollot. All rights reserved.
 //
 

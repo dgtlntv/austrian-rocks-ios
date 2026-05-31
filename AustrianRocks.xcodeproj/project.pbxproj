@@ -658,7 +658,7 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1140;
 				LastUpgradeCheck = 1640;
-				ORGANIZATIONNAME = "Nicolas Mondollot";
+				ORGANIZATIONNAME = "Austrian.rocks";
 				TargetAttributes = {
 					37A8C6252453263300DC161F = {
 						CreatedOnToolsVersion = 11.4.1;
