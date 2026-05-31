@@ -246,6 +246,18 @@ struct DiscoverView: View {
                                 })
                                 
                                 Divider()
+
+                                NavigationLink(value: DiscoverRoute.acknowledgements) {
+                                    HStack {
+                                        Image(systemName: "info.circle")
+                                        Text("discover.acknowledgements")
+                                        Spacer()
+                                    }
+                                    .font(.body)
+                                    .foregroundColor(.primary)
+                                }
+
+                                Divider()
                             }
                             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .topLeading)
                             .padding(.horizontal)
@@ -319,6 +331,8 @@ struct DiscoverView: View {
             TopAreasDryFast()
         case .topAreasBeginner:
             TopAreasBeginnerView()
+        case .acknowledgements:
+            AcknowledgementsView()
         case .settings:
             SettingsView()
         }

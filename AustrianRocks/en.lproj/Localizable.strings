@@ -69,6 +69,17 @@
 "discover.support" = "Want to help?";
 "discover.rate" = "Rate the app";
 "discover.contribute" = "Contribute";
+"discover.acknowledgements" = "About / Acknowledgements";
+
+// MARK: Acknowledgements
+"acknowledgements.title" = "About / Acknowledgements";
+"acknowledgements.intro" = "Austrian.rocks includes open-source software and map components. This screen lists required notices for the app and its current third-party dependencies.";
+"acknowledgements.section.app" = "App";
+"acknowledgements.section.third_party" = "Third-party notices";
+"acknowledgements.license" = "License:";
+"acknowledgements.version" = "Version:";
+"acknowledgements.website" = "Website";
+"acknowledgements.load_failed" = "Acknowledgements could not be loaded. %@";
 
 // MARK: Area view
 "area.tags.popular" = "popular";

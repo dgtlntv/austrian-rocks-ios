@@ -207,6 +207,12 @@
 		4551BE312F957D8A0092DF01 /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 4551BE2E2F957D8A0092DF01 /* Secrets.xcconfig */; };
 		4551BE322F957D8A0092DF01 /* Secrets.sample.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 4551BE2F2F957D8A0092DF01 /* Secrets.sample.xcconfig */; };
 		4551BE332F957D8A0092DF01 /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 4551BE2E2F957D8A0092DF01 /* Secrets.xcconfig */; };
+		45AA00012F97000100010001 /* AcknowledgementCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45AA00002F97000100010001 /* AcknowledgementCatalog.swift */; };
+		45AA00022F97000100010001 /* AcknowledgementCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45AA00002F97000100010001 /* AcknowledgementCatalog.swift */; };
+		45AA00062F97000200010001 /* AcknowledgementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45AA00082F97000200010001 /* AcknowledgementsView.swift */; };
+		45AA00072F97000200010001 /* AcknowledgementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45AA00082F97000200010001 /* AcknowledgementsView.swift */; };
+		45AA00042F97000100010001 /* Acknowledgements.json in Resources */ = {isa = PBXBuildFile; fileRef = 45AA00032F97000100010001 /* Acknowledgements.json */; };
+		45AA00052F97000100010001 /* Acknowledgements.json in Resources */ = {isa = PBXBuildFile; fileRef = 45AA00032F97000100010001 /* Acknowledgements.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -314,6 +320,9 @@
 		452F76172EEECBCF00F65113 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		4551BE2E2F957D8A0092DF01 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
 		4551BE2F2F957D8A0092DF01 /* Secrets.sample.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.sample.xcconfig; sourceTree = "<group>"; };
+		45AA00002F97000100010001 /* AcknowledgementCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcknowledgementCatalog.swift; sourceTree = "<group>"; };
+		45AA00032F97000100010001 /* Acknowledgements.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Acknowledgements.json; sourceTree = "<group>"; };
+		45AA00082F97000200010001 /* AcknowledgementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcknowledgementsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -430,6 +439,7 @@
 			isa = PBXGroup;
 			children = (
 				37158D0525487F4F00A8B696 /* DiscoverView.swift */,
+				45AA00082F97000200010001 /* AcknowledgementsView.swift */,
 				030AC19F27B1257200AF85E7 /* TopAreasLevelView.swift */,
 				452F76042EEEC98400F65113 /* RegionCardView.swift */,
 				452F76052EEEC98400F65113 /* RegionDetailView.swift */,
@@ -506,6 +516,7 @@
 				37254DED2555945100264034 /* Stores */,
 				37A8C808245326F200DC161F /* Models */,
 				37379902258E155A00711EDA /* UI */,
+				45AA00032F97000100010001 /* Acknowledgements.json */,
 				37A8C62F2453263400DC161F /* Assets.xcassets */,
 				37A8C6372453263400DC161F /* Info.plist */,
 				035D41B226F7CF5D00FC96EB /* Dev-Info.plist */,
@@ -540,6 +551,7 @@
 				37A8C80D245326F200DC161F /* Filters.swift */,
 				37E260C524674466003BC672 /* Poi.swift */,
 				031A4CAD296B0DF3002CBF52 /* PoiRoute.swift */,
+				45AA00002F97000100010001 /* AcknowledgementCatalog.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -690,6 +702,7 @@
 				37379A15258E619400711EDA /* Preview Assets.xcassets in Resources */,
 				37379A3D258E619400711EDA /* Assets.xcassets in Resources */,
 				37379A46258E619400711EDA /* Localizable.strings in Resources */,
+				45AA00042F97000100010001 /* Acknowledgements.json in Resources */,
 				4551BE302F957D8A0092DF01 /* Secrets.sample.xcconfig in Resources */,
 				4551BE312F957D8A0092DF01 /* Secrets.xcconfig in Resources */,
 			);
@@ -706,6 +719,7 @@
 				37A8C6332453263400DC161F /* Preview Assets.xcassets in Resources */,
 				37379A9A258F4C3000711EDA /* Assets.xcassets in Resources */,
 				37A6572524BDC00500273A9A /* Localizable.strings in Resources */,
+				45AA00052F97000100010001 /* Acknowledgements.json in Resources */,
 				4551BE322F957D8A0092DF01 /* Secrets.sample.xcconfig in Resources */,
 				4551BE332F957D8A0092DF01 /* Secrets.xcconfig in Resources */,
 			);
@@ -762,6 +776,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				452F75FD2EEEC7F000F65113 /* Region.swift in Sources */,
+				45AA00022F97000100010001 /* AcknowledgementCatalog.swift in Sources */,
+				45AA00072F97000200010001 /* AcknowledgementsView.swift in Sources */,
 				03D199192C556B550082B56C /* DownloadTip.swift in Sources */,
 				031A4CAC296B0A74002CBF52 /* PoiActionSheet.swift in Sources */,
 				37DE481125AF9AC80052428E /* TestColorView.swift in Sources */,
@@ -858,6 +874,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				452F75FE2EEEC7F000F65113 /* Region.swift in Sources */,
+				45AA00012F97000100010001 /* AcknowledgementCatalog.swift in Sources */,
+				45AA00062F97000200010001 /* AcknowledgementsView.swift in Sources */,
 				033F70D429191755000DD3F4 /* FiltersView.swift in Sources */,
 				038C2EF129201152006581CD /* MapContainerView.swift in Sources */,
 				37DE480E25AF9AB60052428E /* TestColorView.swift in Sources */,
