@@ -37,7 +37,7 @@ struct RegionsListView: View {
                                             .foregroundColor(.secondary)
                                     }
 
-                                    Text("\(region.clusters.count) clusters")
+                                    Text(String(format: NSLocalizedString("discover.regions.clusters", comment: ""), region.clusters.count))
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                 }
@@ -53,7 +53,7 @@ struct RegionsListView: View {
                     }
                 }
             }
-            .navigationTitle("Regions")
+            .navigationTitle("discover.regions.title")
             .searchable(text: $searchText, prompt: "discover.search_prompt")
             .onAppear {
                 loadRegions()

@@ -50,14 +50,26 @@
 "search.no_results" = "Keine Ergebnisse";
 "search.request_error" = "Verbindungsproblem";
 "search.examples" = "Beispiele:";
+"search.popular_areas" = "Beliebte Gebiete";
+"search.popular_problems" = "Beliebte Boulder";
 
 // MARK: Discover view
 "discover.title" = "Entdecken";
 "discover.all_areas" = "Alle Gebiete";
+"discover.regions.all" = "Alle Regionen";
+"discover.regions.title" = "Regionen";
+"discover.regions.clusters" = "%d Cluster";
+"discover.region.clusters" = "Cluster";
+"discover.region.no_clusters" = "Keine Cluster verfügbar";
+"discover.cluster.areas" = "Gebiete";
+"discover.cluster.no_areas" = "Keine Gebiete verfügbar";
+"discover.cluster.areas_count" = "%d Gebiete";
+"discover.cluster.problems_count" = "%d Boulder";
 "discover.popular" = "Beliebt";
 "discover.beginners_guide" = "Anfänger-Guide";
 "discover.top_areas.level" = "Für deine Schwierigkeit";
 "discover.top_areas.level.beginner_friendly" = "Anfängerfreundlich";
+"discover.top_areas.level.beginner.intro" = "Diese Gebiete sind ein guter Einstieg, wenn du neu beim Bouldern bist oder leichtere Boulder suchst.";
 "discover.top_areas.train" = "Mit Zug + Rad erreichbar";
 "discover.top_areas.train.intro" = "Radzeit vom Bahnhof:";
 "discover.top_areas.see_in_google_maps" = "In Google Maps öffnen";
@@ -112,6 +124,7 @@
 "download.cancel.title" = "Download stoppen?";
 "download.cancel.action" = "Download stoppen";
 "download.zoom" = "Zoome auf der Karte, um Gebiete herunterzuladen.";
+"download.area.delete" = "Löschen";
 
 // MARK: Top areas
 "top_areas.level.title" = "Für deine Schwierigkeit";
@@ -156,13 +169,17 @@
 "problem.action.untick" = "Tick entfernen";
 "problem.action.share.description" = "\"%@\" bei %@";
 "problem.image.loading" = "Lade Gebiet...";
-"problem.pagination" = "%d von %d";
 "problem.variants" = "%d Varianten";
+"problem.startgroup.pagination" = "%d/%d";
+"problem.startgroup.variants.singular" = "%d Variante";
+"problem.startgroup.variants.plural" = "%d Varianten";
 "problem.missing_line" = "Fehlende Linie";
 "problem.topo.no_internet" = "Keine Internetverbindung";
 "problem.topo.timeout" = "Überprüfe deine Internetverbindung";
 "problem.topo.error" = "Foto konnte nicht geladen werden";
 "problem.topo.retry" = "Erneut versuchen";
+"problem.videos.title" = "Videos";
+"problem.videos.watch" = "Video ansehen";
 
 // MARK: Tick List
 "ticklist.title" = "Tickliste";
@@ -178,3 +195,7 @@
 "contribute.report" = "Fehler melden";
 "contribute.cta" = "Jetzt beitragen";
 "contribute.learn_more" = "Mehr über Austrian.rocks erfahren";
+
+// MARK: Boulder
+"boulder.info_basic" = "%d Boulder";
+"boulder.info_basic_singular" = "%d Boulder";

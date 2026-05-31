@@ -62,9 +62,9 @@ struct RegionDetailView: View {
     }
 
     var clustersList: some View {
-        Section(header: Text("Clusters").font(.title2).fontWeight(.bold)) {
+        Section(header: Text("discover.region.clusters").font(.title2).fontWeight(.bold)) {
             if clusters.isEmpty {
-                Text("No clusters available")
+                Text("discover.region.no_clusters")
                     .foregroundColor(.secondary)
             } else {
                 ForEach(clusters) { cluster in
@@ -74,7 +74,7 @@ struct RegionDetailView: View {
                                 Text(cluster.name)
                                     .font(.headline)
 
-                                Text("\(cluster.areas.count) areas")
+                                Text(String(format: NSLocalizedString("discover.cluster.areas_count", comment: ""), cluster.areas.count))
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
