@@ -13,14 +13,15 @@ updated: 2026-05-31
 # Update Privacy App Review Metadata — plan
 
 ## Status
-- Phase: 0004-P1 (of 3) · stage: review
+- Phase: 0004-P2 (of 3) · stage: review
 - Branch: incant/0004-update-privacy-app-review-metadata
-- Next: run `/incant:review 0004` for the Phase 0004-P1 gate before continuing to Phase 0004-P2.
+- Next: run `/incant:review 0004` for the Phase 0004-P2 gate before continuing to Phase 0004-P3.
 - Blockers: none
 - Completed this session:
-  - 0004-P1 implemented App Store review configuration and Discover support-row behavior.
+  - 0004-P2 removed unused camera permission metadata, fixed the dev precise-location plist structure, updated dev bundle identifiers, preserved the privacy manifest, and added the Austrian.rocks license notice.
 - Quality gate evidence (2026-05-31):
-  - `! rg -n "1506614493|appID = \"" AustrianRocks/Config/BrandConfig.swift AustrianRocks/UI/Discover/DiscoverView.swift && xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -configuration Debug -destination 'generic/platform=iOS Simulator' build` passed; `xcodebuild` ended with `** BUILD SUCCEEDED **`.
+  - `rg -n "UIImagePicker|AVCapture|NSCameraUsageDescription|PHPhoto|PhotosUI|camera|Camera" AustrianRocks Dev-Info.plist` found no live photo/camera capture APIs; matches were permission metadata scheduled for removal and Mapbox map camera APIs only.
+  - `plutil -lint AustrianRocks/Info.plist Dev-Info.plist PrivacyInfo.xcprivacy && ! rg -n "NSCameraUsageDescription|com\\.nicolasmondollot\\.austrian-rocks-dev" AustrianRocks Dev-Info.plist AustrianRocks.xcodeproj/project.pbxproj && rg -n "NSLocationWhenInUseUsageDescription|NSLocationAlwaysAndWhenInUseUsageDescription|LocationAccuracyAuthorizationDescription|com\\.maxblazek\\.austrian-rocks|Copyright \\(c\\)" AustrianRocks/Info.plist Dev-Info.plist AustrianRocks.xcodeproj/project.pbxproj LICENSE.md` passed; plist/privacy files linted OK, stale camera/fork bundle-ID search returned no matches, and evidence showed preserved location metadata, `com.maxblazek` bundle IDs, and both license copyright notices.
 - Decisions:
   - `BrandConfig.AppStore.appID` will be optional and default to `nil` until Austrian.rocks has a real App Store ID.
   - The Discover support section will render the rate/review row only when `BrandConfig.AppStore.reviewURL` can be formed from the configured ID.
@@ -53,15 +54,15 @@ Goal: Remove the stale Boolder App Store review link from runtime code and make 
 ## Phase 0004-P2 — Permission metadata, privacy manifest, bundle IDs, and license
 Goal: Make release metadata match current app behavior and current ownership without changing runtime behavior.
 
-- [ ] Run and read `rg -n "UIImagePicker|AVCapture|NSCameraUsageDescription|PHPhoto|PhotosUI|camera|Camera" AustrianRocks Dev-Info.plist` before editing; if live camera/photo-capture API usage is found, keep the camera permission keys and document the exact file path in this plan before continuing.
-- [ ] Read `AustrianRocks/Info.plist`, then remove only the `NSCameraUsageDescription` key and value from production metadata while leaving `NSLocationAlwaysAndWhenInUseUsageDescription`, `NSLocationWhenInUseUsageDescription`, and `NSLocationTemporaryUsageDescriptionDictionary` intact.
-- [ ] Read `Dev-Info.plist`, then remove only the `NSCameraUsageDescription` key and value from development metadata while leaving location permission keys intact.
-- [ ] In `Dev-Info.plist`, ensure `NSLocationTemporaryUsageDescriptionDictionary` contains `LocationAccuracyAuthorizationDescription` as a child key with the existing precise-location explanation string, matching the production plist structure.
-- [ ] Read `AustrianRocks/en.lproj/InfoPlist.strings` and remove only the `NSCameraUsageDescription` line.
-- [ ] Read `AustrianRocks/de.lproj/InfoPlist.strings` and remove only the `NSCameraUsageDescription` line.
-- [ ] Read `PrivacyInfo.xcprivacy`; keep `NSPrivacyAccessedAPICategoryUserDefaults` with reason `CA92.1` because `AustrianRocks/UI/Map/MapContainerView.swift` uses `UserDefaults.standard`, and do not add any new accessed API category.
-- [ ] Read `AustrianRocks.xcodeproj/project.pbxproj`, then change both development target `PRODUCT_BUNDLE_IDENTIFIER` values from `com.nicolasmondollot.austrian-rocks-dev` to `com.maxblazek.austrian-rocks-dev` and leave both production `com.maxblazek.austrian-rocks` values unchanged.
-- [ ] Read `LICENSE.md`, then add `Copyright (c) 2026 Austrian.rocks` directly below the existing Boolder copyright line without deleting or rewriting the original MIT license notice.
+- [x] Run and read `rg -n "UIImagePicker|AVCapture|NSCameraUsageDescription|PHPhoto|PhotosUI|camera|Camera" AustrianRocks Dev-Info.plist` before editing; if live camera/photo-capture API usage is found, keep the camera permission keys and document the exact file path in this plan before continuing.
+- [x] Read `AustrianRocks/Info.plist`, then remove only the `NSCameraUsageDescription` key and value from production metadata while leaving `NSLocationAlwaysAndWhenInUseUsageDescription`, `NSLocationWhenInUseUsageDescription`, and `NSLocationTemporaryUsageDescriptionDictionary` intact.
+- [x] Read `Dev-Info.plist`, then remove only the `NSCameraUsageDescription` key and value from development metadata while leaving location permission keys intact.
+- [x] In `Dev-Info.plist`, ensure `NSLocationTemporaryUsageDescriptionDictionary` contains `LocationAccuracyAuthorizationDescription` as a child key with the existing precise-location explanation string, matching the production plist structure.
+- [x] Read `AustrianRocks/en.lproj/InfoPlist.strings` and remove only the `NSCameraUsageDescription` line.
+- [x] Read `AustrianRocks/de.lproj/InfoPlist.strings` and remove only the `NSCameraUsageDescription` line.
+- [x] Read `PrivacyInfo.xcprivacy`; keep `NSPrivacyAccessedAPICategoryUserDefaults` with reason `CA92.1` because `AustrianRocks/UI/Map/MapContainerView.swift` uses `UserDefaults.standard`, and do not add any new accessed API category.
+- [x] Read `AustrianRocks.xcodeproj/project.pbxproj`, then change both development target `PRODUCT_BUNDLE_IDENTIFIER` values from `com.nicolasmondollot.austrian-rocks-dev` to `com.maxblazek.austrian-rocks-dev` and leave both production `com.maxblazek.austrian-rocks` values unchanged.
+- [x] Read `LICENSE.md`, then add `Copyright (c) 2026 Austrian.rocks` directly below the existing Boolder copyright line without deleting or rewriting the original MIT license notice.
 
 **Quality gate:** `plutil -lint AustrianRocks/Info.plist Dev-Info.plist PrivacyInfo.xcprivacy && ! rg -n "NSCameraUsageDescription|com\.nicolasmondollot\.austrian-rocks-dev" AustrianRocks Dev-Info.plist AustrianRocks.xcodeproj/project.pbxproj && rg -n "NSLocationWhenInUseUsageDescription|NSLocationAlwaysAndWhenInUseUsageDescription|LocationAccuracyAuthorizationDescription|com\.maxblazek\.austrian-rocks" AustrianRocks/Info.plist Dev-Info.plist AustrianRocks.xcodeproj/project.pbxproj LICENSE.md` → plist and privacy files lint successfully; stale camera and fork dev bundle ID search returns no matches; evidence search shows location metadata still present, dev and production bundle IDs under `com.maxblazek`, and the license remains readable with both copyright notices.
 

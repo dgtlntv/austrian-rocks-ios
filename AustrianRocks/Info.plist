@@ -29,8 +29,6 @@
 	<true/>
 	<key>MBXAccessToken</key>
 	<string>$(MBX_ACCESS_TOKEN)</string>
-	<key>NSCameraUsageDescription</key>
-	<string>You'll be able to take photos of problems.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Your location will be displayed on the map to help you find your way around.</string>
 	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
