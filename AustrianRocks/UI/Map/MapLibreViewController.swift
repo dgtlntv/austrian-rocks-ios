@@ -105,7 +105,9 @@ class MapLibreViewController: UIViewController, MLNMapViewDelegate {
         styleLoadTask = Task { [weak self] in
             guard let self else { return }
             let action = await styleLoader.loadStyle(for: choice, unavailableMessage: unavailableMessage)
+            guard !Task.isCancelled else { return }
             await MainActor.run {
+                guard !Task.isCancelled else { return }
                 self.handleStyleLoadAction(action)
             }
         }

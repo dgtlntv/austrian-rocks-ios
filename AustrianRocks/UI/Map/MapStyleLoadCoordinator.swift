@@ -61,6 +61,8 @@ final class MapStyleLoadCoordinator {
                 fallback: cachedFallback
             )
             return .install(styleURL, forceReload: true)
+        } catch is CancellationError {
+            return .none
         } catch {
             if let cachedFallback {
                 pendingAttempt = StyleAttempt(url: cachedFallback.styleURL, source: .cached, fallback: nil)

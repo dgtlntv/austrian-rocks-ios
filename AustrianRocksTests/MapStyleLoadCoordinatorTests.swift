@@ -72,6 +72,19 @@ final class MapStyleLoadCoordinatorTests: XCTestCase {
         XCTAssertEqual(action, .unavailable("unavailable"))
     }
 
+    func testCancelledManifestLoadDoesNotInstallCachedStyleOrSurfaceUnavailable() async throws {
+        let cached = try cachedStyle(choice: .light, url: "https://tiles.austrian.rocks/cached-light.json")
+        let coordinator = makeCoordinator(
+            fetchManifest: { _ in throw CancellationError() },
+            recordSuccess: { _, _, _ in XCTFail("Canceled loads must not be recorded") },
+            lastKnownStyle: { choice in choice == .light ? cached : nil }
+        )
+
+        let action = await coordinator.loadStyle(for: .light, unavailableMessage: "unavailable")
+
+        XCTAssertEqual(action, .none)
+    }
+
     func testRetryReinstallsSameURLRatherThanTreatingItAsAlreadyAvailable() async throws {
         let manifest = try makeManifest(light: "https://tiles.austrian.rocks/retry-light.json")
         let coordinator = makeCoordinator(
