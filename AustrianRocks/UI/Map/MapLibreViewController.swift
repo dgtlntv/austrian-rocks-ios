@@ -27,10 +27,8 @@ class MapLibreViewController: UIViewController, MLNMapViewDelegate {
         }
     }
 
-    private let manifestClient: MapTileManifestClient
-    private let styleCache: MapTileStyleCache
+    private let styleLoader: MapStyleLoadCoordinator
     private var currentFilters: Filters?
-    private var currentStyleChoice: MapStyleChoice?
     private var styleLoadTask: Task<Void, Never>?
     private var lastCameraDelegateUpdate = Date.distantPast
     private var flyinToSomething = false
@@ -47,14 +45,22 @@ class MapLibreViewController: UIViewController, MLNMapViewDelegate {
         manifestClient: MapTileManifestClient = MapTileManifestClient(),
         styleCache: MapTileStyleCache = MapTileStyleCache()
     ) {
-        self.manifestClient = manifestClient
-        self.styleCache = styleCache
+        self.styleLoader = MapStyleLoadCoordinator(
+            fetchManifest: { url in try await manifestClient.fetchManifest(from: url) },
+            recordSuccess: { manifest, choice, styleURL in try styleCache.recordSuccess(manifest: manifest, choice: choice, styleURL: styleURL) },
+            lastKnownStyle: { choice in styleCache.lastKnownStyle(for: choice) }
+        )
         super.init(nibName: nil, bundle: nil)
     }
 
     required init?(coder: NSCoder) {
-        self.manifestClient = MapTileManifestClient()
-        self.styleCache = MapTileStyleCache()
+        let manifestClient = MapTileManifestClient()
+        let styleCache = MapTileStyleCache()
+        self.styleLoader = MapStyleLoadCoordinator(
+            fetchManifest: { url in try await manifestClient.fetchManifest(from: url) },
+            recordSuccess: { manifest, choice, styleURL in try styleCache.recordSuccess(manifest: manifest, choice: choice, styleURL: styleURL) },
+            lastKnownStyle: { choice in styleCache.lastKnownStyle(for: choice) }
+        )
         super.init(coder: coder)
     }
 
@@ -94,52 +100,48 @@ class MapLibreViewController: UIViewController, MLNMapViewDelegate {
     private func loadStyleFromManifestOrCache() {
         styleLoadTask?.cancel()
         let choice = MapStyleChoice(userInterfaceStyle: traitCollection.userInterfaceStyle)
-        currentStyleChoice = choice
+        let unavailableMessage = String(localized: "map.unavailable.message")
 
         styleLoadTask = Task { [weak self] in
             guard let self else { return }
-
-            do {
-                let manifest = try await manifestClient.fetchManifest(from: BrandConfig.MapTiles.manifestURL)
-                let styleURL = try manifest.styleURL(for: choice)
-                try styleCache.recordSuccess(manifest: manifest, choice: choice, styleURL: styleURL)
-                await MainActor.run {
-                    self.installStyle(url: styleURL)
-                }
-            } catch {
-                if let cached = styleCache.lastKnownStyle(for: choice) {
-                    await MainActor.run {
-                        self.installStyle(url: cached.styleURL)
-                    }
-                } else {
-                    await MainActor.run {
-                        self.delegate?.mapBecameUnavailable(message: String(localized: "map.unavailable.message"))
-                    }
-                }
+            let action = await styleLoader.loadStyle(for: choice, unavailableMessage: unavailableMessage)
+            await MainActor.run {
+                self.handleStyleLoadAction(action)
             }
         }
     }
 
     @MainActor
-    private func installStyle(url: URL) {
-        guard mapView.styleURL != url else {
+    private func handleStyleLoadAction(_ action: MapStyleLoadCoordinator.LoadAction) {
+        switch action {
+        case .install(let url, let forceReload):
+            installStyle(url: url, forceReload: forceReload)
+        case .available:
             delegate?.mapBecameAvailable()
-            return
+            if let filters = currentFilters {
+                applyFilters(filters)
+            }
+        case .unavailable(let message):
+            delegate?.mapBecameUnavailable(message: message)
+        case .none:
+            break
         }
+    }
 
-        delegate?.mapBecameAvailable()
+    @MainActor
+    private func installStyle(url: URL, forceReload: Bool) {
+        if forceReload, mapView.styleURL == url {
+            mapView.styleURL = nil
+        }
         mapView.styleURL = url
     }
 
     func mapView(_ mapView: MLNMapView, didFinishLoading style: MLNStyle) {
-        delegate?.mapBecameAvailable()
-        if let filters = currentFilters {
-            applyFilters(filters)
-        }
+        handleStyleLoadAction(styleLoader.styleDidLoad(url: mapView.styleURL))
     }
 
     func mapView(_ mapView: MLNMapView, didFailLoadingMapWithError error: Error) {
-        delegate?.mapBecameUnavailable(message: error.localizedDescription)
+        handleStyleLoadAction(styleLoader.styleDidFail(url: mapView.styleURL, message: error.localizedDescription))
     }
 
     func mapViewRegionIsChanging(_ mapView: MLNMapView) {

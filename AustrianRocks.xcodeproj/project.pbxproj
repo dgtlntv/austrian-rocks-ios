@@ -229,11 +229,14 @@
 		45B000000000000000000015 /* MapFeatureCardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000013 /* MapFeatureCardModel.swift */; };
 		45B00000000000000000002C /* MapUnavailableOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B00000000000000000002B /* MapUnavailableOverlay.swift */; };
 		45B00000000000000000002D /* MapUnavailableOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B00000000000000000002B /* MapUnavailableOverlay.swift */; };
+		45B00000000000000000002F /* MapStyleLoadCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B00000000000000000002E /* MapStyleLoadCoordinator.swift */; };
+		45B000000000000000000030 /* MapStyleLoadCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B00000000000000000002E /* MapStyleLoadCoordinator.swift */; };
 		45B000000000000000000022 /* MapTileManifestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000021 /* MapTileManifestTests.swift */; };
 		45B000000000000000000024 /* MapTileStyleCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000023 /* MapTileStyleCacheTests.swift */; };
 		45B000000000000000000026 /* MapFeatureCardModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000025 /* MapFeatureCardModelTests.swift */; };
 		45B000000000000000000028 /* SafeURLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000027 /* SafeURLTests.swift */; };
 		45B00000000000000000002A /* MissingDetailActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000029 /* MissingDetailActionTests.swift */; };
+		45B000000000000000000032 /* MapStyleLoadCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000031 /* MapStyleLoadCoordinatorTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -362,12 +365,14 @@
 		45B000000000000000000010 /* MapFeatureBounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapFeatureBounds.swift; sourceTree = "<group>"; };
 		45B000000000000000000013 /* MapFeatureCardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapFeatureCardModel.swift; sourceTree = "<group>"; };
 		45B00000000000000000002B /* MapUnavailableOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapUnavailableOverlay.swift; sourceTree = "<group>"; };
+		45B00000000000000000002E /* MapStyleLoadCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStyleLoadCoordinator.swift; sourceTree = "<group>"; };
 		45B000000000000000000016 /* AustrianRocksTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AustrianRocksTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		45B000000000000000000021 /* MapTileManifestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTileManifestTests.swift; sourceTree = "<group>"; };
 		45B000000000000000000023 /* MapTileStyleCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTileStyleCacheTests.swift; sourceTree = "<group>"; };
 		45B000000000000000000025 /* MapFeatureCardModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapFeatureCardModelTests.swift; sourceTree = "<group>"; };
 		45B000000000000000000027 /* SafeURLTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeURLTests.swift; sourceTree = "<group>"; };
 		45B000000000000000000029 /* MissingDetailActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissingDetailActionTests.swift; sourceTree = "<group>"; };
+		45B000000000000000000031 /* MapStyleLoadCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStyleLoadCoordinatorTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -475,6 +480,7 @@
 				45B000000000000000000004 /* MapTileManifest.swift */,
 				45B000000000000000000007 /* MapTileManifestClient.swift */,
 				45B00000000000000000000A /* MapTileStyleCache.swift */,
+				45B00000000000000000002E /* MapStyleLoadCoordinator.swift */,
 				45B00000000000000000000D /* MapLayerContract.swift */,
 				45B000000000000000000010 /* MapFeatureBounds.swift */,
 				45B000000000000000000013 /* MapFeatureCardModel.swift */,
@@ -672,6 +678,7 @@
 				45B000000000000000000025 /* MapFeatureCardModelTests.swift */,
 				45B000000000000000000027 /* SafeURLTests.swift */,
 				45B000000000000000000029 /* MissingDetailActionTests.swift */,
+				45B000000000000000000031 /* MapStyleLoadCoordinatorTests.swift */,
 			);
 			path = AustrianRocksTests;
 			sourceTree = "<group>";
@@ -840,6 +847,7 @@
 				45B000000000000000000005 /* MapTileManifest.swift in Sources */,
 				45B000000000000000000008 /* MapTileManifestClient.swift in Sources */,
 				45B00000000000000000000B /* MapTileStyleCache.swift in Sources */,
+				45B00000000000000000002F /* MapStyleLoadCoordinator.swift in Sources */,
 				45B00000000000000000000E /* MapLayerContract.swift in Sources */,
 				45B000000000000000000011 /* MapFeatureBounds.swift in Sources */,
 				45B000000000000000000014 /* MapFeatureCardModel.swift in Sources */,
@@ -946,6 +954,7 @@
 				45B000000000000000000006 /* MapTileManifest.swift in Sources */,
 				45B000000000000000000009 /* MapTileManifestClient.swift in Sources */,
 				45B00000000000000000000C /* MapTileStyleCache.swift in Sources */,
+				45B000000000000000000030 /* MapStyleLoadCoordinator.swift in Sources */,
 				45B00000000000000000000F /* MapLayerContract.swift in Sources */,
 				45B000000000000000000012 /* MapFeatureBounds.swift in Sources */,
 				45B000000000000000000015 /* MapFeatureCardModel.swift in Sources */,
@@ -1051,6 +1060,7 @@
 			files = (
 				45B000000000000000000022 /* MapTileManifestTests.swift in Sources */,
 				45B000000000000000000024 /* MapTileStyleCacheTests.swift in Sources */,
+				45B000000000000000000032 /* MapStyleLoadCoordinatorTests.swift in Sources */,
 				45B000000000000000000026 /* MapFeatureCardModelTests.swift in Sources */,
 				45B000000000000000000028 /* SafeURLTests.swift in Sources */,
 				45B00000000000000000002A /* MissingDetailActionTests.swift in Sources */,
