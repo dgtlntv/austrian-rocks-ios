@@ -12,9 +12,9 @@ import Foundation
 ///
 /// When `Package.resolved` changes, re-audit the source files listed in the JSON:
 /// the app `LICENSE.md`, `Package.resolved`, and each resolved non-Apple Swift Package
-/// license file under Xcode's `SourcePackages/checkouts`. During the planned Mapbox to
-/// MapLibre migration, replace the Mapbox package pins and Mapbox notice entries in the
-/// JSON with the MapLibre package metadata and notices, keeping this loader unchanged.
+/// license file under Xcode's `SourcePackages/checkouts`. Keep the audited pins, source
+/// files, omissions, and notice entries in sync with the current MapLibre and SQLite
+/// dependencies while leaving this loader unchanged.
 struct AcknowledgementCatalog: Decodable {
     let schemaVersion: Int
     let audit: AcknowledgementAudit

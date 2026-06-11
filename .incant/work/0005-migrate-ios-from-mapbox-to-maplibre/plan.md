@@ -3,8 +3,8 @@ id: "0005"
 slug: migrate-ios-from-mapbox-to-maplibre
 branch: incant/0005-migrate-ios-from-mapbox-to-maplibre
 title: Migrate iOS From Mapbox To MapLibre
-stage: review
-status: phase-0005-P3-complete
+stage: implement
+status: phase-0005-P5-automated-complete-manual-pending
 created: 2026-06-11
 commit: 3e3720ef
 updated: 2026-06-11
@@ -13,10 +13,20 @@ updated: 2026-06-11
 # Migrate iOS From Mapbox To MapLibre — plan
 
 ## Status
-- Phase: 0005-P4 complete (of 5) · stage: review
+- Phase: 0005-P5 automated/legal cleanup complete (of 5) · stage: implement · manual verification pending human.
 - Branch: incant/0005-migrate-ios-from-mapbox-to-maplibre
-- Next: `/incant:review 0005` for the 0005-P4 phase gate review.
+- Next: human-run P5 manual checklist, then `/incant:review 0005` for the final phase gate review.
 - Blockers: none.
+- P5 quality gate evidence (2026-06-11):
+  - `xcodebuild -list -project AustrianRocks.xcodeproj` → project schemes are only `AustrianRocks` and `AustrianRocks dev`; resolved packages are MapLibre Native `6.27.0` and SQLite.swift `0.15.5`.
+  - `rg -n "import MapboxMaps|BrandConfig\\.Mapbox|MBXAccessToken|~/.mapbox|api\\.mapbox\\.com|mapbox-(maps|common|core-maps)-ios|turf-swift|MapboxMaps" AustrianRocks AustrianRocks.xcodeproj README.md AustrianRocks.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved; test $? -eq 1` → no matches after removing the stale `MBXAccessToken` key from `Info.plist`.
+  - The planned `xcodebuild test -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'platform=iOS Simulator,name=iPhone 16'` could not start because `OS:latest` resolves to an unavailable runtime on this Xcode install; the available iPhone 16 simulator is `OS=18.3.1`.
+  - Equivalent available-destination gate passed: `xcodebuild test -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.3.1' && xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -configuration Debug -destination 'generic/platform=iOS Simulator' build && xcodebuild -project AustrianRocks.xcodeproj -scheme 'AustrianRocks dev' -configuration Debug -destination 'generic/platform=iOS Simulator' build` → **TEST SUCCEEDED** and **BUILD SUCCEEDED** for both app schemes.
+- P5 phase notes (2026-06-11):
+  - Updated `Acknowledgements.json` audit metadata from `Package.resolved` origin hash `fdf92ad8c9922d77d4030f2150bf3ea7f204167cf9efae20289dc808debd2e0b`, replacing Mapbox Maps/Common/Core Maps and Turf pins/notices with MapLibre Native iOS `6.27.0` and the current SQLite.swift pin.
+  - Re-audited license source files from Xcode `SourcePackages/checkouts`: `maplibre-gl-native-distribution/LICENSE.md` (BSD 2-Clause) and `SQLite.swift/LICENSE.txt` (MIT); obsolete Mapbox omission notes were removed.
+  - Updated `AcknowledgementCatalog.swift` audit comments to describe the current MapLibre/SQLite audit instead of a planned migration.
+  - Manual simulator/device verification is intentionally left to the human per request; no screenshot evidence is retained in the repo. Checklist: online style loads; light/dark style reload; PMTiles problem/area/cluster/region/POI layers render; selected features animate; problem taps open `ProblemDetailsView`; non-problem taps show native cards; show-on-map fits bounds; missing SQLite details are safe; POI directions only appears for valid URLs; problem filters work; area toolbar/download context updates while panning; retry overlay appears only when fresh and cached styles fail; attribution remains visible.
 - Quality gate evidence (2026-06-11):
   - `xcodebuild -resolvePackageDependencies -project AustrianRocks.xcodeproj && xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -configuration Debug -destination 'generic/platform=iOS Simulator' build && xcodebuild -project AustrianRocks.xcodeproj -scheme 'AustrianRocks dev' -configuration Debug -destination 'generic/platform=iOS Simulator' build` → **BUILD SUCCEEDED** for both app schemes after package resolution. MapLibre Native resolved through the public Swift package distribution repository `https://github.com/maplibre/maplibre-gl-native-distribution.git` at `6.27.0`; no Mapbox token files or GitHub credentials were required in the CLI gate.
 - Phase notes (2026-06-11):
@@ -157,14 +167,14 @@ Goal: add native SwiftUI cards for non-problem selectable features with tile-pro
 ## Phase 0005-P5 — legal/docs cleanup and final verification
 Goal: remove remaining Mapbox references from active code/project/docs, update acknowledgements, and prove the migration acceptance criteria.
 
-- [ ] Step 1: read `AustrianRocks/Acknowledgements.json`, `AustrianRocks/Models/AcknowledgementCatalog.swift`, `AustrianRocks.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved`, `README.md`, and MapLibre/SQLite license files from Xcode `SourcePackages/checkouts` before editing legal notices.
-- [ ] Step 2: update `AustrianRocks/Acknowledgements.json` audit metadata from the resolved package pins, replacing Mapbox Maps, Mapbox Common, Mapbox Core Maps, and Turf entries with MapLibre Native iOS plus current non-Apple Swift Package dependencies; keep SQLite and app notices current; remove obsolete Mapbox omission notes.
-- [ ] Step 3: edit `AustrianRocks/Models/AcknowledgementCatalog.swift` comments so the audit guidance describes the current MapLibre dependency audit instead of a planned Mapbox migration.
-- [ ] Step 4: run `xcodebuild -list -project AustrianRocks.xcodeproj` and confirm the schemes are `AustrianRocks` and `AustrianRocks dev` only, with no Mapbox package scheme listed.
-- [ ] Step 5: run `rg -n "import MapboxMaps|BrandConfig\\.Mapbox|MBXAccessToken|~/.mapbox|api\\.mapbox\\.com|mapbox-(maps|common|core-maps)-ios|turf-swift|MapboxMaps" AustrianRocks AustrianRocks.xcodeproj README.md AustrianRocks.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` and ensure it returns no matches.
-- [ ] Step 6: run the full automated test/build suite and read the output: `xcodebuild test -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'platform=iOS Simulator,name=iPhone 16' && xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -configuration Debug -destination 'generic/platform=iOS Simulator' build && xcodebuild -project AustrianRocks.xcodeproj -scheme 'AustrianRocks dev' -configuration Debug -destination 'generic/platform=iOS Simulator' build`.
-- [ ] Step 7: manually verify in the iPhone 16 simulator or a device: online map loads the Rails shared style; light/dark mode reloads `styles.light`/`styles.dark`; PMTiles problem/area/cluster/region/POI layers render; selected pins/circles grow, settle, and shrink; problem taps open `ProblemDetailsView`; region/cluster/area/POI taps show native cards; show-on-map fits bounds; missing SQLite detail actions are safe; POI directions opens only for valid URLs; grade/popular/favorite/ticked filters affect problem rendering; area toolbar/download context update while panning; retry overlay appears only when fresh and cached styles cannot initialize; attribution remains visible.
-- [ ] Step 8: update this plan's Status block phase/checklist as implementation progresses and commit completed implementation phases individually as `incant 0005-P1: ...` through `incant 0005-P5: ...`.
+- [x] Step 1: read `AustrianRocks/Acknowledgements.json`, `AustrianRocks/Models/AcknowledgementCatalog.swift`, `AustrianRocks.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved`, `README.md`, and MapLibre/SQLite license files from Xcode `SourcePackages/checkouts` before editing legal notices.
+- [x] Step 2: update `AustrianRocks/Acknowledgements.json` audit metadata from the resolved package pins, replacing Mapbox Maps, Mapbox Common, Mapbox Core Maps, and Turf entries with MapLibre Native iOS plus current non-Apple Swift Package dependencies; keep SQLite and app notices current; remove obsolete Mapbox omission notes.
+- [x] Step 3: edit `AustrianRocks/Models/AcknowledgementCatalog.swift` comments so the audit guidance describes the current MapLibre dependency audit instead of a planned Mapbox migration.
+- [x] Step 4: run `xcodebuild -list -project AustrianRocks.xcodeproj` and confirm the schemes are `AustrianRocks` and `AustrianRocks dev` only, with no Mapbox package scheme listed.
+- [x] Step 5: run `rg -n "import MapboxMaps|BrandConfig\\.Mapbox|MBXAccessToken|~/.mapbox|api\\.mapbox\\.com|mapbox-(maps|common|core-maps)-ios|turf-swift|MapboxMaps" AustrianRocks AustrianRocks.xcodeproj README.md AustrianRocks.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` and ensure it returns no matches.
+- [x] Step 6: run the full automated test/build suite and read the output: `xcodebuild test -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'platform=iOS Simulator,name=iPhone 16' && xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -configuration Debug -destination 'generic/platform=iOS Simulator' build && xcodebuild -project AustrianRocks.xcodeproj -scheme 'AustrianRocks dev' -configuration Debug -destination 'generic/platform=iOS Simulator' build`.
+- [ ] Step 7: manually verify in the iPhone 16 simulator or a device: online map loads the Rails shared style; light/dark mode reloads `styles.light`/`styles.dark`; PMTiles problem/area/cluster/region/POI layers render; selected pins/circles grow, settle, and shrink; problem taps open `ProblemDetailsView`; region/cluster/area/POI taps show native cards; show-on-map fits bounds; missing SQLite detail actions are safe; POI directions opens only for valid URLs; grade/popular/favorite/ticked filters affect problem rendering; area toolbar/download context update while panning; retry overlay appears only when fresh and cached styles cannot initialize; attribution remains visible. Human-owned per request.
+- [x] Step 8: update this plan's Status block phase/checklist as implementation progresses and commit completed implementation phases individually as `incant 0005-P1: ...` through `incant 0005-P5: ...`.
 
 **Quality gate:** `xcodebuild -list -project AustrianRocks.xcodeproj && rg -n "import MapboxMaps|BrandConfig\\.Mapbox|MBXAccessToken|~/.mapbox|api\\.mapbox\\.com|mapbox-(maps|common|core-maps)-ios|turf-swift|MapboxMaps" AustrianRocks AustrianRocks.xcodeproj README.md AustrianRocks.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved; test $? -eq 1 && xcodebuild test -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'platform=iOS Simulator,name=iPhone 16' && xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -configuration Debug -destination 'generic/platform=iOS Simulator' build && xcodebuild -project AustrianRocks.xcodeproj -scheme 'AustrianRocks dev' -configuration Debug -destination 'generic/platform=iOS Simulator' build` → only app schemes are listed, the Mapbox-removal search has no matches, all tests pass, and both schemes build.
 
@@ -180,6 +190,6 @@ Goal: remove remaining Mapbox references from active code/project/docs, update a
 - [x] R22: Phase 0005-P5 updates acknowledgements and audit metadata from resolved packages.
 - [x] R23: Phase 0005-P1 creates XCTest coverage for manifest/cache/card parsing/localization/safe URL/missing-detail behavior; later phases keep it passing.
 - [x] R24: Phases 0005-P2 through 0005-P5 build both app schemes without Mapbox token files.
-- [x] Acceptance criteria: Phase 0005-P5 includes the final `xcodebuild -list`, package/static-search, test/build, and manual simulator verification evidence needed before review.
+- [ ] Acceptance criteria: Phase 0005-P5 includes the final `xcodebuild -list`, package/static-search, and test/build evidence; human-owned manual simulator/device verification remains pending before final review/release.
 - [x] Symbol/signature consistency: planned names use `MapLibreView`, `MapLibreViewController`, `MapLibreViewDelegate`, `MapTileManifest`, `MapTileManifestClient`, `MapTileStyleCache`, `MapLayerContract`, `MapSelectionController`, `MapFeatureBounds`, `MapFeatureCardModel`, `MapFeatureCardView`, `MapFeatureCardGradeHistogramView`, and `MapUnavailableOverlay` consistently.
 - [x] Completeness check: every phase has concrete paths, actions, commands, expected results, and named follow-up work.
