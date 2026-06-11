@@ -26,6 +26,7 @@
 "map.card.guidebook" = "Guidebook";
 "map.card.problems" = "problems";
 "map.card.grade_distribution" = "Grade distribution";
+"map.card.grade_distribution_accessibility" = "Grade distribution: %@";
 "map.card.close" = "Close";
 "map.unavailable.title" = "Map unavailable";
 "map.unavailable.message" = "The map could not be loaded right now. You can keep using the rest of the app and try again.";

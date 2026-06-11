@@ -21,6 +21,7 @@ struct MapContainerView: View {
     // TODO: make this more DRY
     @State private var presentDownloads = false
     @State private var presentDownloadsPlaceholder = false
+    @State private var presentedDetail: MapFeatureDetailDestination? = nil
     
     var body: some View {
         @Bindable var mapState = mapState
@@ -34,6 +35,9 @@ struct MapContainerView: View {
                 }
                 .zIndex(5)
             }
+
+            mapFeatureCardOverlay
+                .zIndex(15)
 
             // fake view acting as an anchor point for poi sheet
             Color.clear.frame(width: 10, height: 10).allowsHitTesting(false)
@@ -58,6 +62,11 @@ struct MapContainerView: View {
         .sheet(isPresented: $mapState.presentSearch) {
             SearchSheetView()
         }
+        .sheet(item: $presentedDetail) { destination in
+            NavigationStack {
+                mapFeatureDetail(destination)
+            }
+        }
         .onChange(of: mapState.presentProblemDetails) { oldValue, newValue in
             if !newValue {
                 mapState.deselectTopo()
@@ -77,6 +86,60 @@ struct MapContainerView: View {
         }
     }
     
+    @ViewBuilder
+    var mapFeatureCardOverlay: some View {
+        if let card = mapState.selectedMapFeatureCard {
+            MapFeatureCardOverlay(
+                model: card,
+                onShowOnMap: {
+                    mapState.fitSelectedMapFeatureOnMap()
+                },
+                onOpenDetail: {
+                    presentDetail(for: card)
+                },
+                onDirections: {
+                    mapState.openPoiDirections(card)
+                },
+                onClose: {
+                    mapState.dismissMapFeatureCard()
+                }
+            )
+            .transition(.move(edge: .bottom).combined(with: .opacity))
+            .animation(.spring(response: 0.32, dampingFraction: 0.88), value: card.id)
+        }
+    }
+
+    @ViewBuilder
+    private func mapFeatureDetail(_ destination: MapFeatureDetailDestination) -> some View {
+        switch destination {
+        case .region(let region):
+            RegionDetailView(region: region)
+        case .cluster(let cluster):
+            ClusterDetailView(cluster: cluster)
+        case .area(let area):
+            AreaView(area: area, linkToMap: true)
+        }
+    }
+
+    private func presentDetail(for card: MapFeatureCardModel) {
+        switch card.kind {
+        case .region:
+            if let region = Region.load(id: card.id) {
+                presentedDetail = .region(region)
+            }
+        case .cluster:
+            if let cluster = Cluster.load(id: card.id) {
+                presentedDetail = .cluster(cluster)
+            }
+        case .area:
+            if let area = Area.load(id: card.id) {
+                presentedDetail = .area(area)
+            }
+        case .poi:
+            break
+        }
+    }
+
     var mapLibre : some View {
         @Bindable var mapState = mapState
         return MapLibreView(mapState: mapState)
@@ -297,6 +360,65 @@ struct MapContainerView: View {
         }.first
     }
     
+}
+
+private struct MapFeatureCardOverlay: View {
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    let model: MapFeatureCardModel
+    let onShowOnMap: () -> Void
+    let onOpenDetail: () -> Void
+    let onDirections: () -> Void
+    let onClose: () -> Void
+
+    var body: some View {
+        Group {
+            if horizontalSizeClass == .regular {
+                VStack {
+                    HStack {
+                        card
+                            .frame(width: 380)
+                        Spacer()
+                    }
+                    Spacer()
+                }
+                .padding(.top, 24)
+                .padding(.horizontal)
+            } else {
+                VStack {
+                    Spacer()
+                    card
+                        .padding(.horizontal)
+                        .padding(.bottom, 12)
+                }
+            }
+        }
+        .allowsHitTesting(true)
+    }
+
+    private var card: some View {
+        MapFeatureCardView(
+            model: model,
+            onShowOnMap: onShowOnMap,
+            onOpenDetail: onOpenDetail,
+            onDirections: onDirections,
+            onClose: onClose
+        )
+    }
+}
+
+private enum MapFeatureDetailDestination: Identifiable {
+    case region(Region)
+    case cluster(Cluster)
+    case area(Area)
+
+    var id: String {
+        switch self {
+        case .region(let region): return "region-\(region.id)"
+        case .cluster(let cluster): return "cluster-\(cluster.id)"
+        case .area(let area): return "area-\(area.id)"
+        }
+    }
 }
 
 //struct MapView_Previews: PreviewProvider {

@@ -104,18 +104,23 @@ final class MapFeatureCardModelTests: XCTestCase {
                 "poiId": 11,
                 "name": "Parkplatz",
                 "poiType": "parking",
-                "googleUrl": "https://maps.google.com/?q=parkplatz"
+                "googleUrl": "https://maps.google.com/?q=parkplatz",
+                "latitude": 47.1,
+                "longitude": 14.2
             ]
         ))
 
         XCTAssertEqual(model.poiType, .parking)
         XCTAssertEqual(model.googleURL?.scheme, "https")
+        XCTAssertEqual(model.coordinate?.latitude, 47.1)
+        XCTAssertTrue(model.canOpenDirections)
 
         let unsafe = try XCTUnwrap(MapFeatureCardModel.make(
             kind: .poi,
-            properties: ["poiId": 12, "name": "Bahnhof", "poiType": "train_station", "googleUrl": "javascript:alert(1)"]
+            properties: ["poiId": 12, "name": "Bahnhof", "poiType": "train_station", "googleUrl": "javascript:alert(1)", "latitude": 47.1, "longitude": 14.2]
         ))
         XCTAssertEqual(unsafe.poiType, .trainStation)
         XCTAssertNil(unsafe.googleURL)
+        XCTAssertFalse(unsafe.canOpenDirections)
     }
 }

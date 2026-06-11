@@ -227,6 +227,10 @@
 		45B000000000000000000012 /* MapFeatureBounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000010 /* MapFeatureBounds.swift */; };
 		45B000000000000000000014 /* MapFeatureCardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000013 /* MapFeatureCardModel.swift */; };
 		45B000000000000000000015 /* MapFeatureCardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000013 /* MapFeatureCardModel.swift */; };
+		45B000000000000000000036 /* MapFeatureCardGradeHistogramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000038 /* MapFeatureCardGradeHistogramView.swift */; };
+		45B000000000000000000037 /* MapFeatureCardGradeHistogramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000038 /* MapFeatureCardGradeHistogramView.swift */; };
+		45B000000000000000000039 /* MapFeatureCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B00000000000000000003B /* MapFeatureCardView.swift */; };
+		45B00000000000000000003A /* MapFeatureCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B00000000000000000003B /* MapFeatureCardView.swift */; };
 		45B00000000000000000002C /* MapUnavailableOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B00000000000000000002B /* MapUnavailableOverlay.swift */; };
 		45B00000000000000000002D /* MapUnavailableOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B00000000000000000002B /* MapUnavailableOverlay.swift */; };
 		45B00000000000000000002F /* MapStyleLoadCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B00000000000000000002E /* MapStyleLoadCoordinator.swift */; };
@@ -366,6 +370,8 @@
 		45B00000000000000000000D /* MapLayerContract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapLayerContract.swift; sourceTree = "<group>"; };
 		45B000000000000000000010 /* MapFeatureBounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapFeatureBounds.swift; sourceTree = "<group>"; };
 		45B000000000000000000013 /* MapFeatureCardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapFeatureCardModel.swift; sourceTree = "<group>"; };
+		45B000000000000000000038 /* MapFeatureCardGradeHistogramView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapFeatureCardGradeHistogramView.swift; sourceTree = "<group>"; };
+		45B00000000000000000003B /* MapFeatureCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapFeatureCardView.swift; sourceTree = "<group>"; };
 		45B00000000000000000002B /* MapUnavailableOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapUnavailableOverlay.swift; sourceTree = "<group>"; };
 		45B00000000000000000002E /* MapStyleLoadCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStyleLoadCoordinator.swift; sourceTree = "<group>"; };
 		45B000000000000000000033 /* MapSelectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSelectionController.swift; sourceTree = "<group>"; };
@@ -488,6 +494,8 @@
 				45B000000000000000000033 /* MapSelectionController.swift */,
 				45B000000000000000000010 /* MapFeatureBounds.swift */,
 				45B000000000000000000013 /* MapFeatureCardModel.swift */,
+				45B000000000000000000038 /* MapFeatureCardGradeHistogramView.swift */,
+				45B00000000000000000003B /* MapFeatureCardView.swift */,
 				45B00000000000000000002B /* MapUnavailableOverlay.swift */,
 				03C104EB290ACDC6007A94D7 /* MapLibreView.swift */,
 				03C104E8290ACC1A007A94D7 /* MapLibreViewController.swift */,
@@ -856,6 +864,8 @@
 				45B000000000000000000034 /* MapSelectionController.swift in Sources */,
 				45B000000000000000000011 /* MapFeatureBounds.swift in Sources */,
 				45B000000000000000000014 /* MapFeatureCardModel.swift in Sources */,
+				45B000000000000000000036 /* MapFeatureCardGradeHistogramView.swift in Sources */,
+				45B000000000000000000039 /* MapFeatureCardView.swift in Sources */,
 				45B00000000000000000002C /* MapUnavailableOverlay.swift in Sources */,
 				452F75FD2EEEC7F000F65113 /* Region.swift in Sources */,
 				45AA00022F97000100010001 /* AcknowledgementCatalog.swift in Sources */,
@@ -964,6 +974,8 @@
 				45B000000000000000000035 /* MapSelectionController.swift in Sources */,
 				45B000000000000000000012 /* MapFeatureBounds.swift in Sources */,
 				45B000000000000000000015 /* MapFeatureCardModel.swift in Sources */,
+				45B000000000000000000037 /* MapFeatureCardGradeHistogramView.swift in Sources */,
+				45B00000000000000000003A /* MapFeatureCardView.swift in Sources */,
 				45B00000000000000000002D /* MapUnavailableOverlay.swift in Sources */,
 				452F75FE2EEEC7F000F65113 /* Region.swift in Sources */,
 				45AA00012F97000100010001 /* AcknowledgementCatalog.swift in Sources */,

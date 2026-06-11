@@ -26,6 +26,7 @@
 "map.card.guidebook" = "Guidebook";
 "map.card.problems" = "Boulder";
 "map.card.grade_distribution" = "Schwierigkeitsverteilung";
+"map.card.grade_distribution_accessibility" = "Schwierigkeitsverteilung: %@";
 "map.card.close" = "Schließen";
 "map.unavailable.title" = "Karte nicht verfügbar";
 "map.unavailable.message" = "Die Karte konnte gerade nicht geladen werden. Du kannst den Rest der App weiter verwenden und es erneut versuchen.";

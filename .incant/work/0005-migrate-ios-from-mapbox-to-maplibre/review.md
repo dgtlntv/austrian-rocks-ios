@@ -3,18 +3,21 @@ id: "0005"
 slug: migrate-ios-from-mapbox-to-maplibre
 stage: review
 reviewed: 2026-06-11
-commit: 4d43176efa9b25dfb99877548ec2e000fe7055f0
+commit: 6b9674802a732365723d1a00f86a63235e7d63b8
 ---
 
 # Migrate iOS From Mapbox To MapLibre — review
 
 ### Strengths
-- `AustrianRocks.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved:5` and `AustrianRocks.xcodeproj/project.pbxproj:1420` — P2 resolves MapLibre Native through the public SwiftPM distribution package at `6.27.0` with a project requirement starting at `6.10.0`, satisfying the PMTiles-capable SDK version requirement and avoiding the unavailable repository named in the original plan.
-- `AustrianRocks/Config/BrandConfig.swift:44` — the active map configuration is centralized as `BrandConfig.MapTiles` with the Rails manifest URL and cache keys; controller code no longer carries Mapbox/provider URL configuration.
-- `AustrianRocks/UI/Map/MapStyleLoadCoordinator.swift:52` through `AustrianRocks/UI/Map/MapStyleLoadCoordinator.swift:90` — the manifest/cache/style-load state machine now keeps fresh installs pending until MapLibre reports success, falls back from failed fresh styles to the prior cached style, and treats `CancellationError` as `.none` instead of surfacing stale unavailable state.
-- `AustrianRocks/UI/Map/MapLibreViewController.swift:108` and `AustrianRocks/UI/Map/MapLibreViewController.swift:110` — canceled async style-load tasks are guarded before applying actions back to the controller, which addresses the stale light/dark or retry-result race from the prior review.
-- `AustrianRocksTests/MapStyleLoadCoordinatorTests.swift:75` — cancellation behavior now has regression coverage proving a canceled manifest load neither installs cached fallback nor surfaces unavailable.
-- Fresh review gates: `rg -n "import MapboxMaps|BrandConfig\\.Mapbox|MBXAccessToken|~/.mapbox|api\\.mapbox\\.com|mapbox-(maps|common|core-maps)-ios|turf-swift|MapboxMaps" AustrianRocks/Config AustrianRocks/UI AustrianRocks.xcodeproj README.md AustrianRocks.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved; test $? -eq 1` → no matches; `xcodebuild -list -project AustrianRocks.xcodeproj` → schemes are `AustrianRocks` and `AustrianRocks dev` only; `xcodebuild -resolvePackageDependencies -project AustrianRocks.xcodeproj && xcodebuild test -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.3.1' -only-testing:AustrianRocksTests && xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -configuration Debug -destination 'generic/platform=iOS Simulator' build && xcodebuild -project AustrianRocks.xcodeproj -scheme 'AustrianRocks dev' -configuration Debug -destination 'generic/platform=iOS Simulator' build` → package resolution succeeded, **TEST SUCCEEDED**, and **BUILD SUCCEEDED** for both app schemes.
+- `AustrianRocks/UI/Map/MapSelectionController.swift:87` — P3 initializes all selected layers with the shared `-1` sentinel after style load, then reapplies the current selection without falling back to MapLibre feature-state.
+- `AustrianRocks/UI/Map/MapSelectionController.swift:151` — selected-layer predicates are built from the shared id properties and support topo sibling problem ids, while `AustrianRocks/UI/Map/MapSelectionController.swift:166` skips base-layer exclusion for problems and excludes selected symbol ids for the other feature kinds.
+- `AustrianRocks/UI/Map/MapSelectionController.swift:196` and `AustrianRocks/UI/Map/MapSelectionController.swift:207` — the grow/settle and clear animations carry over the Rails timing and scale constants, including symbol wiggle and selected problem circle scaling.
+- `AustrianRocks/UI/Map/MapLibreViewController.swift:257` — problem taps use the shared `problemId` property, select through `problems-selected`, and still route directly to the native `ProblemDetailsView` flow through the existing delegate.
+- `AustrianRocks/UI/Map/MapLibreViewController.swift:287` through `AustrianRocks/UI/Map/MapLibreViewController.swift:317` — area, cluster, region, and POI taps now query the shared MapLibre layer/property contract and preserve the current native state callbacks until the planned P4 card work lands.
+- `AustrianRocks/UI/Map/MapLibreViewController.swift:328` and `AustrianRocks/UI/Map/MapLibreViewController.swift:341` — camera-based area and cluster inference is restored against `areas-hulls` and `cluster-hulls` with the planned zoom thresholds, keeping toolbar/download context updates tied to panning.
+- `AustrianRocks/UI/Map/MapLibreViewController.swift:368` — iOS-specific grade, popular, favorite, and ticked filters are reapplied on the shared `problems` layer with local Core Data-backed favorite/tick ids, and the selected problem layer receives the same supplemental predicate.
+- Fresh P3 review gate: `xcodebuild test -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.3.1' -only-testing:AustrianRocksTests && xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -configuration Debug -destination 'generic/platform=iOS Simulator' build && xcodebuild -project AustrianRocks.xcodeproj -scheme 'AustrianRocks dev' -configuration Debug -destination 'generic/platform=iOS Simulator' build` → **TEST SUCCEEDED** and **BUILD SUCCEEDED** for both app schemes.
+- Fresh active-code Mapbox-removal check: `rg -n "import MapboxMaps|BrandConfig\\.Mapbox|MBXAccessToken|~/.mapbox|api\\.mapbox\\.com|mapbox-(maps|common|core-maps)-ios|turf-swift|MapboxMaps" AustrianRocks/Config AustrianRocks/UI AustrianRocks.xcodeproj README.md AustrianRocks.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved; test $? -eq 1` → no matches. Remaining Mapbox acknowledgement entries are still expected until planned P5 legal cleanup.
 
 ### Blocker
 - None.
@@ -31,4 +34,4 @@ commit: 4d43176efa9b25dfb99877548ec2e000fe7055f0
 - None.
 
 ### Verdict
-Ready to release? **No** — the 0005-P2 phase gate has no open blocker or major findings, and the prior cancellation major is addressed with passing gates. The full item should continue to the planned P3–P5 implementation before final release/finalize.
+Ready to release? **No** — the 0005-P3 phase gate has no open blocker or major findings, and the fresh P3 tests/builds pass. The item is not ready to finalize yet because planned P4 native map cards and P5 legal/docs/final verification remain incomplete.

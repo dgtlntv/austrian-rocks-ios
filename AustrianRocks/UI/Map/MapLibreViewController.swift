@@ -182,6 +182,7 @@ class MapLibreViewController: UIViewController, MLNMapViewDelegate {
         if visibleFeatures(at: tapPoint, layers: interactiveLayerIds()).isEmpty {
             selectionController?.clear()
             delegate?.dismissProblemDetails()
+            delegate?.dismissMapFeatureCard()
         }
     }
 
@@ -250,6 +251,14 @@ class MapLibreViewController: UIViewController, MLNMapViewDelegate {
         selectionController?.clear()
     }
 
+    func clearSelectedMapFeature() {
+        selectionController?.clear()
+    }
+
+    func fitMapFeatureBounds(_ bounds: MapFeatureBounds) {
+        fit([bounds.southWest, bounds.northEast], minZoom: nil, padding: safePadding)
+    }
+
     func triggerMapDetectors() {
         triggerMapDetectors(immediate: false)
     }
@@ -279,8 +288,9 @@ class MapLibreViewController: UIViewController, MLNMapViewDelegate {
 
         selectionController?.select(.poi, id: id)
         delegate?.dismissProblemDetails()
-        let name = feature.attributes.stringValue(for: "name") ?? ""
-        delegate?.selectPoi(name: name, location: feature.coordinate, googleUrl: feature.attributes.stringValue(for: "googleUrl"))
+        if let card = mapFeatureCard(kind: .poi, feature: feature) {
+            delegate?.selectMapFeatureCard(card)
+        }
         return true
     }
 
@@ -292,6 +302,9 @@ class MapLibreViewController: UIViewController, MLNMapViewDelegate {
         selectionController?.select(.area, id: id)
         delegate?.dismissProblemDetails()
         delegate?.selectArea(id: id)
+        if let card = mapFeatureCard(kind: .area, feature: feature) {
+            delegate?.selectMapFeatureCard(card)
+        }
         return true
     }
 
@@ -303,6 +316,9 @@ class MapLibreViewController: UIViewController, MLNMapViewDelegate {
         selectionController?.select(.cluster, id: id)
         delegate?.dismissProblemDetails()
         delegate?.selectCluster(id: id)
+        if let card = mapFeatureCard(kind: .cluster, feature: feature) {
+            delegate?.selectMapFeatureCard(card)
+        }
         return true
     }
 
@@ -314,7 +330,27 @@ class MapLibreViewController: UIViewController, MLNMapViewDelegate {
         selectionController?.select(.region, id: id)
         delegate?.dismissProblemDetails()
         delegate?.selectRegion(id: id)
+        if let card = mapFeatureCard(kind: .region, feature: feature) {
+            delegate?.selectMapFeatureCard(card)
+        }
         return true
+    }
+
+    private func mapFeatureCard(kind: MapFeatureCardModel.Kind, feature: MLNFeature) -> MapFeatureCardModel? {
+        MapFeatureCardModel.make(
+            kind: kind,
+            properties: cardProperties(from: feature),
+            coordinate: feature.coordinate
+        )
+    }
+
+    private func cardProperties(from feature: MLNFeature) -> [String: Any] {
+        var properties: [String: Any] = [:]
+        for (key, value) in feature.attributes {
+            guard let key = key as? String else { continue }
+            properties[key] = value
+        }
+        return properties
     }
 
     private func zoomTowardBoulder(at tapPoint: CGPoint) -> Bool {
@@ -511,7 +547,7 @@ class MapLibreViewController: UIViewController, MLNMapViewDelegate {
 
 protocol MapLibreViewDelegate: AnyObject {
     func selectProblem(id: Int)
-    func selectPoi(name: String, location: CLLocationCoordinate2D, googleUrl: String?)
+    func selectMapFeatureCard(_ card: MapFeatureCardModel)
     func selectArea(id: Int)
     func selectCluster(id: Int)
     func selectRegion(id: Int)
@@ -519,6 +555,7 @@ protocol MapLibreViewDelegate: AnyObject {
     func unselectCluster()
     func cameraChanged(state: MapLibreCameraState)
     func dismissProblemDetails()
+    func dismissMapFeatureCard()
     func mapBecameAvailable()
     func mapBecameUnavailable(message: String)
 }

@@ -77,6 +77,18 @@ struct MapLibreView: UIViewControllerRepresentable {
             context.coordinator.lastRefreshFiltersCount = mapState.refreshFiltersCount
             vc.applyFilters(mapState.filters)
         }
+
+        if mapState.fitMapFeatureBoundsCount != context.coordinator.lastFitMapFeatureBoundsCount {
+            context.coordinator.lastFitMapFeatureBoundsCount = mapState.fitMapFeatureBoundsCount
+            if let bounds = mapState.fitMapFeatureBounds {
+                vc.fitMapFeatureBounds(bounds)
+            }
+        }
+
+        if mapState.clearMapSelectionCount != context.coordinator.lastClearMapSelectionCount {
+            context.coordinator.lastClearMapSelectionCount = mapState.clearMapSelectionCount
+            vc.clearSelectedMapFeature()
+        }
     }
 
     func makeCoordinator() -> Coordinator {
@@ -94,6 +106,8 @@ struct MapLibreView: UIViewControllerRepresentable {
         var lastRefreshFiltersCount: Int = 0
         var lastIsTopoMode: Bool = false
         var lastCenterOnBoulderCount: Int = 0
+        var lastFitMapFeatureBoundsCount: Int = 0
+        var lastClearMapSelectionCount: Int = 0
 
         init(_ parent: MapLibreView) {
             self.parent = parent
@@ -132,13 +146,16 @@ struct MapLibreView: UIViewControllerRepresentable {
             parent.mapState.unselectCluster()
         }
 
-        func selectPoi(name: String, location: CLLocationCoordinate2D, googleUrl: String?) {
-            let poi = Poi(id: 0, type: .parking, name: name, shortName: name, googleUrl: googleUrl, coordinate: location)
-            parent.mapState.selectedPoi = poi
+        func selectMapFeatureCard(_ card: MapFeatureCardModel) {
+            parent.mapState.selectMapFeatureCard(card)
         }
 
         func dismissProblemDetails() {
             parent.mapState.presentProblemDetails = false
+        }
+
+        func dismissMapFeatureCard() {
+            parent.mapState.dismissMapFeatureCardFromMap()
         }
 
         func cameraChanged(state: MapLibreCameraState) {

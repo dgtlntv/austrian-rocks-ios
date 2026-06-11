@@ -59,11 +59,17 @@ struct MapFeatureCardModel: Equatable, Identifiable {
     let bounds: MapFeatureBounds?
     let poiType: Poi.PoiType?
     let googleURL: URL?
+    let coordinate: CLLocationCoordinate2D?
     let detailAvailability: DetailAvailability
+
+    var canOpenDirections: Bool {
+        kind == .poi && googleURL != nil && coordinate != nil
+    }
 
     static func make(
         kind: Kind,
         properties: [String: Any],
+        coordinate: CLLocationCoordinate2D? = nil,
         localeIdentifier: String = Locale.current.language.languageCode?.identifier ?? "de",
         detailAvailabilityResolver: DetailAvailabilityResolver? = nil
     ) -> MapFeatureCardModel? {
@@ -106,8 +112,28 @@ struct MapFeatureCardModel: Equatable, Identifiable {
             bounds: MapFeatureBounds.fromProperties(properties, preferMainCluster: kind == .region),
             poiType: poiType(from: properties.stringValue(for: "poiType")),
             googleURL: MapSafeURL.httpURL(from: properties["googleUrl"]),
+            coordinate: coordinate ?? parseCoordinate(from: properties),
             detailAvailability: DetailAvailability(canOpenDetail: hasDetail)
         )
+    }
+
+    static func == (lhs: MapFeatureCardModel, rhs: MapFeatureCardModel) -> Bool {
+        lhs.kind == rhs.kind &&
+        lhs.id == rhs.id &&
+        lhs.title == rhs.title &&
+        lhs.problemCount == rhs.problemCount &&
+        lhs.gradeMin == rhs.gradeMin &&
+        lhs.gradeMax == rhs.gradeMax &&
+        lhs.gradeHistogram == rhs.gradeHistogram &&
+        lhs.coverPhotoURL == rhs.coverPhotoURL &&
+        lhs.warning == rhs.warning &&
+        lhs.guidebook == rhs.guidebook &&
+        lhs.parking == rhs.parking &&
+        lhs.bounds == rhs.bounds &&
+        lhs.poiType == rhs.poiType &&
+        lhs.googleURL == rhs.googleURL &&
+        lhs.detailAvailability == rhs.detailAvailability &&
+        coordinatesEqual(lhs.coordinate, rhs.coordinate)
     }
 
     private static func localizedText(base: String?, english: String?, localeIdentifier: String) -> String {
@@ -133,6 +159,27 @@ struct MapFeatureCardModel: Equatable, Identifiable {
         case "parking": return .parking
         case "train_station": return .trainStation
         default: return nil
+        }
+    }
+
+    private static func parseCoordinate(from properties: [String: Any]) -> CLLocationCoordinate2D? {
+        guard let latitude = properties.doubleValue(for: "latitude"),
+              let longitude = properties.doubleValue(for: "longitude"),
+              latitude.isFinite,
+              longitude.isFinite,
+              (-90...90).contains(latitude),
+              (-180...180).contains(longitude) else { return nil }
+        return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    }
+
+    private static func coordinatesEqual(_ lhs: CLLocationCoordinate2D?, _ rhs: CLLocationCoordinate2D?) -> Bool {
+        switch (lhs, rhs) {
+        case (.none, .none):
+            return true
+        case (.some(let lhs), .some(let rhs)):
+            return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
+        default:
+            return false
         }
     }
 

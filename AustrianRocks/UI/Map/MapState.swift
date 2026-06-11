@@ -21,10 +21,14 @@ class MapState {
     private(set) var centerOnBoulderCoordinates: [CLLocationCoordinate2D] = []
     private(set) var centerOnBoulderCount: Int = 0
     var selectedPoi: Poi? = nil
+    private(set) var selectedMapFeatureCard: MapFeatureCardModel? = nil
     var filters: Filters = Filters()
     private(set) var refreshFiltersCount: Int = 0
     private(set) var mapUnavailableMessage: String? = nil
     private(set) var mapRetryCount: Int = 0
+    private(set) var fitMapFeatureBounds: MapFeatureBounds? = nil
+    private(set) var fitMapFeatureBoundsCount: Int = 0
+    private(set) var clearMapSelectionCount: Int = 0
 
     var presentProblemDetails = false
     var presentFilters = false
@@ -66,6 +70,7 @@ class MapState {
     }
 
     func selectProblem(_ problem: Problem, source: Selection.Source = .other) {
+        selectedMapFeatureCard = nil
         selection = .problem(problem: problem, source: source)
 
         selectedArea = Area.load(id: problem.areaId)
@@ -123,6 +128,40 @@ class MapState {
 
     func markMapAvailable() {
         mapUnavailableMessage = nil
+    }
+
+    func selectMapFeatureCard(_ card: MapFeatureCardModel) {
+        selectedMapFeatureCard = card
+        presentProblemDetails = false
+    }
+
+    func dismissMapFeatureCard() {
+        selectedMapFeatureCard = nil
+        clearMapSelectionCount += 1
+    }
+
+    func dismissMapFeatureCardFromMap() {
+        selectedMapFeatureCard = nil
+    }
+
+    func fitSelectedMapFeatureOnMap() {
+        guard let bounds = selectedMapFeatureCard?.bounds else { return }
+        fitMapFeatureBounds = bounds
+        fitMapFeatureBoundsCount += 1
+    }
+
+    func openPoiDirections(_ card: MapFeatureCardModel) {
+        guard card.kind == .poi,
+              let googleURL = card.googleURL,
+              let coordinate = card.coordinate else { return }
+        selectedPoi = Poi(
+            id: card.id,
+            type: card.poiType ?? .parking,
+            name: card.title,
+            shortName: card.title,
+            googleUrl: googleURL.absoluteString,
+            coordinate: coordinate
+        )
     }
     
     func requestTopoFullScreenPresentation() {
@@ -183,7 +222,7 @@ class MapState {
             refreshBoulderCacheIfNeeded()
             
             switch selection {
-            case .problem(let problem, let _):
+            case .problem(let problem, _):
                 clearFiltersIfProblemHidden(problem)
             case .topo:
                 clearFilters()
