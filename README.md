@@ -6,37 +6,9 @@ Use the app to explore areas on a map, browse recommended areas, save projects, 
 
 ## Build the app
 
-### Mapbox setup
+Open `AustrianRocks.xcodeproj` in Xcode and build the `AustrianRocks` or `AustrianRocks dev` scheme.
 
-#### Step 1
-
-Create an account on https://www.mapbox.com and go to the [Tokens](https://account.mapbox.com/access-tokens/) page to create 2 tokens:
-- 1 public token with all the public `scopes` (or use the default token)
-- 1 secret token with all the public `scopes` + the `DOWNLOADS:READ` scope
-
-#### Step 2: set up the public token
-
-Store the public token in `~/.mapbox` like so:
-
-```
-YOUR_PUBLIC_MAPBOX_ACCESS_TOKEN
-```
-
-More info [here](https://docs.mapbox.com/help/troubleshooting/private-access-token-android-and-ios/#ios).
-
-#### Step 3 (optional): set up the secret token
-
-To be able to download the SDK via Swift Package Manager, you must first configure the secret token.
-
-Edit your `~/.netrc` file to add the following lines:
-
-```
-machine api.mapbox.com
-  login mapbox
-  password YOUR_SECRET_MAPBOX_ACCESS_TOKEN
-```
-
-More info [here](https://docs.mapbox.com/ios/maps/guides/install/).
+Maps load the Rails-published MapLibre manifest at `https://tiles.austrian.rocks/map_tiles/current.json` and do not require local map provider token files.
 
 ## Contribute
 

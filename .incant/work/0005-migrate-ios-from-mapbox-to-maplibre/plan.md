@@ -4,7 +4,7 @@ slug: migrate-ios-from-mapbox-to-maplibre
 branch: incant/0005-migrate-ios-from-mapbox-to-maplibre
 title: Migrate iOS From Mapbox To MapLibre
 stage: review
-status: phase-0005-P1-complete
+status: phase-0005-P2-complete
 created: 2026-06-11
 commit: 3e3720ef
 updated: 2026-06-11
@@ -13,10 +13,15 @@ updated: 2026-06-11
 # Migrate iOS From Mapbox To MapLibre — plan
 
 ## Status
-- Phase: 0005-P1 complete (of 5) · stage: review
+- Phase: 0005-P2 complete (of 5) · stage: review
 - Branch: incant/0005-migrate-ios-from-mapbox-to-maplibre
-- Next: `/incant:review 0005` for the 0005-P1 phase gate re-review.
+- Next: `/incant:review 0005` for the 0005-P2 phase gate review.
 - Blockers: none.
+- Quality gate evidence (2026-06-11):
+  - `xcodebuild -resolvePackageDependencies -project AustrianRocks.xcodeproj && xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -configuration Debug -destination 'generic/platform=iOS Simulator' build && xcodebuild -project AustrianRocks.xcodeproj -scheme 'AustrianRocks dev' -configuration Debug -destination 'generic/platform=iOS Simulator' build` → **BUILD SUCCEEDED** for both app schemes after package resolution. MapLibre Native resolved through the public Swift package distribution repository `https://github.com/maplibre/maplibre-gl-native-distribution.git` at `6.27.0`; no Mapbox token files or GitHub credentials were required in the CLI gate.
+- Phase notes (2026-06-11):
+  - The plan named `https://github.com/maplibre/maplibre-native-ios.git`, but that repository does not exist publicly. Package resolution succeeded with MapLibre's public SwiftPM distribution repository `maplibre-gl-native-distribution`, which provides the `MapLibre` product and resolves MapLibre Native iOS `6.27.0` (>= 6.10.0).
+  - P2 establishes the MapLibre dependency, renamed bridge/controller files, manifest/cache-driven style loading, retry/unavailable state, Mapbox token-script removal, and README cleanup. Interaction queries, selected-layer filters/animations, and detailed camera inference remain assigned to 0005-P3 as planned.
 - Review fixes (2026-06-11):
   - Addressed review major from `review.md` about hostless/malformed HTTP(S) URLs by requiring HTTP(S) URLs to include a non-empty host in the shared `URL.isHTTPOrHTTPS` validator used by manifest/cache/card URL checks.
   - Added regression coverage for `https:foo`, `https:///path`, and `http://` in `SafeURLTests`, plus manifest decoding rejection for hostless HTTP(S) URLs in `MapTileManifestTests`.
@@ -86,16 +91,16 @@ Goal: add the pure Swift seams for manifest loading, style fallback, tile-proper
 ## Phase 0005-P2 — MapLibre dependency, manifest style loading, and unavailable fallback
 Goal: replace the SDK and create a working MapLibre map that loads the Rails shared style, retries via fresh manifest/cache fallback, and no longer needs Mapbox token files.
 
-- [ ] Step 1: read `AustrianRocks.xcodeproj/project.pbxproj`, `AustrianRocks.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved`, `AustrianRocks/UI/Map/MapboxView.swift`, `AustrianRocks/UI/Map/MapboxViewController.swift`, `AustrianRocks/UI/Map/MapContainerView.swift`, `AustrianRocks/Config/BrandConfig.swift`, and `README.md` before editing.
-- [ ] Step 2: in `AustrianRocks.xcodeproj/project.pbxproj`, remove the `mapbox-maps-ios` package reference, `MapboxMaps` product dependencies, `MapboxMaps in Frameworks` entries, Mapbox shell-script build phases that read `~/.mapbox` or `~/mapbox`, and transitive Mapbox/Turf pins by resolving packages after adding `https://github.com/maplibre/maplibre-native-ios.git` with an up-to-next-major requirement starting at `6.10.0` and product `MapLibre` for both `AustrianRocks` and `AustrianRocks dev` targets.
-- [ ] Step 3: rename `AustrianRocks/UI/Map/MapboxView.swift` to `AustrianRocks/UI/Map/MapLibreView.swift`; rename `MapboxView` to `MapLibreView`, `MapBoxViewDelegate` to `MapLibreViewDelegate`, coordinator comments to MapLibre-neutral wording, and imports from `MapboxMaps` to `MapLibre`.
-- [ ] Step 4: rename `AustrianRocks/UI/Map/MapboxViewController.swift` to `AustrianRocks/UI/Map/MapLibreViewController.swift`; rename the class and comments, import `MapLibre`, use MapLibre Native equivalents for map view construction, camera state, location puck/user tracking, ornaments/attribution, style loaded callbacks, tap gestures, camera-change throttling, query-rendered-features, layer/source updates, camera fitting, and fly/ease animation.
-- [ ] Step 5: remove the current Mapbox-hosted `lightStyleURI`, `darkStyleURI`, `BrandConfig.Mapbox.problemsTilesetURL`, manual vector-source setup, and custom `problems` source creation from the controller; initialize MapLibre with a resolved HTTP(S) style URL from `MapTileManifestClient`/`MapTileStyleCache`, relying on the shared style's `austrian-rocks` PMTiles source, glyphs, sprites, basemap.at, terrain, contours, and overlay layers.
-- [ ] Step 6: edit `AustrianRocks/UI/Map/MapContainerView.swift` so the `mapbox` computed property becomes `mapLibre`, renders `MapLibreView(mapState:)`, and overlays `MapUnavailableOverlay` only when the controller reports that neither a fresh manifest nor a cached style initialized the map.
-- [ ] Step 7: edit `AustrianRocks/UI/Map/MapState.swift` to add `mapUnavailableMessage`, `mapRetryCount`, `requestMapRetry()`, `markMapUnavailable(_:)`, and `markMapAvailable()` so retry UI is native and non-blocking.
-- [ ] Step 8: implement trait/color-scheme changes in `MapLibreViewController` by resolving `MapStyleChoice(userInterfaceStyle:)`, fetching the latest manifest with no-store, recording successful `styles.light` or `styles.dark` into `MapTileStyleCache`, falling back to the cached choice if fetch fails, and showing unavailable state only when no fresh or cached URL can load.
-- [ ] Step 9: edit `README.md` to remove Mapbox account, `~/.mapbox`, and `.netrc` instructions and document that maps use the Rails-published MapLibre manifest with no local token setup.
-- [ ] Step 10: run package resolution so `AustrianRocks.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` contains MapLibre Native iOS `>= 6.10.0`, SQLite, and no Mapbox/Turf pins.
+- [x] Step 1: read `AustrianRocks.xcodeproj/project.pbxproj`, `AustrianRocks.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved`, `AustrianRocks/UI/Map/MapboxView.swift`, `AustrianRocks/UI/Map/MapboxViewController.swift`, `AustrianRocks/UI/Map/MapContainerView.swift`, `AustrianRocks/Config/BrandConfig.swift`, and `README.md` before editing.
+- [x] Step 2: in `AustrianRocks.xcodeproj/project.pbxproj`, remove the `mapbox-maps-ios` package reference, `MapboxMaps` product dependencies, `MapboxMaps in Frameworks` entries, Mapbox shell-script build phases that read `~/.mapbox` or `~/mapbox`, and transitive Mapbox/Turf pins by resolving packages after adding MapLibre's public SwiftPM distribution package `https://github.com/maplibre/maplibre-gl-native-distribution.git` with an up-to-next-major requirement starting at `6.10.0` and product `MapLibre` for both `AustrianRocks` and `AustrianRocks dev` targets.
+- [x] Step 3: rename `AustrianRocks/UI/Map/MapboxView.swift` to `AustrianRocks/UI/Map/MapLibreView.swift`; rename `MapboxView` to `MapLibreView`, `MapBoxViewDelegate` to `MapLibreViewDelegate`, coordinator comments to MapLibre-neutral wording, and imports from `MapboxMaps` to `MapLibre`.
+- [x] Step 4: rename `AustrianRocks/UI/Map/MapboxViewController.swift` to `AustrianRocks/UI/Map/MapLibreViewController.swift`; rename the class and comments, import `MapLibre`, use MapLibre Native equivalents for map view construction, camera state, location puck/user tracking, ornaments/attribution, style loaded callbacks, tap gestures, camera-change throttling, query-rendered-features, layer/source updates, camera fitting, and fly/ease animation.
+- [x] Step 5: remove the current Mapbox-hosted `lightStyleURI`, `darkStyleURI`, `BrandConfig.Mapbox.problemsTilesetURL`, manual vector-source setup, and custom `problems` source creation from the controller; initialize MapLibre with a resolved HTTP(S) style URL from `MapTileManifestClient`/`MapTileStyleCache`, relying on the shared style's `austrian-rocks` PMTiles source, glyphs, sprites, basemap.at, terrain, contours, and overlay layers.
+- [x] Step 6: edit `AustrianRocks/UI/Map/MapContainerView.swift` so the `mapbox` computed property becomes `mapLibre`, renders `MapLibreView(mapState:)`, and overlays `MapUnavailableOverlay` only when the controller reports that neither a fresh manifest nor a cached style initialized the map.
+- [x] Step 7: edit `AustrianRocks/UI/Map/MapState.swift` to add `mapUnavailableMessage`, `mapRetryCount`, `requestMapRetry()`, `markMapUnavailable(_:)`, and `markMapAvailable()` so retry UI is native and non-blocking.
+- [x] Step 8: implement trait/color-scheme changes in `MapLibreViewController` by resolving `MapStyleChoice(userInterfaceStyle:)`, fetching the latest manifest with no-store, recording successful `styles.light` or `styles.dark` into `MapTileStyleCache`, falling back to the cached choice if fetch fails, and showing unavailable state only when no fresh or cached URL can load.
+- [x] Step 9: edit `README.md` to remove Mapbox account, `~/.mapbox`, and `.netrc` instructions and document that maps use the Rails-published MapLibre manifest with no local token setup.
+- [x] Step 10: run package resolution so `AustrianRocks.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved` contains MapLibre Native iOS `>= 6.10.0`, SQLite, and no Mapbox/Turf pins.
 
 **Quality gate:** `xcodebuild -resolvePackageDependencies -project AustrianRocks.xcodeproj && xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -configuration Debug -destination 'generic/platform=iOS Simulator' build && xcodebuild -project AustrianRocks.xcodeproj -scheme 'AustrianRocks dev' -configuration Debug -destination 'generic/platform=iOS Simulator' build` → package resolution succeeds, both app schemes build for a generic iOS Simulator destination, and no Mapbox token file is required.
 

@@ -103,12 +103,12 @@
 		03AB8B872C8EF32D00093D76 /* TapLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AB8B852C8EF32D00093D76 /* TapLocationView.swift */; };
 		03B910702B2C798200DE7B45 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03B9106F2B2C798200DE7B45 /* CircularProgressView.swift */; };
 		03B910712B2C798200DE7B45 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03B9106F2B2C798200DE7B45 /* CircularProgressView.swift */; };
-		03C104E4290ACB85007A94D7 /* MapboxMaps in Frameworks */ = {isa = PBXBuildFile; productRef = 03C104E3290ACB85007A94D7 /* MapboxMaps */; };
-		03C104E6290ACBC9007A94D7 /* MapboxMaps in Frameworks */ = {isa = PBXBuildFile; productRef = 03C104E5290ACBC9007A94D7 /* MapboxMaps */; };
-		03C104E9290ACC1A007A94D7 /* MapboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C104E8290ACC1A007A94D7 /* MapboxViewController.swift */; };
-		03C104EA290ACC1A007A94D7 /* MapboxViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C104E8290ACC1A007A94D7 /* MapboxViewController.swift */; };
-		03C104EC290ACDC6007A94D7 /* MapboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C104EB290ACDC6007A94D7 /* MapboxView.swift */; };
-		03C104ED290ACDC6007A94D7 /* MapboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C104EB290ACDC6007A94D7 /* MapboxView.swift */; };
+		03C104E4290ACB85007A94D7 /* MapLibre in Frameworks */ = {isa = PBXBuildFile; productRef = 03C104E3290ACB85007A94D7 /* MapLibre */; };
+		03C104E6290ACBC9007A94D7 /* MapLibre in Frameworks */ = {isa = PBXBuildFile; productRef = 03C104E5290ACBC9007A94D7 /* MapLibre */; };
+		03C104E9290ACC1A007A94D7 /* MapLibreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C104E8290ACC1A007A94D7 /* MapLibreViewController.swift */; };
+		03C104EA290ACC1A007A94D7 /* MapLibreViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C104E8290ACC1A007A94D7 /* MapLibreViewController.swift */; };
+		03C104EC290ACDC6007A94D7 /* MapLibreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C104EB290ACDC6007A94D7 /* MapLibreView.swift */; };
+		03C104ED290ACDC6007A94D7 /* MapLibreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C104EB290ACDC6007A94D7 /* MapLibreView.swift */; };
 		03C104F3290BFBCE007A94D7 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 03C104F2290BFBCE007A94D7 /* SQLite */; };
 		03C104F5290BFBD8007A94D7 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 03C104F4290BFBD8007A94D7 /* SQLite */; };
 		03C104F7290C0688007A94D7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03C104F6290C0688007A94D7 /* ContentView.swift */; };
@@ -227,6 +227,8 @@
 		45B000000000000000000012 /* MapFeatureBounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000010 /* MapFeatureBounds.swift */; };
 		45B000000000000000000014 /* MapFeatureCardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000013 /* MapFeatureCardModel.swift */; };
 		45B000000000000000000015 /* MapFeatureCardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000013 /* MapFeatureCardModel.swift */; };
+		45B00000000000000000002C /* MapUnavailableOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B00000000000000000002B /* MapUnavailableOverlay.swift */; };
+		45B00000000000000000002D /* MapUnavailableOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B00000000000000000002B /* MapUnavailableOverlay.swift */; };
 		45B000000000000000000022 /* MapTileManifestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000021 /* MapTileManifestTests.swift */; };
 		45B000000000000000000024 /* MapTileStyleCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000023 /* MapTileStyleCacheTests.swift */; };
 		45B000000000000000000026 /* MapFeatureCardModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000025 /* MapFeatureCardModelTests.swift */; };
@@ -294,8 +296,8 @@
 		039FFC962F3F265700A5E597 /* BoulderProblemsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoulderProblemsListView.swift; sourceTree = "<group>"; };
 		03AB8B852C8EF32D00093D76 /* TapLocationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapLocationView.swift; sourceTree = "<group>"; };
 		03B9106F2B2C798200DE7B45 /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
-		03C104E8290ACC1A007A94D7 /* MapboxViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapboxViewController.swift; sourceTree = "<group>"; };
-		03C104EB290ACDC6007A94D7 /* MapboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapboxView.swift; sourceTree = "<group>"; };
+		03C104E8290ACC1A007A94D7 /* MapLibreViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapLibreViewController.swift; sourceTree = "<group>"; };
+		03C104EB290ACDC6007A94D7 /* MapLibreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapLibreView.swift; sourceTree = "<group>"; };
 		03C104F6290C0688007A94D7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		03C104F9290C09B5007A94D7 /* SqliteStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SqliteStore.swift; sourceTree = "<group>"; };
 		03C5A3602C4F9E750057C42A /* Downloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Downloader.swift; sourceTree = "<group>"; };
@@ -359,6 +361,7 @@
 		45B00000000000000000000D /* MapLayerContract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapLayerContract.swift; sourceTree = "<group>"; };
 		45B000000000000000000010 /* MapFeatureBounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapFeatureBounds.swift; sourceTree = "<group>"; };
 		45B000000000000000000013 /* MapFeatureCardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapFeatureCardModel.swift; sourceTree = "<group>"; };
+		45B00000000000000000002B /* MapUnavailableOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapUnavailableOverlay.swift; sourceTree = "<group>"; };
 		45B000000000000000000016 /* AustrianRocksTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AustrianRocksTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		45B000000000000000000021 /* MapTileManifestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTileManifestTests.swift; sourceTree = "<group>"; };
 		45B000000000000000000023 /* MapTileStyleCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTileStyleCacheTests.swift; sourceTree = "<group>"; };
@@ -373,7 +376,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				03C104F5290BFBD8007A94D7 /* SQLite in Frameworks */,
-				03C104E6290ACBC9007A94D7 /* MapboxMaps in Frameworks */,
+				03C104E6290ACBC9007A94D7 /* MapLibre in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -382,7 +385,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				03C104F3290BFBCE007A94D7 /* SQLite in Frameworks */,
-				03C104E4290ACB85007A94D7 /* MapboxMaps in Frameworks */,
+				03C104E4290ACB85007A94D7 /* MapLibre in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -475,8 +478,9 @@
 				45B00000000000000000000D /* MapLayerContract.swift */,
 				45B000000000000000000010 /* MapFeatureBounds.swift */,
 				45B000000000000000000013 /* MapFeatureCardModel.swift */,
-				03C104EB290ACDC6007A94D7 /* MapboxView.swift */,
-				03C104E8290ACC1A007A94D7 /* MapboxViewController.swift */,
+				45B00000000000000000002B /* MapUnavailableOverlay.swift */,
+				03C104EB290ACDC6007A94D7 /* MapLibreView.swift */,
+				03C104E8290ACC1A007A94D7 /* MapLibreViewController.swift */,
 				038F7F432C3A8CC500AE7028 /* Download */,
 				03809ACE2F508F4600ACDC06 /* AllFiltersView.swift */,
 				03DE504427BFA895003E5B2A /* GradeRangePickerView.swift */,
@@ -682,7 +686,6 @@
 				37379908258E619400711EDA /* Sources */,
 				37379933258E619400711EDA /* Frameworks */,
 				37379934258E619400711EDA /* Resources */,
-				03E466522B5C155B00DC52D5 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -690,7 +693,7 @@
 			);
 			name = "AustrianRocks dev";
 			packageProductDependencies = (
-				03C104E5290ACBC9007A94D7 /* MapboxMaps */,
+				03C104E5290ACBC9007A94D7 /* MapLibre */,
 				03C104F4290BFBD8007A94D7 /* SQLite */,
 			);
 			productName = AustrianRocks;
@@ -704,7 +707,6 @@
 				37A8C6222453263300DC161F /* Sources */,
 				37A8C6232453263300DC161F /* Frameworks */,
 				37A8C6242453263300DC161F /* Resources */,
-				03E466512B5C0FEB00DC52D5 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -712,7 +714,7 @@
 			);
 			name = AustrianRocks;
 			packageProductDependencies = (
-				03C104E3290ACB85007A94D7 /* MapboxMaps */,
+				03C104E3290ACB85007A94D7 /* MapLibre */,
 				03C104F2290BFBCE007A94D7 /* SQLite */,
 			);
 			productName = AustrianRocks;
@@ -771,7 +773,7 @@
 			);
 			mainGroup = 37A8C61D2453263300DC161F;
 			packageReferences = (
-				03C104E2290ACB85007A94D7 /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */,
+				03C104E2290ACB85007A94D7 /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */,
 				03C104F1290BFBCE007A94D7 /* XCRemoteSwiftPackageReference "SQLite.swift" */,
 			);
 			productRefGroup = 37A8C6272453263300DC161F /* Products */;
@@ -829,49 +831,6 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		03E466512B5C0FEB00DC52D5 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
-				"~/.mapbox",
-				"~/mapbox",
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Look for a global file named 'mapbox' or '.mapbox' within the home directory\ntoken_file=~/.mapbox\ntoken_file2=~/mapbox\ntoken=\"$(cat $token_file 2>/dev/null || cat $token_file2 2>/dev/null)\"\nif [ \"$token\" ]; then\n  plutil -replace MBXAccessToken -string $token \"$TARGET_BUILD_DIR/$INFOPLIST_PATH\"\nelse\n  echo 'warning: Missing Mapbox access token'\n  open 'https://account.mapbox.com/access-tokens/'\n  echo \"warning: Get an access token from <https://account.mapbox.com/access-tokens/>, then create a new file at $token_file or $token_file2 that contains the access token.\"\nfi\n";
-		};
-		03E466522B5C155B00DC52D5 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(TARGET_BUILD_DIR)/$(INFOPLIST_PATH)",
-				"~/.mapbox",
-				"~/mapbox",
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Look for a global file named 'mapbox' or '.mapbox' within the home directory\ntoken_file=~/.mapbox\ntoken_file2=~/mapbox\ntoken=\"$(cat $token_file 2>/dev/null || cat $token_file2 2>/dev/null)\"\nif [ \"$token\" ]; then\n  plutil -replace MBXAccessToken -string $token \"$TARGET_BUILD_DIR/$INFOPLIST_PATH\"\nelse\n  echo 'warning: Missing Mapbox access token'\n  open 'https://account.mapbox.com/access-tokens/'\n  echo \"warning: Get an access token from <https://account.mapbox.com/access-tokens/>, then create a new file at $token_file or $token_file2 that contains the access token.\"\nfi\n";
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		37379908258E619400711EDA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -884,6 +843,7 @@
 				45B00000000000000000000E /* MapLayerContract.swift in Sources */,
 				45B000000000000000000011 /* MapFeatureBounds.swift in Sources */,
 				45B000000000000000000014 /* MapFeatureCardModel.swift in Sources */,
+				45B00000000000000000002C /* MapUnavailableOverlay.swift in Sources */,
 				452F75FD2EEEC7F000F65113 /* Region.swift in Sources */,
 				45AA00022F97000100010001 /* AcknowledgementCatalog.swift in Sources */,
 				45AA00072F97000200010001 /* AcknowledgementsView.swift in Sources */,
@@ -909,7 +869,7 @@
 				039FFC8F2F379ECF00A5E597 /* Boulder.swift in Sources */,
 				37C8D3C325ABA6FB002FBDCF /* SettingsView.swift in Sources */,
 				37379917258E619400711EDA /* SceneDelegate.swift in Sources */,
-				03C104EA290ACC1A007A94D7 /* MapboxViewController.swift in Sources */,
+				03C104EA290ACC1A007A94D7 /* MapLibreViewController.swift in Sources */,
 				37379919258E619400711EDA /* Poi.swift in Sources */,
 				031EE76D2F1A35E700FCC590 /* GradeLabelView.swift in Sources */,
 				3737991A258E619400711EDA /* CircleView.swift in Sources */,
@@ -943,7 +903,7 @@
 				03C104F8290C0688007A94D7 /* ContentView.swift in Sources */,
 				37379924258E619400711EDA /* GradeRange.swift in Sources */,
 				37379926258E619400711EDA /* Grade.swift in Sources */,
-				03C104ED290ACDC6007A94D7 /* MapboxView.swift in Sources */,
+				03C104ED290ACDC6007A94D7 /* MapLibreView.swift in Sources */,
 				033F70DF291959FF000DD3F4 /* TopAreasDryFast.swift in Sources */,
 				03FD89942D8DB18000B7FAD9 /* Bundle+AppVersion.swift in Sources */,
 				037AF0352C538F2700AB9392 /* ClusterViewWithActionsheet.swift in Sources */,
@@ -989,6 +949,7 @@
 				45B00000000000000000000F /* MapLayerContract.swift in Sources */,
 				45B000000000000000000012 /* MapFeatureBounds.swift in Sources */,
 				45B000000000000000000015 /* MapFeatureCardModel.swift in Sources */,
+				45B00000000000000000002D /* MapUnavailableOverlay.swift in Sources */,
 				452F75FE2EEEC7F000F65113 /* Region.swift in Sources */,
 				45AA00012F97000100010001 /* AcknowledgementCatalog.swift in Sources */,
 				45AA00062F97000200010001 /* AcknowledgementsView.swift in Sources */,
@@ -1015,7 +976,7 @@
 				03502F732E263ACC00E8319E /* ZoomableScrollView.swift in Sources */,
 				039FFC8E2F379ECF00A5E597 /* Boulder.swift in Sources */,
 				3794555F25AB6DC9009C47A4 /* SettingsView.swift in Sources */,
-				03C104E9290ACC1A007A94D7 /* MapboxViewController.swift in Sources */,
+				03C104E9290ACC1A007A94D7 /* MapLibreViewController.swift in Sources */,
 				37A8C62C2453263300DC161F /* SceneDelegate.swift in Sources */,
 				0314989A2B4FEF4B0014C883 /* SafariWebView.swift in Sources */,
 				031EE76E2F1A35E700FCC590 /* GradeLabelView.swift in Sources */,
@@ -1051,7 +1012,7 @@
 				37254DE925557F9700264034 /* GradeRange.swift in Sources */,
 				038F7F4A2C3A8CC500AE7028 /* DownloadButtonView.swift in Sources */,
 				37A8C80F245326F200DC161F /* Grade.swift in Sources */,
-				03C104EC290ACDC6007A94D7 /* MapboxView.swift in Sources */,
+				03C104EC290ACDC6007A94D7 /* MapLibreView.swift in Sources */,
 				03C5A3612C4F9E750057C42A /* Downloader.swift in Sources */,
 				031A4C9629673C90002CBF52 /* FlowLayout.swift in Sources */,
 				039A22A6295F21FA0096E137 /* AreaProblemsView.swift in Sources */,
@@ -1446,12 +1407,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		03C104E2290ACB85007A94D7 /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */ = {
+		03C104E2290ACB85007A94D7 /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/mapbox/mapbox-maps-ios.git";
+			repositoryURL = "https://github.com/maplibre/maplibre-gl-native-distribution.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 11.13.0;
+				minimumVersion = 6.10.0;
 			};
 		};
 		03C104F1290BFBCE007A94D7 /* XCRemoteSwiftPackageReference "SQLite.swift" */ = {
@@ -1465,15 +1426,15 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		03C104E3290ACB85007A94D7 /* MapboxMaps */ = {
+		03C104E3290ACB85007A94D7 /* MapLibre */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 03C104E2290ACB85007A94D7 /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */;
-			productName = MapboxMaps;
+			package = 03C104E2290ACB85007A94D7 /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */;
+			productName = MapLibre;
 		};
-		03C104E5290ACBC9007A94D7 /* MapboxMaps */ = {
+		03C104E5290ACBC9007A94D7 /* MapLibre */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 03C104E2290ACB85007A94D7 /* XCRemoteSwiftPackageReference "mapbox-maps-ios" */;
-			productName = MapboxMaps;
+			package = 03C104E2290ACB85007A94D7 /* XCRemoteSwiftPackageReference "maplibre-gl-native-distribution" */;
+			productName = MapLibre;
 		};
 		03C104F2290BFBCE007A94D7 /* SQLite */ = {
 			isa = XCSwiftPackageProductDependency;

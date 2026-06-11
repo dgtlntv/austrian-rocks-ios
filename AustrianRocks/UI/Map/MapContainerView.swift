@@ -26,7 +26,14 @@ struct MapContainerView: View {
         @Bindable var mapState = mapState
         
         ZStack {
-            mapbox
+            mapLibre
+
+            if let mapUnavailableMessage = mapState.mapUnavailableMessage {
+                MapUnavailableOverlay(message: mapUnavailableMessage) {
+                    mapState.requestMapRetry()
+                }
+                .zIndex(5)
+            }
 
             // fake view acting as an anchor point for poi sheet
             Color.clear.frame(width: 10, height: 10).allowsHitTesting(false)
@@ -70,9 +77,9 @@ struct MapContainerView: View {
         }
     }
     
-    var mapbox : some View {
+    var mapLibre : some View {
         @Bindable var mapState = mapState
-        return MapboxView(mapState: mapState)
+        return MapLibreView(mapState: mapState)
             .modify {
                 if #available(iOS 26, *) {
                     $0.edgesIgnoringSafeArea(.vertical)

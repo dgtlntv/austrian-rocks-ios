@@ -1,5 +1,5 @@
 //
-//  MapboxView.swift
+//  MapLibreView.swift
 //  Austrian.rocks
 //
 //  Created by Nicolas Mondollot on 27/10/2022.
@@ -8,26 +8,26 @@
 
 import SwiftUI
 import CoreLocation
-import MapboxMaps
+import MapLibre
 import Combine
 
-// Bridge between SwiftUI-world (driven by MapState) and UIKit-world (MapboxViewController)
-// 2 ways to communicate:
-// SwiftUI -> UIKit : MapboxView.updateUIViewController
-// UIKit -> SwiftUI : MapBoxViewDelegate protocol
-
-struct MapboxView: UIViewControllerRepresentable {
+// Bridge between SwiftUI-world (driven by MapState) and UIKit-world (MapLibreViewController).
+// SwiftUI -> UIKit: MapLibreView.updateUIViewController
+// UIKit -> SwiftUI: MapLibreViewDelegate protocol
+struct MapLibreView: UIViewControllerRepresentable {
     var mapState: MapState
-    
-    func makeUIViewController(context: Context) -> MapboxViewController {
-        let vc = MapboxViewController()
+
+    func makeUIViewController(context: Context) -> MapLibreViewController {
+        let vc = MapLibreViewController()
         vc.delegate = context.coordinator
         context.coordinator.viewController = vc
         return vc
     }
-    
-    func updateUIViewController(_ vc: MapboxViewController, context: Context) {
-        // Pass pre-cached topo problem IDs so setProblemAsSelected never hits SQLite
+
+    func updateUIViewController(_ vc: MapLibreViewController, context: Context) {
+        vc.retryToken = mapState.mapRetryCount
+
+        // Pass pre-cached topo problem IDs so setProblemAsSelected never hits SQLite.
         if let topoId = mapState.selectedTopo?.id {
             vc.selectedTopoProblemIds = mapState.boulderProblems
                 .filter { $0.topoId == topoId }
@@ -35,11 +35,10 @@ struct MapboxView: UIViewControllerRepresentable {
         } else {
             vc.selectedTopoProblemIds = []
         }
-        
-        // Handle selection changes (problem or topo)
+
         let selectedId = mapState.selectedProblem?.id ?? 0
         let isTopoMode = mapState.selectedTopo != nil
-        
+
         if context.coordinator.lastSelectedProblemId != selectedId || context.coordinator.lastIsTopoMode != isTopoMode {
             context.coordinator.lastSelectedProblemId = selectedId
             context.coordinator.lastIsTopoMode = isTopoMode
@@ -47,8 +46,7 @@ struct MapboxView: UIViewControllerRepresentable {
                 vc.setProblemAsSelected(problemFeatureId: String(selectedId))
             }
         }
-        
-        // Handle centerOnProblem changes
+
         if let centerOnProblem = mapState.centerOnProblem {
             let centerOnProblemId = centerOnProblem.id
             if context.coordinator.lastCenterOnProblemId != centerOnProblemId {
@@ -56,8 +54,7 @@ struct MapboxView: UIViewControllerRepresentable {
                 vc.centerOnProblem(centerOnProblem)
             }
         }
-        
-        // Handle centerOnArea changes
+
         if let centerOnArea = mapState.centerOnArea {
             let centerOnAreaId = centerOnArea.id
             if context.coordinator.lastCenterOnAreaId != centerOnAreaId {
@@ -65,36 +62,31 @@ struct MapboxView: UIViewControllerRepresentable {
                 vc.centerOnArea(centerOnArea)
             }
         }
-        
-        // Handle centerOnCurrentLocation changes
+
         if mapState.currentLocationCount != context.coordinator.lastCurrentLocationCount {
             context.coordinator.lastCurrentLocationCount = mapState.currentLocationCount
             vc.centerOnCurrentLocation()
         }
 
-        // Handle centerOnBoulder changes
         if mapState.centerOnBoulderCount != context.coordinator.lastCenterOnBoulderCount {
             context.coordinator.lastCenterOnBoulderCount = mapState.centerOnBoulderCount
             vc.centerOnBoulderCoordinates(mapState.centerOnBoulderCoordinates)
         }
 
-        // Handle refreshFilters changes
         if mapState.refreshFiltersCount != context.coordinator.lastRefreshFiltersCount {
             context.coordinator.lastRefreshFiltersCount = mapState.refreshFiltersCount
             vc.applyFilters(mapState.filters)
         }
     }
-    
+
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
-    
-    // MARK: Coordinator
-    
-    class Coordinator: MapBoxViewDelegate {
-        var parent: MapboxView
-        var viewController: MapboxViewController?
-        
+
+    final class Coordinator: MapLibreViewDelegate {
+        var parent: MapLibreView
+        var viewController: MapLibreViewController?
+
         var lastSelectedProblemId: Int = 0
         var lastCenterOnProblemId: Int = 0
         var lastCenterOnAreaId: Int = 0
@@ -103,23 +95,23 @@ struct MapboxView: UIViewControllerRepresentable {
         var lastIsTopoMode: Bool = false
         var lastCenterOnBoulderCount: Int = 0
 
-        init(_ parent: MapboxView) {
+        init(_ parent: MapLibreView) {
             self.parent = parent
         }
-        
+
         func selectProblem(id: Int) {
             if let problem = Problem.load(id: id) {
                 parent.mapState.selectProblem(problem, source: .map)
                 parent.mapState.presentProblemDetails = true
             }
         }
-        
+
         func selectArea(id: Int) {
             if let area = Area.load(id: id) {
                 parent.mapState.selectArea(area)
             }
         }
-        
+
         func selectCluster(id: Int) {
             if let cluster = Cluster.load(id: id) {
                 parent.mapState.selectCluster(cluster)
@@ -135,25 +127,30 @@ struct MapboxView: UIViewControllerRepresentable {
         func unselectArea() {
             parent.mapState.unselectArea()
         }
-        
+
         func unselectCluster() {
             parent.mapState.unselectCluster()
         }
 
-        func selectPoi(name: String, location: CLLocationCoordinate2D, googleUrl: String) {
-            // FIXME: use short name or long name?
-            // FIXME: don't use id=0
+        func selectPoi(name: String, location: CLLocationCoordinate2D, googleUrl: String?) {
             let poi = Poi(id: 0, type: .parking, name: name, shortName: name, googleUrl: googleUrl, coordinate: location)
             parent.mapState.selectedPoi = poi
         }
-        
+
         func dismissProblemDetails() {
             parent.mapState.presentProblemDetails = false
         }
-        
-        func cameraChanged(state: MapboxMaps.CameraState) {
-            // TODO: deal with padding
+
+        func cameraChanged(state: MapLibreCameraState) {
             parent.mapState.updateCameraState(center: state.center, zoom: state.zoom)
+        }
+
+        func mapBecameAvailable() {
+            parent.mapState.markMapAvailable()
+        }
+
+        func mapBecameUnavailable(message: String) {
+            parent.mapState.markMapUnavailable(message)
         }
     }
 }

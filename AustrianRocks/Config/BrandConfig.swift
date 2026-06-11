@@ -47,27 +47,6 @@ struct BrandConfig {
         static let lastKnownStyleCacheKey = "mapTiles.lastKnownStyle"
     }
 
-    struct Mapbox {
-        static let account = "dgtlntv"
-        static let styleID = "cmi0wnif6004t01r0araj0ts0"
-        // TODO: create a dedicated dark-mode style; for now, fall back to the light style.
-        static let darkStyleID = styleID
-        static let problemsTilesetID = "95ifk802"
-        static let problemsSourceLayer = "problems_8-85f5eq"
-
-        static var styleURL: String {
-            "mapbox://styles/\(account)/\(styleID)"
-        }
-
-        static var darkStyleURL: String {
-            "mapbox://styles/\(account)/\(darkStyleID)"
-        }
-
-        static var problemsTilesetURL: String {
-            "mapbox://\(account).\(problemsTilesetID)"
-        }
-    }
-
     struct Database {
         static let filename = "austrian-rocks"
     }

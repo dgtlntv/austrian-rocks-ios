@@ -23,6 +23,8 @@ class MapState {
     var selectedPoi: Poi? = nil
     var filters: Filters = Filters()
     private(set) var refreshFiltersCount: Int = 0
+    private(set) var mapUnavailableMessage: String? = nil
+    private(set) var mapRetryCount: Int = 0
 
     var presentProblemDetails = false
     var presentFilters = false
@@ -108,6 +110,19 @@ class MapState {
     
     func centerOnCurrentLocation() {
         currentLocationCount += 1
+    }
+
+    func requestMapRetry() {
+        mapUnavailableMessage = nil
+        mapRetryCount += 1
+    }
+
+    func markMapUnavailable(_ message: String) {
+        mapUnavailableMessage = message
+    }
+
+    func markMapAvailable() {
+        mapUnavailableMessage = nil
     }
     
     func requestTopoFullScreenPresentation() {

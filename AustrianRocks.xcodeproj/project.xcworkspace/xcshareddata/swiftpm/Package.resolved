@@ -1,31 +1,13 @@
 {
-  "originHash" : "663d61215403232efd7b15a1215b9af8ee4443f97166337fd093f7d19371a8be",
+  "originHash" : "fdf92ad8c9922d77d4030f2150bf3ea7f204167cf9efae20289dc808debd2e0b",
   "pins" : [
     {
-      "identity" : "mapbox-common-ios",
+      "identity" : "maplibre-gl-native-distribution",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mapbox/mapbox-common-ios.git",
+      "location" : "https://github.com/maplibre/maplibre-gl-native-distribution.git",
       "state" : {
-        "revision" : "75b31c67a8fdaa9ded07701f92a744cc3480fc5c",
-        "version" : "24.19.0"
-      }
-    },
-    {
-      "identity" : "mapbox-core-maps-ios",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mapbox/mapbox-core-maps-ios.git",
-      "state" : {
-        "revision" : "08eafe5c6dd0bb54df218ce4340ceceaf3a64ce1",
-        "version" : "11.19.0"
-      }
-    },
-    {
-      "identity" : "mapbox-maps-ios",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mapbox/mapbox-maps-ios.git",
-      "state" : {
-        "revision" : "3605c262e9da9d4059fb32132718640c998dba8b",
-        "version" : "11.19.0"
+        "revision" : "84a79bc375a301169390ac110c868f06c857b83f",
+        "version" : "6.27.0"
       }
     },
     {
@@ -35,15 +17,6 @@
       "state" : {
         "revision" : "0c08856385fe24f7b76d8c51842d78a196e8e817",
         "version" : "0.15.5"
-      }
-    },
-    {
-      "identity" : "turf-swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mapbox/turf-swift.git",
-      "state" : {
-        "revision" : "bf840e6b9529d105687840fe2c9dcd74197d46d1",
-        "version" : "4.0.0"
       }
     }
   ],
