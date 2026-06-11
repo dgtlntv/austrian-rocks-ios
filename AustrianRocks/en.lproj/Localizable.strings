@@ -17,6 +17,22 @@
 "poi.cancel" = "Cancel";
 "poi.gps_coordinates_for_poi" = "%@ : %@,%@";
 
+// MARK: Map cards
+"map.card.show_on_map" = "Show on map";
+"map.card.details" = "Details";
+"map.card.details_unavailable" = "Details unavailable";
+"map.card.directions" = "Directions";
+"map.card.warning" = "Warning";
+"map.card.guidebook" = "Guidebook";
+"map.card.problems" = "problems";
+"map.card.grade_distribution" = "Grade distribution";
+"map.card.close" = "Close";
+"map.unavailable.title" = "Map unavailable";
+"map.unavailable.message" = "The map could not be loaded right now. You can keep using the rest of the app and try again.";
+"map.unavailable.retry" = "Retry";
+"map.poi_type.parking" = "Parking";
+"map.poi_type.train_station" = "Train station";
+
 // MARK: Filters
 "filters.title" = "Filters";
 "filters.level" = "Level";

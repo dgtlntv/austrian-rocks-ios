@@ -1,10 +1,10 @@
 # State
-- Updated: 2026-06-11 (0005 plan awaiting approval)
-- Current focus: 0005 migrate-ios-from-mapbox-to-maplibre — plan awaiting approval
+- Updated: 2026-06-11 (0005 phase 0005-P1 awaiting review)
+- Current focus: 0005 migrate-ios-from-mapbox-to-maplibre — review 0005-P1
 
 ## Active
 <!-- One line per active item: <id> <slug> — <stage> (Pn/total) -->
-- 0005 migrate-ios-from-mapbox-to-maplibre — plan
+- 0005 migrate-ios-from-mapbox-to-maplibre — review (P1/5)
 
 ## Cross-cutting notes / blockers
 - none

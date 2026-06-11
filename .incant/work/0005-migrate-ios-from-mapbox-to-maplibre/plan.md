@@ -3,8 +3,8 @@ id: "0005"
 slug: migrate-ios-from-mapbox-to-maplibre
 branch: incant/0005-migrate-ios-from-mapbox-to-maplibre
 title: Migrate iOS From Mapbox To MapLibre
-stage: plan
-status: awaiting-approval
+stage: review
+status: phase-0005-P1-complete
 created: 2026-06-11
 commit: 3e3720ef
 updated: 2026-06-11
@@ -13,10 +13,13 @@ updated: 2026-06-11
 # Migrate iOS From Mapbox To MapLibre — plan
 
 ## Status
-- Phase: 0005-P1 (of 5) · stage: plan
+- Phase: 0005-P1 complete (of 5) · stage: review
 - Branch: incant/0005-migrate-ios-from-mapbox-to-maplibre
-- Next: human approval, then `/incant:implement 0005` starting with phase 0005-P1.
+- Next: `/incant:review 0005` for the 0005-P1 phase gate.
 - Blockers: none.
+- Quality gate evidence (2026-06-11):
+  - `xcodebuild test -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'platform=iOS Simulator,name=iPhone 16' -only-testing:AustrianRocksTests` could not start because this Xcode install has iPhone 16 only at OS 18.3.1 while `OS:latest` resolves to a newer unavailable runtime.
+  - Equivalent available-destination gate passed: `xcodebuild test -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.3.1' -only-testing:AustrianRocksTests` → **TEST SUCCEEDED**, 16 tests passed, and the existing Mapbox-based app target built during the test action. A local ignored `AustrianRocks/Config/Secrets.xcconfig` was copied from `Secrets.sample.xcconfig` to satisfy the existing project base configuration.
 - Key decisions:
   - The spec commit `0c9dd19c` is one commit behind current HEAD `3e3720ef`; the intervening changes are incant artifacts only, so no app or Rails code invalidates the spec.
   - Use the Rails manifest at `https://tiles.austrian.rocks/map_tiles/current.json` and load `styles.light` or `styles.dark`; do not add an iOS PMTiles adapter because MapLibre Native iOS 6.10.0+ handles `pmtiles://https://...` style sources.
@@ -61,18 +64,18 @@ updated: 2026-06-11
 ## Phase 0005-P1 — pure map contract support and tests
 Goal: add the pure Swift seams for manifest loading, style fallback, tile-property parsing, localization, safe URLs, and missing-detail behavior before touching the map engine.
 
-- [ ] Step 1: read `AustrianRocks/Config/BrandConfig.swift`, `AustrianRocks/UI/Map/MapState.swift`, `AustrianRocks/UI/Map/PoiActionSheet.swift`, `AustrianRocks/Models/Poi.swift`, `AustrianRocks/en.lproj/Localizable.strings`, and `AustrianRocks/de.lproj/Localizable.strings` before editing.
-- [ ] Step 2: add `BrandConfig.MapTiles` to `AustrianRocks/Config/BrandConfig.swift` with `manifestURL = URL(string: "https://tiles.austrian.rocks/map_tiles/current.json")!`, `lastKnownManifestCacheKey = "mapTiles.lastKnownManifest"`, and `lastKnownStyleCacheKey = "mapTiles.lastKnownStyle"`; leave `BrandConfig.Mapbox` in place for this phase so the existing app still builds.
-- [ ] Step 3: create `AustrianRocks/UI/Map/MapStyleChoice.swift` with `enum MapStyleChoice { case light, dark }`, `init(userInterfaceStyle: UIUserInterfaceStyle)`, and `manifestKey` returning `"light"` or `"dark"`.
-- [ ] Step 4: create `AustrianRocks/UI/Map/MapTileManifest.swift` with `Decodable` structs for `version`, `pmtilesUrl`, `spriteUrl`, `styles.light`, `styles.dark`, `publishedAt`, URL validation that accepts only HTTP(S) manifest/style/sprite/PMTiles URLs, and `styleURL(for:)` that throws a typed error when a style is missing or invalid.
-- [ ] Step 5: create `AustrianRocks/UI/Map/MapTileManifestClient.swift` with `func fetchManifest(from url: URL) async throws -> MapTileManifest` using `URLRequest(cachePolicy: .reloadIgnoringLocalAndRemoteCacheData)`, status-code validation, and injected `URLSession`/data-loader closure for tests.
-- [ ] Step 6: create `AustrianRocks/UI/Map/MapTileStyleCache.swift` with `recordSuccess(manifest:choice:styleURL:)`, `lastKnownStyle(for:)`, and `clear()` backed by injected `UserDefaults`; persist the manifest JSON and chosen style URL without storing secrets.
-- [ ] Step 7: create `AustrianRocks/UI/Map/MapLayerContract.swift` containing source id `austrian-rocks`, layer ids `problems`, `boulders`, `areas`, `areas-hulls`, `clusters`, `cluster-hulls`, `regions`, `region-hulls`, `pois`, selected-layer ids, id property names, and `clearedSentinel = -1`.
-- [ ] Step 8: create `AustrianRocks/UI/Map/MapFeatureBounds.swift` to parse numeric `southWestLat`, `southWestLon`, `northEastLat`, `northEastLon`, prefer `mainClusterSouthWestLat/Lon` and `mainClusterNorthEastLat/Lon` for region show-on-map when valid, and reject missing/non-finite values.
-- [ ] Step 9: create `AustrianRocks/UI/Map/MapFeatureCardModel.swift` that builds region/cluster/area/POI card models from `[String: Any]` tile properties: localized title uses `nameEn` for English when present otherwise `name`; optional rows are omitted when absent; histogram JSON is parsed into ordered grade entries; guidebook/parking/Google links use HTTP(S)-only URL validation; secondary detail availability checks `Region.load`, `Cluster.load`, or `Area.load` by id without force-unwrapping.
-- [ ] Step 10: edit `AustrianRocks/Models/Poi.swift` so non-SQLite POI card values can represent `googleUrl` as optional while existing `Poi.load` still fills SQLite POIs with their stored URL.
-- [ ] Step 11: add English and German localization keys for `map.card.show_on_map`, `map.card.details`, `map.card.details_unavailable`, `map.card.directions`, `map.card.warning`, `map.card.guidebook`, `map.card.problems`, `map.card.grade_distribution`, `map.card.close`, `map.unavailable.title`, `map.unavailable.message`, `map.unavailable.retry`, `map.poi_type.parking`, and `map.poi_type.train_station`.
-- [ ] Step 12: add `AustrianRocksTests` XCTest target to `AustrianRocks.xcodeproj/project.pbxproj` and `AustrianRocks.xcodeproj/xcshareddata/xcschemes/AustrianRocks.xcscheme`, then create `AustrianRocksTests/MapTileManifestTests.swift`, `AustrianRocksTests/MapTileStyleCacheTests.swift`, `AustrianRocksTests/MapFeatureCardModelTests.swift`, `AustrianRocksTests/SafeURLTests.swift`, and `AustrianRocksTests/MissingDetailActionTests.swift` covering the pure seams from the spec.
+- [x] Step 1: read `AustrianRocks/Config/BrandConfig.swift`, `AustrianRocks/UI/Map/MapState.swift`, `AustrianRocks/UI/Map/PoiActionSheet.swift`, `AustrianRocks/Models/Poi.swift`, `AustrianRocks/en.lproj/Localizable.strings`, and `AustrianRocks/de.lproj/Localizable.strings` before editing.
+- [x] Step 2: add `BrandConfig.MapTiles` to `AustrianRocks/Config/BrandConfig.swift` with `manifestURL = URL(string: "https://tiles.austrian.rocks/map_tiles/current.json")!`, `lastKnownManifestCacheKey = "mapTiles.lastKnownManifest"`, and `lastKnownStyleCacheKey = "mapTiles.lastKnownStyle"`; leave `BrandConfig.Mapbox` in place for this phase so the existing app still builds.
+- [x] Step 3: create `AustrianRocks/UI/Map/MapStyleChoice.swift` with `enum MapStyleChoice { case light, dark }`, `init(userInterfaceStyle: UIUserInterfaceStyle)`, and `manifestKey` returning `"light"` or `"dark"`.
+- [x] Step 4: create `AustrianRocks/UI/Map/MapTileManifest.swift` with `Decodable` structs for `version`, `pmtilesUrl`, `spriteUrl`, `styles.light`, `styles.dark`, `publishedAt`, URL validation that accepts only HTTP(S) manifest/style/sprite/PMTiles URLs, and `styleURL(for:)` that throws a typed error when a style is missing or invalid.
+- [x] Step 5: create `AustrianRocks/UI/Map/MapTileManifestClient.swift` with `func fetchManifest(from url: URL) async throws -> MapTileManifest` using `URLRequest(cachePolicy: .reloadIgnoringLocalAndRemoteCacheData)`, status-code validation, and injected `URLSession`/data-loader closure for tests.
+- [x] Step 6: create `AustrianRocks/UI/Map/MapTileStyleCache.swift` with `recordSuccess(manifest:choice:styleURL:)`, `lastKnownStyle(for:)`, and `clear()` backed by injected `UserDefaults`; persist the manifest JSON and chosen style URL without storing secrets.
+- [x] Step 7: create `AustrianRocks/UI/Map/MapLayerContract.swift` containing source id `austrian-rocks`, layer ids `problems`, `boulders`, `areas`, `areas-hulls`, `clusters`, `cluster-hulls`, `regions`, `region-hulls`, `pois`, selected-layer ids, id property names, and `clearedSentinel = -1`.
+- [x] Step 8: create `AustrianRocks/UI/Map/MapFeatureBounds.swift` to parse numeric `southWestLat`, `southWestLon`, `northEastLat`, `northEastLon`, prefer `mainClusterSouthWestLat/Lon` and `mainClusterNorthEastLat/Lon` for region show-on-map when valid, and reject missing/non-finite values.
+- [x] Step 9: create `AustrianRocks/UI/Map/MapFeatureCardModel.swift` that builds region/cluster/area/POI card models from `[String: Any]` tile properties: localized title uses `nameEn` for English when present otherwise `name`; optional rows are omitted when absent; histogram JSON is parsed into ordered grade entries; guidebook/parking/Google links use HTTP(S)-only URL validation; secondary detail availability checks `Region.load`, `Cluster.load`, or `Area.load` by id without force-unwrapping.
+- [x] Step 10: edit `AustrianRocks/Models/Poi.swift` so non-SQLite POI card values can represent `googleUrl` as optional while existing `Poi.load` still fills SQLite POIs with their stored URL.
+- [x] Step 11: add English and German localization keys for `map.card.show_on_map`, `map.card.details`, `map.card.details_unavailable`, `map.card.directions`, `map.card.warning`, `map.card.guidebook`, `map.card.problems`, `map.card.grade_distribution`, `map.card.close`, `map.unavailable.title`, `map.unavailable.message`, `map.unavailable.retry`, `map.poi_type.parking`, and `map.poi_type.train_station`.
+- [x] Step 12: add `AustrianRocksTests` XCTest target to `AustrianRocks.xcodeproj/project.pbxproj` and `AustrianRocks.xcodeproj/xcshareddata/xcschemes/AustrianRocks.xcscheme`, then create `AustrianRocksTests/MapTileManifestTests.swift`, `AustrianRocksTests/MapTileStyleCacheTests.swift`, `AustrianRocksTests/MapFeatureCardModelTests.swift`, `AustrianRocksTests/SafeURLTests.swift`, and `AustrianRocksTests/MissingDetailActionTests.swift` covering the pure seams from the spec.
 
 **Quality gate:** `xcodebuild test -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'platform=iOS Simulator,name=iPhone 16' -only-testing:AustrianRocksTests` → the new XCTest target builds, all pure map-support tests pass, and the existing Mapbox-based app target still builds during the test action.
 

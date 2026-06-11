@@ -213,7 +213,36 @@
 		45AA00072F97000200010001 /* AcknowledgementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45AA00082F97000200010001 /* AcknowledgementsView.swift */; };
 		45AA00042F97000100010001 /* Acknowledgements.json in Resources */ = {isa = PBXBuildFile; fileRef = 45AA00032F97000100010001 /* Acknowledgements.json */; };
 		45AA00052F97000100010001 /* Acknowledgements.json in Resources */ = {isa = PBXBuildFile; fileRef = 45AA00032F97000100010001 /* Acknowledgements.json */; };
+		45B000000000000000000002 /* MapStyleChoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000001 /* MapStyleChoice.swift */; };
+		45B000000000000000000003 /* MapStyleChoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000001 /* MapStyleChoice.swift */; };
+		45B000000000000000000005 /* MapTileManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000004 /* MapTileManifest.swift */; };
+		45B000000000000000000006 /* MapTileManifest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000004 /* MapTileManifest.swift */; };
+		45B000000000000000000008 /* MapTileManifestClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000007 /* MapTileManifestClient.swift */; };
+		45B000000000000000000009 /* MapTileManifestClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000007 /* MapTileManifestClient.swift */; };
+		45B00000000000000000000B /* MapTileStyleCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B00000000000000000000A /* MapTileStyleCache.swift */; };
+		45B00000000000000000000C /* MapTileStyleCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B00000000000000000000A /* MapTileStyleCache.swift */; };
+		45B00000000000000000000E /* MapLayerContract.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B00000000000000000000D /* MapLayerContract.swift */; };
+		45B00000000000000000000F /* MapLayerContract.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B00000000000000000000D /* MapLayerContract.swift */; };
+		45B000000000000000000011 /* MapFeatureBounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000010 /* MapFeatureBounds.swift */; };
+		45B000000000000000000012 /* MapFeatureBounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000010 /* MapFeatureBounds.swift */; };
+		45B000000000000000000014 /* MapFeatureCardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000013 /* MapFeatureCardModel.swift */; };
+		45B000000000000000000015 /* MapFeatureCardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000013 /* MapFeatureCardModel.swift */; };
+		45B000000000000000000022 /* MapTileManifestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000021 /* MapTileManifestTests.swift */; };
+		45B000000000000000000024 /* MapTileStyleCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000023 /* MapTileStyleCacheTests.swift */; };
+		45B000000000000000000026 /* MapFeatureCardModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000025 /* MapFeatureCardModelTests.swift */; };
+		45B000000000000000000028 /* SafeURLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000027 /* SafeURLTests.swift */; };
+		45B00000000000000000002A /* MissingDetailActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000029 /* MissingDetailActionTests.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		45B00000000000000000001F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 37A8C61E2453263300DC161F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 37A8C6252453263300DC161F;
+			remoteInfo = AustrianRocks;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		030738982F1BD3960034B178 /* SegmentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentType.swift; sourceTree = "<group>"; };
@@ -323,6 +352,19 @@
 		45AA00002F97000100010001 /* AcknowledgementCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcknowledgementCatalog.swift; sourceTree = "<group>"; };
 		45AA00032F97000100010001 /* Acknowledgements.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Acknowledgements.json; sourceTree = "<group>"; };
 		45AA00082F97000200010001 /* AcknowledgementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcknowledgementsView.swift; sourceTree = "<group>"; };
+		45B000000000000000000001 /* MapStyleChoice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStyleChoice.swift; sourceTree = "<group>"; };
+		45B000000000000000000004 /* MapTileManifest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTileManifest.swift; sourceTree = "<group>"; };
+		45B000000000000000000007 /* MapTileManifestClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTileManifestClient.swift; sourceTree = "<group>"; };
+		45B00000000000000000000A /* MapTileStyleCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTileStyleCache.swift; sourceTree = "<group>"; };
+		45B00000000000000000000D /* MapLayerContract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapLayerContract.swift; sourceTree = "<group>"; };
+		45B000000000000000000010 /* MapFeatureBounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapFeatureBounds.swift; sourceTree = "<group>"; };
+		45B000000000000000000013 /* MapFeatureCardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapFeatureCardModel.swift; sourceTree = "<group>"; };
+		45B000000000000000000016 /* AustrianRocksTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AustrianRocksTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		45B000000000000000000021 /* MapTileManifestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTileManifestTests.swift; sourceTree = "<group>"; };
+		45B000000000000000000023 /* MapTileStyleCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapTileStyleCacheTests.swift; sourceTree = "<group>"; };
+		45B000000000000000000025 /* MapFeatureCardModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapFeatureCardModelTests.swift; sourceTree = "<group>"; };
+		45B000000000000000000027 /* SafeURLTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeURLTests.swift; sourceTree = "<group>"; };
+		45B000000000000000000029 /* MissingDetailActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissingDetailActionTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -341,6 +383,13 @@
 			files = (
 				03C104F3290BFBCE007A94D7 /* SQLite in Frameworks */,
 				03C104E4290ACB85007A94D7 /* MapboxMaps in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		45B00000000000000000001A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -419,6 +468,13 @@
 			children = (
 				038C2EF029201152006581CD /* MapContainerView.swift */,
 				031F36AF291CE56100BD0C2B /* MapState.swift */,
+				45B000000000000000000001 /* MapStyleChoice.swift */,
+				45B000000000000000000004 /* MapTileManifest.swift */,
+				45B000000000000000000007 /* MapTileManifestClient.swift */,
+				45B00000000000000000000A /* MapTileStyleCache.swift */,
+				45B00000000000000000000D /* MapLayerContract.swift */,
+				45B000000000000000000010 /* MapFeatureBounds.swift */,
+				45B000000000000000000013 /* MapFeatureCardModel.swift */,
 				03C104EB290ACDC6007A94D7 /* MapboxView.swift */,
 				03C104E8290ACC1A007A94D7 /* MapboxViewController.swift */,
 				038F7F432C3A8CC500AE7028 /* Download */,
@@ -493,6 +549,7 @@
 				030A0B3B2BEB852800F4E370 /* PrivacyInfo.xcprivacy */,
 				37AEBCF425A5CEA200E0E04F /* AustrianRocks dev.entitlements */,
 				37A8C6282453263300DC161F /* AustrianRocks */,
+				45B000000000000000000017 /* AustrianRocksTests */,
 				37A8C6272453263300DC161F /* Products */,
 				03817A33272B336F003C21D9 /* Frameworks */,
 			);
@@ -503,6 +560,7 @@
 			children = (
 				37A8C6262453263300DC161F /* AustrianRocks.app */,
 				37379A8E258E619400711EDA /* AustrianRocks dev.app */,
+				45B000000000000000000016 /* AustrianRocksTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -602,6 +660,18 @@
 			path = Config;
 			sourceTree = "<group>";
 		};
+		45B000000000000000000017 /* AustrianRocksTests */ = {
+			isa = PBXGroup;
+			children = (
+				45B000000000000000000021 /* MapTileManifestTests.swift */,
+				45B000000000000000000023 /* MapTileStyleCacheTests.swift */,
+				45B000000000000000000025 /* MapFeatureCardModelTests.swift */,
+				45B000000000000000000027 /* SafeURLTests.swift */,
+				45B000000000000000000029 /* MissingDetailActionTests.swift */,
+			);
+			path = AustrianRocksTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -649,6 +719,26 @@
 			productReference = 37A8C6262453263300DC161F /* AustrianRocks.app */;
 			productType = "com.apple.product-type.application";
 		};
+		45B000000000000000000018 /* AustrianRocksTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 45B00000000000000000001E /* Build configuration list for PBXNativeTarget "AustrianRocksTests" */;
+			buildPhases = (
+				45B000000000000000000019 /* Sources */,
+				45B00000000000000000001A /* Frameworks */,
+				45B00000000000000000001B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				45B000000000000000000020 /* PBXTargetDependency */,
+			);
+			name = AustrianRocksTests;
+			packageProductDependencies = (
+			);
+			productName = AustrianRocksTests;
+			productReference = 45B000000000000000000016 /* AustrianRocksTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -660,6 +750,10 @@
 				LastUpgradeCheck = 1640;
 				ORGANIZATIONNAME = "Austrian.rocks";
 				TargetAttributes = {
+					45B000000000000000000018 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 37A8C6252453263300DC161F;
+					};
 					37A8C6252453263300DC161F = {
 						CreatedOnToolsVersion = 11.4.1;
 					};
@@ -686,6 +780,7 @@
 			targets = (
 				37A8C6252453263300DC161F /* AustrianRocks */,
 				37379907258E619400711EDA /* AustrianRocks dev */,
+				45B000000000000000000018 /* AustrianRocksTests */,
 			);
 		};
 /* End PBXProject section */
@@ -722,6 +817,13 @@
 				45AA00052F97000100010001 /* Acknowledgements.json in Resources */,
 				4551BE322F957D8A0092DF01 /* Secrets.sample.xcconfig in Resources */,
 				4551BE332F957D8A0092DF01 /* Secrets.xcconfig in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		45B00000000000000000001B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -775,6 +877,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				45B000000000000000000002 /* MapStyleChoice.swift in Sources */,
+				45B000000000000000000005 /* MapTileManifest.swift in Sources */,
+				45B000000000000000000008 /* MapTileManifestClient.swift in Sources */,
+				45B00000000000000000000B /* MapTileStyleCache.swift in Sources */,
+				45B00000000000000000000E /* MapLayerContract.swift in Sources */,
+				45B000000000000000000011 /* MapFeatureBounds.swift in Sources */,
+				45B000000000000000000014 /* MapFeatureCardModel.swift in Sources */,
 				452F75FD2EEEC7F000F65113 /* Region.swift in Sources */,
 				45AA00022F97000100010001 /* AcknowledgementCatalog.swift in Sources */,
 				45AA00072F97000200010001 /* AcknowledgementsView.swift in Sources */,
@@ -873,6 +982,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				45B000000000000000000003 /* MapStyleChoice.swift in Sources */,
+				45B000000000000000000006 /* MapTileManifest.swift in Sources */,
+				45B000000000000000000009 /* MapTileManifestClient.swift in Sources */,
+				45B00000000000000000000C /* MapTileStyleCache.swift in Sources */,
+				45B00000000000000000000F /* MapLayerContract.swift in Sources */,
+				45B000000000000000000012 /* MapFeatureBounds.swift in Sources */,
+				45B000000000000000000015 /* MapFeatureCardModel.swift in Sources */,
 				452F75FE2EEEC7F000F65113 /* Region.swift in Sources */,
 				45AA00012F97000100010001 /* AcknowledgementCatalog.swift in Sources */,
 				45AA00062F97000200010001 /* AcknowledgementsView.swift in Sources */,
@@ -968,7 +1084,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		45B000000000000000000019 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				45B000000000000000000022 /* MapTileManifestTests.swift in Sources */,
+				45B000000000000000000024 /* MapTileStyleCacheTests.swift in Sources */,
+				45B000000000000000000026 /* MapFeatureCardModelTests.swift in Sources */,
+				45B000000000000000000028 /* SafeURLTests.swift in Sources */,
+				45B00000000000000000002A /* MissingDetailActionTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		45B000000000000000000020 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 37A8C6252453263300DC161F /* AustrianRocks */;
+			targetProxy = 45B00000000000000000001F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		37A6572724BDC00500273A9A /* Localizable.strings */ = {
@@ -1222,6 +1358,52 @@
 			};
 			name = Release;
 		};
+		45B00000000000000000001C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = V2WDCKYGR5;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.maxblazek.austrian-rocks-tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AustrianRocks.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AustrianRocks";
+			};
+			name = Debug;
+		};
+		45B00000000000000000001D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = V2WDCKYGR5;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.maxblazek.austrian-rocks-tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AustrianRocks.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AustrianRocks";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1248,6 +1430,15 @@
 			buildConfigurations = (
 				37A8C63B2453263400DC161F /* Debug */,
 				37A8C63C2453263400DC161F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		45B00000000000000000001E /* Build configuration list for PBXNativeTarget "AustrianRocksTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				45B00000000000000000001C /* Debug */,
+				45B00000000000000000001D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

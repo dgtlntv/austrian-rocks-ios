@@ -14,7 +14,7 @@ struct Poi : Identifiable {
     let type: PoiType
     let name: String
     let shortName: String
-    let googleUrl: String
+    let googleUrl: String?
     let coordinate: CLLocationCoordinate2D
     
     enum PoiType {

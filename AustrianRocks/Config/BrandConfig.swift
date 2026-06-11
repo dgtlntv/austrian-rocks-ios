@@ -41,6 +41,12 @@ struct BrandConfig {
         }
     }
 
+    struct MapTiles {
+        static let manifestURL = URL(string: "https://tiles.austrian.rocks/map_tiles/current.json")!
+        static let lastKnownManifestCacheKey = "mapTiles.lastKnownManifest"
+        static let lastKnownStyleCacheKey = "mapTiles.lastKnownStyle"
+    }
+
     struct Mapbox {
         static let account = "dgtlntv"
         static let styleID = "cmi0wnif6004t01r0araj0ts0"
