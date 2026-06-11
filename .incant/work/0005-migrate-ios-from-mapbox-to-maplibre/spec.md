@@ -4,7 +4,7 @@ slug: migrate-ios-from-mapbox-to-maplibre
 branch: incant/0005-migrate-ios-from-mapbox-to-maplibre
 title: Migrate iOS From Mapbox To MapLibre
 stage: spec
-status: awaiting-approval
+status: approved
 created: 2026-06-11
 commit: 0c9dd19c
 updated: 2026-06-11
