@@ -1,3 +1,3 @@
 # Inbox
 <!-- Append one bullet per idea. No IDs, no order. Triage empties this. -->
-- 2026-05-30 When replacing Mapbox with MapLibre, update in-app acknowledgements/third-party licenses from Mapbox Maps SDK to MapLibre attribution/license entries.
+- Add a shared data release/version contract so Rails live DB, Rails-published PMTiles manifests, and the bundled iOS SQLite database expose comparable content versions; clients should detect mismatches and degrade gracefully instead of assuming tile IDs and local records are always in sync.
