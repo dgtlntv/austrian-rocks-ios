@@ -4,7 +4,7 @@ slug: migrate-ios-from-mapbox-to-maplibre
 branch: incant/0005-migrate-ios-from-mapbox-to-maplibre
 title: Migrate iOS From Mapbox To MapLibre
 stage: review
-status: phase-0005-P2-complete
+status: phase-0005-P3-complete
 created: 2026-06-11
 commit: 3e3720ef
 updated: 2026-06-11
@@ -13,9 +13,9 @@ updated: 2026-06-11
 # Migrate iOS From Mapbox To MapLibre — plan
 
 ## Status
-- Phase: 0005-P2 complete (of 5) · stage: review
+- Phase: 0005-P3 complete (of 5) · stage: review
 - Branch: incant/0005-migrate-ios-from-mapbox-to-maplibre
-- Next: `/incant:review 0005` for the 0005-P2 phase gate review.
+- Next: `/incant:review 0005` for the 0005-P3 phase gate review.
 - Blockers: none.
 - Quality gate evidence (2026-06-11):
   - `xcodebuild -resolvePackageDependencies -project AustrianRocks.xcodeproj && xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -configuration Debug -destination 'generic/platform=iOS Simulator' build && xcodebuild -project AustrianRocks.xcodeproj -scheme 'AustrianRocks dev' -configuration Debug -destination 'generic/platform=iOS Simulator' build` → **BUILD SUCCEEDED** for both app schemes after package resolution. MapLibre Native resolved through the public Swift package distribution repository `https://github.com/maplibre/maplibre-gl-native-distribution.git` at `6.27.0`; no Mapbox token files or GitHub credentials were required in the CLI gate.
@@ -34,6 +34,12 @@ updated: 2026-06-11
 - Quality gate evidence (2026-06-11):
   - `xcodebuild test -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'platform=iOS Simulator,name=iPhone 16' -only-testing:AustrianRocksTests` could not start because this Xcode install has iPhone 16 only at OS 18.3.1 while `OS:latest` resolves to a newer unavailable runtime.
   - Equivalent available-destination gate passed: `xcodebuild test -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.3.1' -only-testing:AustrianRocksTests` → **TEST SUCCEEDED**, 16 tests passed, and the existing Mapbox-based app target built during the test action. A local ignored `AustrianRocks/Config/Secrets.xcconfig` was copied from `Secrets.sample.xcconfig` to satisfy the existing project base configuration.
+- P3 quality gate evidence (2026-06-11):
+  - `xcodebuild test -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.3.1' -only-testing:AustrianRocksTests && xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -configuration Debug -destination 'generic/platform=iOS Simulator' build && xcodebuild -project AustrianRocks.xcodeproj -scheme 'AustrianRocks dev' -configuration Debug -destination 'generic/platform=iOS Simulator' build` → **TEST SUCCEEDED** and **BUILD SUCCEEDED** for both app schemes. This uses the installed iPhone 16 runtime `OS=18.3.1`, matching the equivalent-destination workaround already recorded for this Xcode install.
+- P3 phase notes (2026-06-11):
+  - Added `MapSelectionController` for the shared selected-layer/sentinel state model, base symbol exclusion, selected problem/topo sibling support, and grow/shrink/wiggle animations.
+  - Ported MapLibre rendered-feature tap queries to shared Rails layer ids/properties, with direct native `ProblemDetailsView` flow for problem taps and existing native area/cluster/region/POI state callbacks for non-problem taps until P4 cards land.
+  - Reimplemented iOS problem filters on shared `problemId`, `grade`, and `featured` properties plus local favorite/tick ids, and restored camera operations plus panning-based area/cluster inference against `areas-hulls` and `cluster-hulls`.
 - Key decisions:
   - The spec commit `0c9dd19c` is one commit behind current HEAD `3e3720ef`; the intervening changes are incant artifacts only, so no app or Rails code invalidates the spec.
   - Use the Rails manifest at `https://tiles.austrian.rocks/map_tiles/current.json` and load `styles.light` or `styles.dark`; do not add an iOS PMTiles adapter because MapLibre Native iOS 6.10.0+ handles `pmtiles://https://...` style sources.
@@ -112,16 +118,16 @@ Goal: replace the SDK and create a working MapLibre map that loads the Rails sha
 ## Phase 0005-P3 — shared selection, problem flow, filters, and camera context
 Goal: port interaction behavior to the Rails shared layer contract while preserving iOS problem details, topo selection, filters, and panning-based area/cluster context.
 
-- [ ] Step 1: read `AustrianRocks/UI/Map/MapLibreView.swift`, `AustrianRocks/UI/Map/MapLibreViewController.swift`, `AustrianRocks/UI/Map/MapState.swift`, `AustrianRocks/Models/Problem.swift`, `AustrianRocks/Models/Area.swift`, `AustrianRocks/Models/Cluster.swift`, `AustrianRocks/Models/Region.swift`, `/Users/maximilianblazek/Documents/GitHub/austrian-rocks-rails/app/javascript/map/selection.js`, and `/Users/maximilianblazek/Documents/GitHub/austrian-rocks-rails/app/javascript/controllers/map_controller.js` before editing.
-- [ ] Step 2: create `AustrianRocks/UI/Map/MapSelectionController.swift` to manage one selected feature at a time with selected-layer filters using the id property and `-1` sentinel; exclude selected region/cluster/area/POI ids from base symbol layers when those layers exist; skip base exclusion for problems.
-- [ ] Step 3: implement selected grow/settle/shrink animation constants matching Rails: icon grow scale `1.25`, icon clear scale `0.72`, circle grow scale `1.4`, circle clear scale `1.0`, grow duration about `520 ms`, clear duration about `220 ms`, symbol wiggle about `5°`; mutate MapLibre layer paint/layout properties and restore original values after clear.
-- [ ] Step 4: update tap queries in `MapLibreViewController` to use shared layer ids and properties: `problems.problemId`, `areas.areaId`, `areas-hulls.areaId`, `clusters.clusterId`, `cluster-hulls.clusterId`, `regions.regionId`, `region-hulls.regionId`, and `pois.poiId/poiType/googleUrl`; preserve zoom predicates from Rails where compatible with iOS UX.
-- [ ] Step 5: for problem taps, load `Problem.load(id: problemId)`, call `mapState.selectProblem(problem, source: .map)`, set `presentProblemDetails = true`, select through `problems-selected`, and keep topo sibling selection by passing cached sibling problem ids from `MapLibreView` into the controller.
-- [ ] Step 6: for empty/background taps and changing selections, clear the prior selected layer with the animated shrink and dismiss only map-card selections; preserve `ProblemDetailsView` dismissal behavior for problem deselection.
-- [ ] Step 7: port `applyFilters(_:)` to MapLibre style APIs using shared `problems` and `problems-selected` layers with `grade`, `featured`, `problemId`, local favorites, and local ticks; use `problemId` instead of the old Mapbox `id` property and document that iOS keeps popular/favorite/ticked filters in addition to Rails grade filtering.
-- [ ] Step 8: port camera operations for `centerOnProblem`, `centerOnArea`, `centerOnBoulderCoordinates`, `centerOnCurrentLocation`, show-on-map bounds fitting, fly/ease animations, safe padding, and post-animation detector triggers to MapLibre APIs.
-- [ ] Step 9: preserve camera-based area and cluster inference by querying `areas-hulls` when zoom is above `14.5`, `cluster-hulls` when zoom is at least `12`, updating `mapState.selectedArea` and `mapState.selectedCluster`, and clearing area below `14.5` and cluster below `11`.
-- [ ] Step 10: ensure required attribution remains visible through MapLibre's attribution control and the shared style source attributions; keep the scale bar hidden and position compass/attribution similarly to the current iOS UI without hiding attribution.
+- [x] Step 1: read `AustrianRocks/UI/Map/MapLibreView.swift`, `AustrianRocks/UI/Map/MapLibreViewController.swift`, `AustrianRocks/UI/Map/MapState.swift`, `AustrianRocks/Models/Problem.swift`, `AustrianRocks/Models/Area.swift`, `AustrianRocks/Models/Cluster.swift`, `AustrianRocks/Models/Region.swift`, `/Users/maximilianblazek/Documents/GitHub/austrian-rocks-rails/app/javascript/map/selection.js`, and `/Users/maximilianblazek/Documents/GitHub/austrian-rocks-rails/app/javascript/controllers/map_controller.js` before editing.
+- [x] Step 2: create `AustrianRocks/UI/Map/MapSelectionController.swift` to manage one selected feature at a time with selected-layer filters using the id property and `-1` sentinel; exclude selected region/cluster/area/POI ids from base symbol layers when those layers exist; skip base exclusion for problems.
+- [x] Step 3: implement selected grow/settle/shrink animation constants matching Rails: icon grow scale `1.25`, icon clear scale `0.72`, circle grow scale `1.4`, circle clear scale `1.0`, grow duration about `520 ms`, clear duration about `220 ms`, symbol wiggle about `5°`; mutate MapLibre layer paint/layout properties and restore original values after clear.
+- [x] Step 4: update tap queries in `MapLibreViewController` to use shared layer ids and properties: `problems.problemId`, `areas.areaId`, `areas-hulls.areaId`, `clusters.clusterId`, `cluster-hulls.clusterId`, `regions.regionId`, `region-hulls.regionId`, and `pois.poiId/poiType/googleUrl`; preserve zoom predicates from Rails where compatible with iOS UX.
+- [x] Step 5: for problem taps, load `Problem.load(id: problemId)`, call `mapState.selectProblem(problem, source: .map)`, set `presentProblemDetails = true`, select through `problems-selected`, and keep topo sibling selection by passing cached sibling problem ids from `MapLibreView` into the controller.
+- [x] Step 6: for empty/background taps and changing selections, clear the prior selected layer with the animated shrink and dismiss only map-card selections; preserve `ProblemDetailsView` dismissal behavior for problem deselection.
+- [x] Step 7: port `applyFilters(_:)` to MapLibre style APIs using shared `problems` and `problems-selected` layers with `grade`, `featured`, `problemId`, local favorites, and local ticks; use `problemId` instead of the old Mapbox `id` property and document that iOS keeps popular/favorite/ticked filters in addition to Rails grade filtering.
+- [x] Step 8: port camera operations for `centerOnProblem`, `centerOnArea`, `centerOnBoulderCoordinates`, `centerOnCurrentLocation`, show-on-map bounds fitting, fly/ease animations, safe padding, and post-animation detector triggers to MapLibre APIs.
+- [x] Step 9: preserve camera-based area and cluster inference by querying `areas-hulls` when zoom is above `14.5`, `cluster-hulls` when zoom is at least `12`, updating `mapState.selectedArea` and `mapState.selectedCluster`, and clearing area below `14.5` and cluster below `11`.
+- [x] Step 10: ensure required attribution remains visible through MapLibre's attribution control and the shared style source attributions; keep the scale bar hidden and position compass/attribution similarly to the current iOS UI without hiding attribution.
 
 **Quality gate:** `xcodebuild test -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'platform=iOS Simulator,name=iPhone 16' -only-testing:AustrianRocksTests && xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -configuration Debug -destination 'generic/platform=iOS Simulator' build && xcodebuild -project AustrianRocks.xcodeproj -scheme 'AustrianRocks dev' -configuration Debug -destination 'generic/platform=iOS Simulator' build` → pure tests pass and both schemes build after the MapLibre selection/filter/camera port.
 
