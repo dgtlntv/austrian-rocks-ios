@@ -37,6 +37,20 @@ final class MapTileManifestTests: XCTestCase {
         XCTAssertThrowsError(try JSONDecoder().decode(MapTileManifest.self, from: data))
     }
 
+    func testRejectsHostlessHTTPURLs() throws {
+        let data = Data("""
+        {
+          "version":"bad",
+          "pmtilesUrl":"https:archive.pmtiles",
+          "spriteUrl":"https://tiles.austrian.rocks/map_styles/sprite",
+          "styles":{"light":"https:///light.json","dark":"https://tiles.austrian.rocks/dark.json"},
+          "publishedAt":"now"
+        }
+        """.utf8)
+
+        XCTAssertThrowsError(try JSONDecoder().decode(MapTileManifest.self, from: data))
+    }
+
     func testMissingStyleThrowsTypedError() throws {
         let manifest = try MapTileManifest(
             version: "v1",

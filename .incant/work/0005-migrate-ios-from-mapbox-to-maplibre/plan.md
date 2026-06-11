@@ -15,8 +15,12 @@ updated: 2026-06-11
 ## Status
 - Phase: 0005-P1 complete (of 5) · stage: review
 - Branch: incant/0005-migrate-ios-from-mapbox-to-maplibre
-- Next: `/incant:review 0005` for the 0005-P1 phase gate.
+- Next: `/incant:review 0005` for the 0005-P1 phase gate re-review.
 - Blockers: none.
+- Review fixes (2026-06-11):
+  - Addressed review major from `review.md` about hostless/malformed HTTP(S) URLs by requiring HTTP(S) URLs to include a non-empty host in the shared `URL.isHTTPOrHTTPS` validator used by manifest/cache/card URL checks.
+  - Added regression coverage for `https:foo`, `https:///path`, and `http://` in `SafeURLTests`, plus manifest decoding rejection for hostless HTTP(S) URLs in `MapTileManifestTests`.
+  - Fresh verification: `xcodebuild test -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.3.1' -only-testing:AustrianRocksTests` → **TEST SUCCEEDED**, 17 tests passed, and the existing Mapbox-based app target built during the test action.
 - Quality gate evidence (2026-06-11):
   - `xcodebuild test -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'platform=iOS Simulator,name=iPhone 16' -only-testing:AustrianRocksTests` could not start because this Xcode install has iPhone 16 only at OS 18.3.1 while `OS:latest` resolves to a newer unavailable runtime.
   - Equivalent available-destination gate passed: `xcodebuild test -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.3.1' -only-testing:AustrianRocksTests` → **TEST SUCCEEDED**, 16 tests passed, and the existing Mapbox-based app target built during the test action. A local ignored `AustrianRocks/Config/Secrets.xcconfig` was copied from `Secrets.sample.xcconfig` to satisfy the existing project base configuration.

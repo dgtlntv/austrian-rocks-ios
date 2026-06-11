@@ -96,7 +96,8 @@ struct MapTileManifest: Codable, Equatable {
 
 extension URL {
     var isHTTPOrHTTPS: Bool {
-        guard let scheme = scheme?.lowercased() else { return false }
-        return scheme == "http" || scheme == "https"
+        guard let scheme = scheme?.lowercased(), scheme == "http" || scheme == "https" else { return false }
+        guard let host, !host.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return false }
+        return true
     }
 }
