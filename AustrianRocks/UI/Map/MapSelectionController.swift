@@ -295,7 +295,57 @@ final class MapSelectionController {
 
     private func scaledExpression(_ expression: NSExpression, scale: CGFloat) -> NSExpression {
         guard scale != 1 else { return expression }
-        return NSExpression(mglJSONObject: ["*", NSNumber(value: Double(scale)), expression.mgl_jsonExpressionObject])
+
+        let jsonObject = expression.mgl_jsonExpressionObject
+        if let zoomScaled = Self.zoomSafeScaledJSONObject(jsonObject, scale: scale) {
+            return NSExpression(mglJSONObject: zoomScaled)
+        }
+
+        return NSExpression(mglJSONObject: ["*", NSNumber(value: Double(scale)), jsonObject])
+    }
+
+    static func zoomSafeScaledJSONObject(_ jsonObject: Any, scale: CGFloat) -> Any? {
+        guard var expression = jsonObject as? [Any],
+              let operatorName = expression.first as? String else { return nil }
+
+        let scaleNumber = NSNumber(value: Double(scale))
+
+        switch operatorName {
+        case "interpolate":
+            guard expression.count >= 5, isZoomExpression(expression[2]) else { return nil }
+            var outputIndex = 4
+            while outputIndex < expression.count {
+                expression[outputIndex] = scaledJSONObject(expression[outputIndex], scale: scaleNumber)
+                outputIndex += 2
+            }
+            return expression
+        case "step":
+            guard expression.count >= 4, isZoomExpression(expression[1]) else { return nil }
+            expression[2] = scaledJSONObject(expression[2], scale: scaleNumber)
+            var outputIndex = 4
+            while outputIndex < expression.count {
+                expression[outputIndex] = scaledJSONObject(expression[outputIndex], scale: scaleNumber)
+                outputIndex += 2
+            }
+            return expression
+        default:
+            return nil
+        }
+    }
+
+    private static func scaledJSONObject(_ jsonObject: Any, scale: NSNumber) -> Any {
+        if let number = jsonObject as? NSNumber {
+            return NSNumber(value: number.doubleValue * scale.doubleValue)
+        }
+
+        return ["*", scale, jsonObject]
+    }
+
+    private static func isZoomExpression(_ jsonObject: Any) -> Bool {
+        guard let expression = jsonObject as? [Any],
+              expression.count == 1,
+              let operatorName = expression.first as? String else { return false }
+        return operatorName == "zoom"
     }
 
     private func layerExists(_ identifier: String) -> Bool {

@@ -243,6 +243,7 @@
 		45B000000000000000000028 /* SafeURLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000027 /* SafeURLTests.swift */; };
 		45B00000000000000000002A /* MissingDetailActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000029 /* MissingDetailActionTests.swift */; };
 		45B000000000000000000032 /* MapStyleLoadCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000031 /* MapStyleLoadCoordinatorTests.swift */; };
+		45B00000000000000000003D /* MapSelectionControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B00000000000000000003C /* MapSelectionControllerTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -382,6 +383,7 @@
 		45B000000000000000000027 /* SafeURLTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeURLTests.swift; sourceTree = "<group>"; };
 		45B000000000000000000029 /* MissingDetailActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissingDetailActionTests.swift; sourceTree = "<group>"; };
 		45B000000000000000000031 /* MapStyleLoadCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStyleLoadCoordinatorTests.swift; sourceTree = "<group>"; };
+		45B00000000000000000003C /* MapSelectionControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSelectionControllerTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -691,6 +693,7 @@
 				45B000000000000000000027 /* SafeURLTests.swift */,
 				45B000000000000000000029 /* MissingDetailActionTests.swift */,
 				45B000000000000000000031 /* MapStyleLoadCoordinatorTests.swift */,
+				45B00000000000000000003C /* MapSelectionControllerTests.swift */,
 			);
 			path = AustrianRocksTests;
 			sourceTree = "<group>";
@@ -1082,6 +1085,7 @@
 				45B000000000000000000026 /* MapFeatureCardModelTests.swift in Sources */,
 				45B000000000000000000028 /* SafeURLTests.swift in Sources */,
 				45B00000000000000000002A /* MissingDetailActionTests.swift in Sources */,
+				45B00000000000000000003D /* MapSelectionControllerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

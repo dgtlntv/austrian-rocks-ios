@@ -13,7 +13,7 @@ updated: 2026-06-11
 # Migrate iOS From Mapbox To MapLibre — plan
 
 ## Status
-- Phase: 0005-P5 automated/legal cleanup complete (of 5) · stage: implement · manual verification pending human.
+- Phase: 0005-P5 automated/legal cleanup complete (of 5) · stage: implement · manual verification pending human re-check after crash fix.
 - Branch: incant/0005-migrate-ios-from-mapbox-to-maplibre
 - Next: human-run P5 manual checklist, then `/incant:review 0005` for the final phase gate review.
 - Blockers: none.
@@ -27,6 +27,12 @@ updated: 2026-06-11
   - Re-audited license source files from Xcode `SourcePackages/checkouts`: `maplibre-gl-native-distribution/LICENSE.md` (BSD 2-Clause) and `SQLite.swift/LICENSE.txt` (MIT); obsolete Mapbox omission notes were removed.
   - Updated `AcknowledgementCatalog.swift` audit comments to describe the current MapLibre/SQLite audit instead of a planned migration.
   - Manual simulator/device verification is intentionally left to the human per request; no screenshot evidence is retained in the repo. Checklist: online style loads; light/dark style reload; PMTiles problem/area/cluster/region/POI layers render; selected features animate; problem taps open `ProblemDetailsView`; non-problem taps show native cards; show-on-map fits bounds; missing SQLite details are safe; POI directions only appears for valid URLs; problem filters work; area toolbar/download context updates while panning; retry overlay appears only when fresh and cached styles fail; attribution remains visible.
+- P5 manual feedback fix (2026-06-11):
+  - Addressed a human-reported simulator crash: `NSInvalidArgumentException`, `Invalid property value: "zoom" expression may only be used as input to a top-level "step" or "interpolate" expression.` The selected-layer grow animation was wrapping existing zoom-dependent style expressions as `[* scale, [interpolate/step ... [zoom] ...]]`, which MapLibre rejects because `zoom` was no longer inside the top-level camera expression.
+  - Updated `MapSelectionController` to scale outputs inside top-level `interpolate`/`step` zoom expressions while preserving `zoom` as the camera expression input; non-zoom expressions still use the existing multiply wrapper.
+  - Added `MapSelectionControllerTests` coverage for zoom-dependent `interpolate` and `step` expressions so selection animation cannot regress into invalid nested `zoom` expressions.
+  - Fresh verification: `xcodebuild test -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.3.1' -only-testing:AustrianRocksTests/MapSelectionControllerTests` → **TEST SUCCEEDED**.
+  - Fresh verification: `xcodebuild test -project AustrianRocks.xcodeproj -scheme AustrianRocks -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.3.1' -only-testing:AustrianRocksTests && xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -configuration Debug -destination 'generic/platform=iOS Simulator' build && xcodebuild -project AustrianRocks.xcodeproj -scheme 'AustrianRocks dev' -configuration Debug -destination 'generic/platform=iOS Simulator' build` → **TEST SUCCEEDED** and **BUILD SUCCEEDED** for both app schemes.
 - Quality gate evidence (2026-06-11):
   - `xcodebuild -resolvePackageDependencies -project AustrianRocks.xcodeproj && xcodebuild -project AustrianRocks.xcodeproj -scheme AustrianRocks -configuration Debug -destination 'generic/platform=iOS Simulator' build && xcodebuild -project AustrianRocks.xcodeproj -scheme 'AustrianRocks dev' -configuration Debug -destination 'generic/platform=iOS Simulator' build` → **BUILD SUCCEEDED** for both app schemes after package resolution. MapLibre Native resolved through the public Swift package distribution repository `https://github.com/maplibre/maplibre-gl-native-distribution.git` at `6.27.0`; no Mapbox token files or GitHub credentials were required in the CLI gate.
 - Phase notes (2026-06-11):
