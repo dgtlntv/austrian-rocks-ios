@@ -20,7 +20,6 @@ class MapState {
     private(set) var selectedCluster: Cluster? = nil
     private(set) var centerOnBoulderCoordinates: [CLLocationCoordinate2D] = []
     private(set) var centerOnBoulderCount: Int = 0
-    var selectedPoi: Poi? = nil
     private(set) var selectedMapFeatureCard: MapFeatureCardModel? = nil
     var filters: Filters = Filters()
     private(set) var refreshFiltersCount: Int = 0
@@ -28,7 +27,8 @@ class MapState {
     private(set) var mapRetryCount: Int = 0
     private(set) var fitMapFeatureBounds: MapFeatureBounds? = nil
     private(set) var fitMapFeatureBoundsCount: Int = 0
-    private(set) var clearMapSelectionCount: Int = 0
+    private(set) var clearFeatureSelectionKind: MapFeatureCardModel.Kind? = nil
+    private(set) var clearFeatureSelectionCount: Int = 0
     private(set) var clearProblemSelectionCount: Int = 0
 
     var presentProblemDetails = false
@@ -136,9 +136,15 @@ class MapState {
         presentProblemDetails = false
     }
 
+    /// Dismisses the feature card sheet (user swipe or close) and clears the
+    /// map selection — scoped to the dismissed card's kind so a newer
+    /// selection of another kind (e.g. a fresh problem tap that closed this
+    /// sheet) is never wiped.
     func dismissMapFeatureCard() {
+        guard let card = selectedMapFeatureCard else { return }
         selectedMapFeatureCard = nil
-        clearMapSelectionCount += 1
+        clearFeatureSelectionKind = card.kind
+        clearFeatureSelectionCount += 1
     }
 
     /// Clears the selected problem layer on the map, but only if the current
@@ -158,20 +164,6 @@ class MapState {
         fitMapFeatureBoundsCount += 1
     }
 
-    func openPoiDirections(_ card: MapFeatureCardModel) {
-        guard card.kind == .poi,
-              let googleURL = card.googleURL,
-              let coordinate = card.coordinate else { return }
-        selectedPoi = Poi(
-            id: card.id,
-            type: card.poiType ?? .parking,
-            name: card.title,
-            shortName: card.title,
-            googleUrl: googleURL.absoluteString,
-            coordinate: coordinate
-        )
-    }
-    
     func requestTopoFullScreenPresentation() {
         presentTopoFullScreenRequestCount += 1
     }

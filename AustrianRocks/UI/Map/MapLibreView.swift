@@ -85,9 +85,11 @@ struct MapLibreView: UIViewControllerRepresentable {
             }
         }
 
-        if mapState.clearMapSelectionCount != context.coordinator.lastClearMapSelectionCount {
-            context.coordinator.lastClearMapSelectionCount = mapState.clearMapSelectionCount
-            vc.clearSelectedMapFeature()
+        if mapState.clearFeatureSelectionCount != context.coordinator.lastClearFeatureSelectionCount {
+            context.coordinator.lastClearFeatureSelectionCount = mapState.clearFeatureSelectionCount
+            if let kind = mapState.clearFeatureSelectionKind {
+                vc.clearSelectedMapFeature(ofKind: kind)
+            }
         }
 
         if mapState.clearProblemSelectionCount != context.coordinator.lastClearProblemSelectionCount {
@@ -112,7 +114,7 @@ struct MapLibreView: UIViewControllerRepresentable {
         var lastIsTopoMode: Bool = false
         var lastCenterOnBoulderCount: Int = 0
         var lastFitMapFeatureBoundsCount: Int = 0
-        var lastClearMapSelectionCount: Int = 0
+        var lastClearFeatureSelectionCount: Int = 0
         var lastClearProblemSelectionCount: Int = 0
 
         init(_ parent: MapLibreView) {

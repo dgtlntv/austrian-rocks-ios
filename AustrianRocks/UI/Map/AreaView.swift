@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import Charts
 import CoreLocation
 
 struct AreaView: View {
@@ -18,10 +17,14 @@ struct AreaView: View {
     let area: Area
     @Environment(AppState.self) private var appState: AppState
     let linkToMap: Bool
-    
-    @State private var popularProblems = [Problem]()
-    @State private var showChart = false
-    @State private var chartData: [Level] = []
+    // Set when presented as a map bottom card: folds the tile-property card
+    // data into the page. The page renders its own grade distribution and
+    // warning from SQLite, so the header section omits those.
+    var mapCard: MapFeatureCardModel? = nil
+
+    @State private var problems = [Problem]()
+    @State private var searchText = ""
+    @State private var selectedSegment = Segment.all
     @State private var poiRoutes = [PoiRoute]()
 
     @State private var selectedPoi: Poi?
@@ -29,6 +32,10 @@ struct AreaView: View {
     var body: some View {
         ZStack {
             List {
+                if let mapCard {
+                    MapFeatureCardHeaderSection(card: mapCard, showsHistogram: false, showsWarning: false)
+                }
+
                 if area.tags.count > 0 || area.localizedDescription != nil || area.localizedWarning != nil {
                     Section {
                         tagsWithFlowLayout
@@ -36,8 +43,10 @@ struct AreaView: View {
                     }
                 }
 
-                problems
-                
+                levelsSection
+
+                problemsSection
+
                 if poiRoutes.count > 0 {
                     poiRoutesList
                 }
@@ -89,19 +98,7 @@ struct AreaView: View {
 
         }
         .task {
-            popularProblems = area.popularProblems
-            
-            chartData = [
-                .init(name: "1", count: min(100, area.level1Count)),
-                .init(name: "2", count: min(100, area.level2Count)),
-                .init(name: "3", count: min(100, area.level3Count)),
-                .init(name: "4", count: min(100, area.level4Count)),
-                .init(name: "5", count: min(100, area.level5Count)),
-                .init(name: "6", count: min(100, area.level6Count)),
-                .init(name: "7", count: min(100, area.level7Count)),
-                .init(name: "8", count: min(100, area.level8Count)),
-            ]
-            
+            problems = area.problems
             poiRoutes = area.poiRoutes
         }
         .safeAreaInset(edge: .top, spacing: 0) {
@@ -230,52 +227,88 @@ struct AreaView: View {
         }
     }
     
-    var problems: some View {
-        Section {
-            VStack {
-                Button {
-                    showChart.toggle()
-                } label: {
-                    HStack {
-                        Text("area.levels")
-                            .foregroundColor(.primary)
-                        
-                        Spacer()
-                        
-                        AreaLevelsBarView(area: area)
-                        
-                        Image(systemName: showChart ? "chevron.down" : "chevron.right")
-                            .font(.footnote.weight(.semibold))
-                            .foregroundColor(Color(UIColor.tertiaryLabel))
-                            .frame(minWidth: 16)
-                    }
-                }
+    @ViewBuilder
+    var levelsSection: some View {
+        if area.levels.contains(where: { $0.count > 0 }) {
+            Section(header: Text("area.levels")) {
+                GradeDistributionView(
+                    entries: area.levels.map { GradeDistributionEntry(label: $0.name, count: $0.count) },
+                    showsTitle: false
+                )
+                .padding(.vertical, 4)
+            }
+        }
+    }
 
-                if showChart {
-                    Chart {
-                        ForEach(chartData) { shape in
-                            BarMark(
-                                x: .value("area.chart.level", shape.name),
-                                y: .value("area.chart.problems", shape.count)
-                            )
-                        }
-                    }
-                    .chartYScale(domain: 0...100)
-                    .foregroundColor(.levelGreen)
-                    .frame(height: 150)
-                    .padding(.vertical)
-                    .clipShape(Rectangle())
+    var problemsSection: some View {
+        Section(header: Text("area.problems")) {
+            Picker("Filter", selection: $selectedSegment) {
+                ForEach(Segment.allCases) { segment in
+                    Text(segment.title).tag(segment)
                 }
             }
-            
-            NavigationLink {
-                AreaProblemsView(area: area)
-            } label: {
-                HStack {
-                    Text("area.problems")
-                    Spacer()
-                    Text("\(area.problemsCount)")
+            .pickerStyle(.segmented)
+
+            HStack(spacing: 8) {
+                Image(systemName: "magnifyingglass")
+                    .foregroundColor(.secondary)
+                TextField("area.problems.search_prompt", text: $searchText)
+                    .autocorrectionDisabled()
+            }
+
+            ForEach(problemsFilteredBySearch) { problem in
+                Button {
+                    appState.tab = .map
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { // to avoid a weird race condition
+                        appState.selectedProblem = problem
+                    }
+                } label: {
+                    HStack {
+                        ProblemCircleView(problem: problem)
+                        Text(problem.localizedName)
+                        Spacer()
+                        if(problem.featured) {
+                            Image(systemName: "heart.fill").foregroundColor(.pink)
+                        }
+                        Text(problem.grade?.string ?? "")
+                    }
+                    .foregroundColor(.primary)
                 }
+            }
+        }
+    }
+
+    var problemsFilteredBySearch: [Problem] {
+        if searchText.count > 0 {
+            return problemsFilteredByPopular.filter { ($0.name?.normalized ?? "").contains(searchText.normalized) }
+        }
+        else
+        {
+            return problemsFilteredByPopular
+        }
+    }
+
+    var problemsFilteredByPopular: [Problem] {
+        if selectedSegment == .popular {
+            return problems.filter { $0.featured }
+        }
+        else {
+            return problems
+        }
+    }
+
+    enum Segment: Int, CaseIterable, Identifiable {
+        case all
+        case popular
+
+        var id: Self { self }
+
+        var title: String {
+            switch self {
+            case .all:
+                return NSLocalizedString("area.problems.all", comment: "")
+            case .popular:
+                return NSLocalizedString("area.problems.popular", comment: "")
             }
         }
     }
@@ -320,11 +353,6 @@ struct AreaView: View {
         }
     }
     
-    struct Level: Identifiable {
-        var name: String
-        var count: Int
-        var id = UUID()
-    }
 }
 
 //struct AreaView_Previews: PreviewProvider {

@@ -280,8 +280,20 @@ class MapLibreViewController: UIViewController, MLNMapViewDelegate {
         selectionController?.clear()
     }
 
-    func clearSelectedMapFeature() {
-        selectionController?.clear()
+    /// Clears the selected feature layer only while the selection is still of
+    /// the given card kind — dismissing a stale card never wipes a newer
+    /// selection of a different kind.
+    func clearSelectedMapFeature(ofKind kind: MapFeatureCardModel.Kind) {
+        selectionController?.clear(ifKind: Self.selectionKind(for: kind))
+    }
+
+    private static func selectionKind(for kind: MapFeatureCardModel.Kind) -> MapSelectionController.Kind {
+        switch kind {
+        case .region: return .region
+        case .cluster: return .cluster
+        case .area: return .area
+        case .poi: return .poi
+        }
     }
 
     func clearSelectedProblem() {

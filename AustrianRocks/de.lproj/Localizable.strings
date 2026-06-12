@@ -19,7 +19,6 @@
 
 // MARK: Map cards
 "map.card.show_on_map" = "Auf der Karte anzeigen";
-"map.card.details" = "Details";
 "map.card.details_unavailable" = "Details nicht verfügbar";
 "map.card.directions" = "Route";
 "map.card.warning" = "Warnung";
@@ -27,13 +26,13 @@
 "map.card.problems" = "Boulder";
 "map.card.grade_distribution" = "Schwierigkeitsverteilung";
 "map.card.grade_distribution_accessibility" = "Schwierigkeitsverteilung: %@";
-"map.card.close" = "Schließen";
 "map.unavailable.title" = "Karte nicht verfügbar";
 "map.unavailable.message" = "Die Karte konnte gerade nicht geladen werden. Du kannst den Rest der App weiter verwenden und es erneut versuchen.";
 "map.unavailable.retry" = "Erneut versuchen";
 "map.poi_type.parking" = "Parkplatz";
 "map.poi_type.train_station" = "Bahnhof";
 "map.info.accessibility" = "Über & Danksagungen";
+"sheet.grabber.accessibility" = "Anfasser";
 "cover.photo.placeholder" = "Kein Foto verfügbar";
 
 // MARK: Filters
@@ -123,8 +122,6 @@
 "area.infos" = "Gebietsinfo";
 "area.problems" = "Boulder";
 "area.levels" = "Schwierigkeiten";
-"area.chart.level" = "Schwierigkeit";
-"area.chart.problems" = "Boulder";
 "area.problems.popular" = "Beliebt";
 "area.problems.all" = "Alle";
 "area.access" = "Zugang";

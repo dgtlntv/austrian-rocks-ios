@@ -97,6 +97,39 @@ final class MapFeatureCardModelTests: XCTestCase {
         XCTAssertNil(model.bounds)
     }
 
+    // The stats line and distribution entries moved from the deleted
+    // MapFeatureCardView into the detail-header section, sourced from these
+    // model properties.
+    func testStatsLineCombinesProblemCountAndGradeRange() throws {
+        let model = try XCTUnwrap(MapFeatureCardModel.make(
+            kind: .region,
+            properties: ["regionId": 5, "name": "Ötztal", "problemCount": 123, "gradeMin": "4a", "gradeMax": "8a"],
+            detailAvailabilityResolver: { _, _ in false }
+        ))
+
+        let statsLine = try XCTUnwrap(model.statsLine)
+        XCTAssertTrue(statsLine.contains("123"))
+        XCTAssertTrue(statsLine.contains("4a – 8a"))
+
+        let withoutStats = try XCTUnwrap(MapFeatureCardModel.make(
+            kind: .region,
+            properties: ["regionId": 5, "name": "Ötztal"],
+            detailAvailabilityResolver: { _, _ in false }
+        ))
+        XCTAssertNil(withoutStats.statsLine)
+    }
+
+    func testGradeDistributionEntriesMirrorHistogramOrderAndCounts() throws {
+        let model = try XCTUnwrap(MapFeatureCardModel.make(
+            kind: .cluster,
+            properties: ["clusterId": 3, "name": "Silvretta", "gradeHistogramJson": "{\"6a\":2,\"6c\":5}"],
+            detailAvailabilityResolver: { _, _ in false }
+        ))
+
+        XCTAssertEqual(model.gradeDistributionEntries.map(\.label), model.gradeHistogram.map(\.grade))
+        XCTAssertEqual(model.gradeDistributionEntries.map(\.count), model.gradeHistogram.map(\.count))
+    }
+
     func testBuildsPOICardWithSafeDirectionsOnly() throws {
         let model = try XCTUnwrap(MapFeatureCardModel.make(
             kind: .poi,

@@ -104,7 +104,10 @@ struct TopAreasLevelView: View {
                                         
                                         Spacer()
                                         
-                                        AreaLevelsBarView(area: area)
+                                        GradeDistributionView(
+                                            entries: area.levels.map { GradeDistributionEntry(label: $0.name, count: $0.count) },
+                                            style: .compactRow
+                                        )
                                         
                                         Image(systemName: "chevron.right")
                                             .font(.caption.weight(.bold))

@@ -66,6 +66,33 @@ struct MapFeatureCardModel: Equatable, Identifiable {
         kind == .poi && googleURL != nil && coordinate != nil
     }
 
+    /// "12 problems · 4a – 8a" — the compact stats shown in detail headers.
+    var statsLine: String? {
+        var parts: [String] = []
+        if let problemCount {
+            parts.append("\(problemCount) \(String(localized: "map.card.problems"))")
+        }
+        if let gradeMin, let gradeMax {
+            parts.append("\(gradeMin) – \(gradeMax)")
+        }
+        return parts.isEmpty ? nil : parts.joined(separator: " · ")
+    }
+
+    var gradeDistributionEntries: [GradeDistributionEntry] {
+        gradeHistogram.map { GradeDistributionEntry(label: $0.grade, count: $0.count) }
+    }
+
+    var localizedPoiTypeName: String? {
+        switch poiType {
+        case .parking:
+            return String(localized: "map.poi_type.parking")
+        case .trainStation:
+            return String(localized: "map.poi_type.train_station")
+        case nil:
+            return nil
+        }
+    }
+
     static func make(
         kind: Kind,
         properties: [String: Any],

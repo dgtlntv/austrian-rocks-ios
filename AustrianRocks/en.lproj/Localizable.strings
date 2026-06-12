@@ -19,7 +19,6 @@
 
 // MARK: Map cards
 "map.card.show_on_map" = "Show on map";
-"map.card.details" = "Details";
 "map.card.details_unavailable" = "Details unavailable";
 "map.card.directions" = "Directions";
 "map.card.warning" = "Warning";
@@ -27,13 +26,13 @@
 "map.card.problems" = "problems";
 "map.card.grade_distribution" = "Grade distribution";
 "map.card.grade_distribution_accessibility" = "Grade distribution: %@";
-"map.card.close" = "Close";
 "map.unavailable.title" = "Map unavailable";
 "map.unavailable.message" = "The map could not be loaded right now. You can keep using the rest of the app and try again.";
 "map.unavailable.retry" = "Retry";
 "map.poi_type.parking" = "Parking";
 "map.poi_type.train_station" = "Train station";
 "map.info.accessibility" = "About & acknowledgements";
+"sheet.grabber.accessibility" = "Sheet grabber";
 "cover.photo.placeholder" = "No photo available";
 
 // MARK: Filters
@@ -123,8 +122,6 @@
 "area.infos" = "Area info";
 "area.problems" = "Problems";
 "area.levels" = "Levels";
-"area.chart.level" = "Level";
-"area.chart.problems" = "Problems";
 "area.problems.popular" = "Popular";
 "area.problems.all" = "All";
 "area.access" = "Access";

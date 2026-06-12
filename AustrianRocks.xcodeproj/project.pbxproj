@@ -67,8 +67,6 @@
 		03638D162F196CBA008A6EB8 /* ProblemInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03638D112F196CBA008A6EB8 /* ProblemInfoView.swift */; };
 		03638D182F196CD4008A6EB8 /* ProblemActionButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03638D172F196CD4008A6EB8 /* ProblemActionButtonsView.swift */; };
 		03638D192F196CD4008A6EB8 /* ProblemActionButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03638D172F196CD4008A6EB8 /* ProblemActionButtonsView.swift */; };
-		0371528A296F5FE0008FD130 /* AreaLevelsBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03715289296F5FE0008FD130 /* AreaLevelsBarView.swift */; };
-		0371528B296F5FE0008FD130 /* AreaLevelsBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03715289296F5FE0008FD130 /* AreaLevelsBarView.swift */; };
 		037AF0342C538F2700AB9392 /* ClusterViewWithActionsheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037AF0332C538F2700AB9392 /* ClusterViewWithActionsheet.swift */; };
 		037AF0352C538F2700AB9392 /* ClusterViewWithActionsheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037AF0332C538F2700AB9392 /* ClusterViewWithActionsheet.swift */; };
 		03809ACF2F508F4600ACDC06 /* AllFiltersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03809ACE2F508F4600ACDC06 /* AllFiltersView.swift */; };
@@ -89,8 +87,6 @@
 		038F7F552C3A8D1600AE7028 /* ClusterDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038F7F532C3A8D1600AE7028 /* ClusterDownloader.swift */; };
 		038F7F572C3A8D3700AE7028 /* Cluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038F7F562C3A8D3700AE7028 /* Cluster.swift */; };
 		038F7F582C3A8D3700AE7028 /* Cluster.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038F7F562C3A8D3700AE7028 /* Cluster.swift */; };
-		039A22A6295F21FA0096E137 /* AreaProblemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039A22A5295F21F90096E137 /* AreaProblemsView.swift */; };
-		039A22A7295F21FA0096E137 /* AreaProblemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039A22A5295F21F90096E137 /* AreaProblemsView.swift */; };
 		03AB882C2E22F92F002A5940 /* austrian-rocks.db in Resources */ = {isa = PBXBuildFile; fileRef = 03AB882B2E22F92F002A5940 /* austrian-rocks.db */; };
 		03AB882D2E22F92F002A5940 /* austrian-rocks.db in Resources */ = {isa = PBXBuildFile; fileRef = 03AB882B2E22F92F002A5940 /* austrian-rocks.db */; };
 		039FFC8E2F379ECF00A5E597 /* Boulder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039FFC8D2F379ECF00A5E597 /* Boulder.swift */; };
@@ -229,10 +225,10 @@
 		45B000000000000000000012 /* MapFeatureBounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000010 /* MapFeatureBounds.swift */; };
 		45B000000000000000000014 /* MapFeatureCardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000013 /* MapFeatureCardModel.swift */; };
 		45B000000000000000000015 /* MapFeatureCardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000013 /* MapFeatureCardModel.swift */; };
-		45B000000000000000000036 /* MapFeatureCardGradeHistogramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000038 /* MapFeatureCardGradeHistogramView.swift */; };
-		45B000000000000000000037 /* MapFeatureCardGradeHistogramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000038 /* MapFeatureCardGradeHistogramView.swift */; };
-		45B000000000000000000039 /* MapFeatureCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B00000000000000000003B /* MapFeatureCardView.swift */; };
-		45B00000000000000000003A /* MapFeatureCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B00000000000000000003B /* MapFeatureCardView.swift */; };
+		45B000000000000000000051 /* GradeDistributionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000050 /* GradeDistributionView.swift */; };
+		45B000000000000000000052 /* GradeDistributionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000050 /* GradeDistributionView.swift */; };
+		45B000000000000000000054 /* MapFeatureSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000053 /* MapFeatureSheetView.swift */; };
+		45B000000000000000000055 /* MapFeatureSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000053 /* MapFeatureSheetView.swift */; };
 		45B00000000000000000002C /* MapUnavailableOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B00000000000000000002B /* MapUnavailableOverlay.swift */; };
 		45B00000000000000000002D /* MapUnavailableOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B00000000000000000002B /* MapUnavailableOverlay.swift */; };
 		45B00000000000000000002F /* MapStyleLoadCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B00000000000000000002E /* MapStyleLoadCoordinator.swift */; };
@@ -292,7 +288,6 @@
 		03638D112F196CBA008A6EB8 /* ProblemInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProblemInfoView.swift; sourceTree = "<group>"; };
 		03638D122F196CBA008A6EB8 /* ProblemSaveManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProblemSaveManager.swift; sourceTree = "<group>"; };
 		03638D172F196CD4008A6EB8 /* ProblemActionButtonsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProblemActionButtonsView.swift; sourceTree = "<group>"; };
-		03715289296F5FE0008FD130 /* AreaLevelsBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AreaLevelsBarView.swift; sourceTree = "<group>"; };
 		037AF0332C538F2700AB9392 /* ClusterViewWithActionsheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterViewWithActionsheet.swift; sourceTree = "<group>"; };
 		03809ACE2F508F4600ACDC06 /* AllFiltersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllFiltersView.swift; sourceTree = "<group>"; };
 		03809AD12F50911E00ACDC06 /* SearchSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchSheetView.swift; sourceTree = "<group>"; };
@@ -303,7 +298,6 @@
 		038F7F422C3A8CC500AE7028 /* FabButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FabButton.swift; sourceTree = "<group>"; };
 		038F7F532C3A8D1600AE7028 /* ClusterDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClusterDownloader.swift; sourceTree = "<group>"; };
 		038F7F562C3A8D3700AE7028 /* Cluster.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cluster.swift; sourceTree = "<group>"; };
-		039A22A5295F21F90096E137 /* AreaProblemsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AreaProblemsView.swift; sourceTree = "<group>"; };
 		03AB882B2E22F92F002A5940 /* austrian-rocks.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = "austrian-rocks.db"; sourceTree = "<group>"; };
 		039FFC8D2F379ECF00A5E597 /* Boulder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Boulder.swift; sourceTree = "<group>"; };
 		039FFC932F3DBC0F00A5E597 /* ProblemNameLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProblemNameLabelView.swift; sourceTree = "<group>"; };
@@ -376,8 +370,8 @@
 		45B00000000000000000000D /* MapLayerContract.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapLayerContract.swift; sourceTree = "<group>"; };
 		45B000000000000000000010 /* MapFeatureBounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapFeatureBounds.swift; sourceTree = "<group>"; };
 		45B000000000000000000013 /* MapFeatureCardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapFeatureCardModel.swift; sourceTree = "<group>"; };
-		45B000000000000000000038 /* MapFeatureCardGradeHistogramView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapFeatureCardGradeHistogramView.swift; sourceTree = "<group>"; };
-		45B00000000000000000003B /* MapFeatureCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapFeatureCardView.swift; sourceTree = "<group>"; };
+		45B000000000000000000050 /* GradeDistributionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradeDistributionView.swift; sourceTree = "<group>"; };
+		45B000000000000000000053 /* MapFeatureSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapFeatureSheetView.swift; sourceTree = "<group>"; };
 		45B00000000000000000002B /* MapUnavailableOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapUnavailableOverlay.swift; sourceTree = "<group>"; };
 		45B00000000000000000002E /* MapStyleLoadCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStyleLoadCoordinator.swift; sourceTree = "<group>"; };
 		45B000000000000000000033 /* MapSelectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSelectionController.swift; sourceTree = "<group>"; };
@@ -436,6 +430,7 @@
 				37379903258E157D00711EDA /* LargeButton.swift */,
 				030AC19C27ABCF5300AF85E7 /* Pill.swift */,
 				375397C525AC6C4C00430BF4 /* Extensions.swift */,
+				45B000000000000000000050 /* GradeDistributionView.swift */,
 				030738982F1BD3960034B178 /* SegmentType.swift */,
 				030AC1B127BD590000AF85E7 /* DropShadow.swift */,
 				37DE480D25AF9AB60052428E /* TestColorView.swift */,
@@ -504,8 +499,7 @@
 				45B000000000000000000033 /* MapSelectionController.swift */,
 				45B000000000000000000010 /* MapFeatureBounds.swift */,
 				45B000000000000000000013 /* MapFeatureCardModel.swift */,
-				45B000000000000000000038 /* MapFeatureCardGradeHistogramView.swift */,
-				45B00000000000000000003B /* MapFeatureCardView.swift */,
+				45B000000000000000000053 /* MapFeatureSheetView.swift */,
 				45B00000000000000000002B /* MapUnavailableOverlay.swift */,
 				03C104EB290ACDC6007A94D7 /* MapLibreView.swift */,
 				03C104E8290ACC1A007A94D7 /* MapLibreViewController.swift */,
@@ -514,8 +508,6 @@
 				03DE504427BFA895003E5B2A /* GradeRangePickerView.swift */,
 				0314FFE42950786F00B7E249 /* AreaToolbarView.swift */,
 				0314FFDE295054C500B7E249 /* AreaView.swift */,
-				03715289296F5FE0008FD130 /* AreaLevelsBarView.swift */,
-				039A22A5295F21F90096E137 /* AreaProblemsView.swift */,
 				038C2EF62920142C006581CD /* Search */,
 				37F12D862456D50E0036E3E3 /* Problem details */,
 				031A4CAA296B0A74002CBF52 /* PoiActionSheet.swift */,
@@ -877,8 +869,8 @@
 				45B000000000000000000034 /* MapSelectionController.swift in Sources */,
 				45B000000000000000000011 /* MapFeatureBounds.swift in Sources */,
 				45B000000000000000000014 /* MapFeatureCardModel.swift in Sources */,
-				45B000000000000000000036 /* MapFeatureCardGradeHistogramView.swift in Sources */,
-				45B000000000000000000039 /* MapFeatureCardView.swift in Sources */,
+				45B000000000000000000051 /* GradeDistributionView.swift in Sources */,
+				45B000000000000000000054 /* MapFeatureSheetView.swift in Sources */,
 				45B00000000000000000002C /* MapUnavailableOverlay.swift in Sources */,
 				452F75FD2EEEC7F000F65113 /* Region.swift in Sources */,
 				45AA00022F97000100010001 /* AcknowledgementCatalog.swift in Sources */,
@@ -897,7 +889,6 @@
 				37379913258E619400711EDA /* LineView.swift in Sources */,
 				03B910712B2C798200DE7B45 /* CircularProgressView.swift in Sources */,
 				03638D182F196CD4008A6EB8 /* ProblemActionButtonsView.swift in Sources */,
-				039A22A7295F21FA0096E137 /* AreaProblemsView.swift in Sources */,
 				031A4CAF296B0DF3002CBF52 /* PoiRoute.swift in Sources */,
 				37379914258E619400711EDA /* UserStore.xcdatamodeld in Sources */,
 				37379915258E619400711EDA /* AppDelegate.swift in Sources */,
@@ -919,7 +910,6 @@
 				03809AD22F50911E00ACDC06 /* SearchSheetView.swift in Sources */,
 				031F36C0291E4E4400BD0C2B /* TickList.swift in Sources */,
 				030AC1AD27BBF53D00AF85E7 /* ActivityView.swift in Sources */,
-				0371528B296F5FE0008FD130 /* AreaLevelsBarView.swift in Sources */,
 				038F7F4B2C3A8CC500AE7028 /* DownloadButtonView.swift in Sources */,
 				03389D222F45FFC000D5011D /* TopoLoopScrollView.swift in Sources */,
 				37379922258E619400711EDA /* LargeButton.swift in Sources */,
@@ -988,8 +978,8 @@
 				45B000000000000000000035 /* MapSelectionController.swift in Sources */,
 				45B000000000000000000012 /* MapFeatureBounds.swift in Sources */,
 				45B000000000000000000015 /* MapFeatureCardModel.swift in Sources */,
-				45B000000000000000000037 /* MapFeatureCardGradeHistogramView.swift in Sources */,
-				45B00000000000000000003A /* MapFeatureCardView.swift in Sources */,
+				45B000000000000000000052 /* GradeDistributionView.swift in Sources */,
+				45B000000000000000000055 /* MapFeatureSheetView.swift in Sources */,
 				45B00000000000000000002D /* MapUnavailableOverlay.swift in Sources */,
 				452F75FE2EEEC7F000F65113 /* Region.swift in Sources */,
 				45AA00012F97000100010001 /* AcknowledgementCatalog.swift in Sources */,
@@ -1006,7 +996,6 @@
 				030AC1A927BAFBFE00AF85E7 /* TopAreasDryFast.swift in Sources */,
 				37A483402559A73A00DBD526 /* LineView.swift in Sources */,
 				03B910702B2C798200DE7B45 /* CircularProgressView.swift in Sources */,
-				0371528A296F5FE0008FD130 /* AreaLevelsBarView.swift in Sources */,
 				37043E292458D5A0002782AB /* UserStore.xcdatamodeld in Sources */,
 				37A8C62A2453263300DC161F /* AppDelegate.swift in Sources */,
 				03638D192F196CD4008A6EB8 /* ProblemActionButtonsView.swift in Sources */,
@@ -1056,7 +1045,6 @@
 				03C104EC290ACDC6007A94D7 /* MapLibreView.swift in Sources */,
 				03C5A3612C4F9E750057C42A /* Downloader.swift in Sources */,
 				031A4C9629673C90002CBF52 /* FlowLayout.swift in Sources */,
-				039A22A6295F21FA0096E137 /* AreaProblemsView.swift in Sources */,
 				37BCA98624670DC000D56252 /* Problem.swift in Sources */,
 				030AC1B227BD590000AF85E7 /* DropShadow.swift in Sources */,
 				033F70D72919535A000DD3F4 /* Area.swift in Sources */,

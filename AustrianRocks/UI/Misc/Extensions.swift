@@ -53,7 +53,6 @@ extension UIColor {
 
 extension Color {
     static let systemBackground = Color(UIColor.systemBackground)
-    static let levelGreen = Color(UIColor(red: 5/255, green: 150/255, blue: 105/255, alpha: 0.8))
 
     // Brand color - references BrandConfig for easy customization
     static var appBrandColor: Color {
