@@ -33,6 +33,8 @@
 "map.unavailable.retry" = "Retry";
 "map.poi_type.parking" = "Parking";
 "map.poi_type.train_station" = "Train station";
+"map.info.accessibility" = "About & acknowledgements";
+"cover.photo.placeholder" = "No photo available";
 
 // MARK: Filters
 "filters.title" = "Filters";
@@ -107,6 +109,11 @@
 "acknowledgements.version" = "Version:";
 "acknowledgements.website" = "Website";
 "acknowledgements.load_failed" = "Acknowledgements could not be loaded. %@";
+"acknowledgements.about.title" = "About the project";
+"acknowledgements.about.p1" = "Austrian.rocks is a non-profit project, managed by volunteers.";
+"acknowledgements.about.p2" = "Our goal is to make discovering bouldering in Austria fun and respectful of nature.";
+"acknowledgements.about.p3" = "Austrian.rocks is a fork of Boolder, the open-source bouldering app for Fontainebleau. The code and data are open source — contributions are welcome.";
+"acknowledgements.section.data" = "Map data & basemap";
 
 // MARK: Area view
 "area.tags.popular" = "popular";

@@ -30,6 +30,10 @@ struct AcknowledgementsView: View {
 
     private func acknowledgementsList(_ catalog: AcknowledgementCatalog) -> some View {
         List {
+            aboutSection
+
+            dataAttributionSection
+
             Section {
                 Text("acknowledgements.intro")
                     .font(.body)
@@ -49,6 +53,42 @@ struct AcknowledgementsView: View {
                     Text(LocalizedStringKey(section.titleKey))
                 }
             }
+        }
+    }
+
+    // About copy sourced from the Rails project description (about page).
+    private var aboutSection: some View {
+        Section {
+            Text("acknowledgements.about.p1")
+                .font(.body)
+            Text("acknowledgements.about.p2")
+                .font(.body)
+            Text("acknowledgements.about.p3")
+                .font(.body)
+
+            Link(destination: URL(string: "https://\(BrandConfig.Domains.www)")!) {
+                Label(BrandConfig.Domains.www, systemImage: "link")
+                    .font(.footnote)
+            }
+            .accessibilityLabel(Text("acknowledgements.website"))
+        } header: {
+            Text("acknowledgements.about.title")
+        }
+    }
+
+    // Matches the shared map style's source attributions; the map's info FAB
+    // is the attribution entry point, so this section must stay reachable.
+    private var dataAttributionSection: some View {
+        Section {
+            Link(destination: URL(string: "https://basemap.at/")!) {
+                Label("Grundkarte: basemap.at", systemImage: "map")
+                    .font(.body)
+            }
+
+            Label("© Austrian Rocks", systemImage: "mountain.2")
+                .font(.body)
+        } header: {
+            Text("acknowledgements.section.data")
         }
     }
 

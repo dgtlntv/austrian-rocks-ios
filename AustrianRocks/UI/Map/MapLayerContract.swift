@@ -37,4 +37,14 @@ enum MapLayerContract {
     }
 
     static let clearedSentinel = -1
+
+    /// Austria coverage bounds declared by the shared style's raster/vector
+    /// sources (`[9.34, 46.281, 17.345, 49.332]`); the camera is constrained
+    /// to this area.
+    enum AustriaBounds {
+        static let southWestLatitude = 46.281
+        static let southWestLongitude = 9.34
+        static let northEastLatitude = 49.332
+        static let northEastLongitude = 17.345
+    }
 }

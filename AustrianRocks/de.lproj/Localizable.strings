@@ -33,6 +33,8 @@
 "map.unavailable.retry" = "Erneut versuchen";
 "map.poi_type.parking" = "Parkplatz";
 "map.poi_type.train_station" = "Bahnhof";
+"map.info.accessibility" = "Über & Danksagungen";
+"cover.photo.placeholder" = "Kein Foto verfügbar";
 
 // MARK: Filters
 "filters.title" = "Filter";
@@ -107,6 +109,11 @@
 "acknowledgements.version" = "Version:";
 "acknowledgements.website" = "Website";
 "acknowledgements.load_failed" = "Die Danksagungen konnten nicht geladen werden. %@";
+"acknowledgements.about.title" = "Über das Projekt";
+"acknowledgements.about.p1" = "Austrian.rocks ist ein gemeinnütziges Projekt, das von Freiwilligen verwaltet wird.";
+"acknowledgements.about.p2" = "Unser Ziel ist es, das Entdecken des Boulderns in Österreich auf spielerische Weise und mit Respekt für die Natur zu erleichtern.";
+"acknowledgements.about.p3" = "Austrian.rocks ist ein Fork von Boolder, der Open-Source-Boulder-App für Fontainebleau. Code und Daten sind Open Source – Beiträge sind willkommen.";
+"acknowledgements.section.data" = "Kartendaten & Grundkarte";
 
 // MARK: Area view
 "area.tags.popular" = "beliebt";

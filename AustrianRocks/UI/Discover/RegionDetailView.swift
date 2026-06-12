@@ -9,6 +9,9 @@ import SwiftUI
 
 struct RegionDetailView: View {
     let region: Region
+
+    @Environment(\.discoverRouter) private var router
+
     @State private var clusters: [Cluster] = []
 
     var body: some View {
@@ -28,11 +31,8 @@ struct RegionDetailView: View {
 
     var headerImage: some View {
         ZStack(alignment: .bottomLeading) {
-            Image("region-cover-\(region.id)")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
+            CoverPhotoView(url: region.coverPhotoURL)
                 .frame(height: 200)
-                .clipped()
 
             LinearGradient(
                 gradient: Gradient(colors: [Color.black.opacity(0.6), Color.clear]),
@@ -68,21 +68,39 @@ struct RegionDetailView: View {
                     .foregroundColor(.secondary)
             } else {
                 ForEach(clusters) { cluster in
-                    NavigationLink(value: DiscoverRoute.cluster(cluster.id)) {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(cluster.name)
-                                    .font(.headline)
-
-                                Text(String(format: NSLocalizedString("discover.cluster.areas_count", comment: ""), cluster.areas.count))
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-
-                            Spacer()
-                        }
-                    }
+                    clusterRow(cluster)
                 }
+            }
+        }
+    }
+
+    // Router-aware like ClusterDetailView.areaRow, so cluster rows work both
+    // inside the Discover NavigationStack and when region details are shown
+    // as a sheet from the map (no navigationDestination in that context).
+    @ViewBuilder
+    private func clusterRow(_ cluster: Cluster) -> some View {
+        let label = HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(cluster.name)
+                    .font(.headline)
+
+                Text(String(format: NSLocalizedString("discover.cluster.areas_count", comment: ""), cluster.areas.count))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+
+            Spacer()
+        }
+
+        if router != nil {
+            NavigationLink(value: DiscoverRoute.cluster(cluster.id)) {
+                label
+            }
+        } else {
+            NavigationLink {
+                ClusterDetailView(cluster: cluster)
+            } label: {
+                label
             }
         }
     }

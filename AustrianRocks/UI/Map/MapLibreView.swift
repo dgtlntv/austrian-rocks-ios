@@ -89,6 +89,11 @@ struct MapLibreView: UIViewControllerRepresentable {
             context.coordinator.lastClearMapSelectionCount = mapState.clearMapSelectionCount
             vc.clearSelectedMapFeature()
         }
+
+        if mapState.clearProblemSelectionCount != context.coordinator.lastClearProblemSelectionCount {
+            context.coordinator.lastClearProblemSelectionCount = mapState.clearProblemSelectionCount
+            vc.clearSelectedProblem()
+        }
     }
 
     func makeCoordinator() -> Coordinator {
@@ -108,6 +113,7 @@ struct MapLibreView: UIViewControllerRepresentable {
         var lastCenterOnBoulderCount: Int = 0
         var lastFitMapFeatureBoundsCount: Int = 0
         var lastClearMapSelectionCount: Int = 0
+        var lastClearProblemSelectionCount: Int = 0
 
         init(_ parent: MapLibreView) {
             self.parent = parent

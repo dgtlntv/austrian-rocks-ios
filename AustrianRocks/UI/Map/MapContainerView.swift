@@ -22,6 +22,7 @@ struct MapContainerView: View {
     @State private var presentDownloads = false
     @State private var presentDownloadsPlaceholder = false
     @State private var presentedDetail: MapFeatureDetailDestination? = nil
+    @State private var presentAboutAcknowledgements = false
     
     var body: some View {
         @Bindable var mapState = mapState
@@ -67,9 +68,17 @@ struct MapContainerView: View {
                 mapFeatureDetail(destination)
             }
         }
+        .sheet(isPresented: $presentAboutAcknowledgements) {
+            NavigationStack {
+                AcknowledgementsView()
+            }
+        }
         .onChange(of: mapState.presentProblemDetails) { oldValue, newValue in
             if !newValue {
                 mapState.deselectTopo()
+                // Single dismissal path (swipe, close, background tap, sheet
+                // replacement) — clears the selected problem dot on the map.
+                mapState.clearProblemMapSelection()
             }
         }
         .onChange(of: appState.selectedProblem) { oldValue, newValue in
@@ -299,6 +308,11 @@ struct MapContainerView: View {
 
     var fabButtons: some View {
         Group {
+            // Attribution entry point: replaces the hidden MapLibre ornaments,
+            // so it must stay one tap from the map. Visually smaller/subdued
+            // than the primary download/location actions.
+            infoButton
+
             Group {
                 if let cluster = mapState.selectedCluster {
                     DownloadButtonView(cluster: cluster, presentDownloads: $presentDownloads, clusterDownloader: ClusterDownloader(cluster: cluster, mainArea: areaBestGuess(in: cluster) ?? cluster.mainArea))
@@ -326,8 +340,27 @@ struct MapContainerView: View {
             .adaptiveFabStyle()
         }
     }
-    
-    
+
+    var infoButton: some View {
+        Button {
+            presentAboutAcknowledgements = true
+        } label: {
+            Image(systemName: "info.circle")
+                .font(.system(size: 15))
+                .padding(8)
+                .modify {
+                    if #available(iOS 26, *) {
+                        $0
+                    } else {
+                        $0.foregroundColor(.secondary)
+                    }
+                }
+        }
+        .adaptiveFabStyle()
+        .accessibilityLabel(Text("map.info.accessibility"))
+    }
+
+
     // TODO: remove after October 2024
     private var userDidUseOldOfflineMode: Bool {
         if let data = UserDefaults.standard.data(forKey: "offline-photos/areasIds"),

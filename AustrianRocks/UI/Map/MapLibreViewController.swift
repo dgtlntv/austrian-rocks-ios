@@ -44,6 +44,30 @@ class MapLibreViewController: UIViewController, MLNMapViewDelegate {
         UIEdgeInsets(top: 100, left: 20, bottom: view.bounds.height / 2 + 40, right: 20)
     }
 
+    // The country roughly fills the screen at zoom 6.
+    private static let minimumZoomLevel: Double = 6
+    private static let austriaBounds = MLNCoordinateBounds(
+        sw: CLLocationCoordinate2D(
+            latitude: MapLayerContract.AustriaBounds.southWestLatitude,
+            longitude: MapLayerContract.AustriaBounds.southWestLongitude
+        ),
+        ne: CLLocationCoordinate2D(
+            latitude: MapLayerContract.AustriaBounds.northEastLatitude,
+            longitude: MapLayerContract.AustriaBounds.northEastLongitude
+        )
+    )
+    // Margin so regions on the border stay reachable when panning.
+    private static let pannableBounds = MLNCoordinateBounds(
+        sw: CLLocationCoordinate2D(
+            latitude: MapLayerContract.AustriaBounds.southWestLatitude - 0.5,
+            longitude: MapLayerContract.AustriaBounds.southWestLongitude - 0.5
+        ),
+        ne: CLLocationCoordinate2D(
+            latitude: MapLayerContract.AustriaBounds.northEastLatitude + 0.5,
+            longitude: MapLayerContract.AustriaBounds.northEastLongitude + 0.5
+        )
+    )
+
     init(
         manifestClient: MapTileManifestClient = MapTileManifestClient(),
         styleCache: MapTileStyleCache = MapTileStyleCache()
@@ -79,8 +103,12 @@ class MapLibreViewController: UIViewController, MLNMapViewDelegate {
         mapView.allowsRotating = false
         mapView.showsUserLocation = true
         mapView.showsScale = false
-        mapView.logoView.alpha = 0.5
-        mapView.attributionButton.alpha = 0.35
+        // Both default ornaments collide with the SwiftUI FAB stack; textual
+        // attribution stays one tap away via the info FAB (About &
+        // Acknowledgements), which BSD-2 MapLibre permits.
+        mapView.logoView.isHidden = true
+        mapView.attributionButton.isHidden = true
+        mapView.minimumZoomLevel = Self.minimumZoomLevel
 
         selectionController = MapSelectionController(mapView: mapView)
 
@@ -152,6 +180,10 @@ class MapLibreViewController: UIViewController, MLNMapViewDelegate {
         handleStyleLoadAction(styleLoader.styleDidFail(url: mapView.styleURL, message: error.localizedDescription))
     }
 
+    func mapView(_ mapView: MLNMapView, shouldChangeFrom oldCamera: MLNMapCamera, to newCamera: MLNMapCamera) -> Bool {
+        coordinateIsInside(newCamera.centerCoordinate, bounds: Self.pannableBounds)
+    }
+
     func mapViewRegionIsChanging(_ mapView: MLNMapView) {
         guard !flyinToSomething else { return }
         guard Date().timeIntervalSince(lastCameraDelegateUpdate) > 0.1 else { return }
@@ -212,15 +244,12 @@ class MapLibreViewController: UIViewController, MLNMapViewDelegate {
     func centerOnCurrentLocation() {
         guard let coordinate = mapView.userLocation?.coordinate else { return }
 
-        let austriaFallbackBounds = MLNCoordinateBounds(
-            sw: CLLocationCoordinate2D(latitude: 46.372276, longitude: 9.530748),
-            ne: CLLocationCoordinate2D(latitude: 49.020530, longitude: 17.160776)
-        )
-
-        if coordinateIsInside(coordinate, bounds: austriaFallbackBounds) {
+        if coordinateIsInside(coordinate, bounds: Self.austriaBounds) {
             setCenter(coordinate, zoom: max(mapView.zoomLevel, 17), padding: safePadding)
         } else {
-            fit([austriaFallbackBounds.sw, austriaFallbackBounds.ne, coordinate], minZoom: nil, padding: safePadding)
+            // The camera is constrained to Austria, so a location outside the
+            // country cannot be centered; show the whole country instead.
+            fit([Self.austriaBounds.sw, Self.austriaBounds.ne], minZoom: nil, padding: safePadding)
         }
     }
 
@@ -253,6 +282,10 @@ class MapLibreViewController: UIViewController, MLNMapViewDelegate {
 
     func clearSelectedMapFeature() {
         selectionController?.clear()
+    }
+
+    func clearSelectedProblem() {
+        selectionController?.clear(ifKind: .problem)
     }
 
     func fitMapFeatureBounds(_ bounds: MapFeatureBounds) {
@@ -464,28 +497,35 @@ class MapLibreViewController: UIViewController, MLNMapViewDelegate {
     }
 
     private func fit(_ coordinates: [CLLocationCoordinate2D], minZoom: CGFloat?, maxZoom: Double? = nil, padding: UIEdgeInsets) {
-        guard !coordinates.isEmpty else { return }
+        guard let first = coordinates.first else { return }
+
+        var sw = first
+        var ne = first
+        for coordinate in coordinates.dropFirst() {
+            sw.latitude = min(sw.latitude, coordinate.latitude)
+            sw.longitude = min(sw.longitude, coordinate.longitude)
+            ne.latitude = max(ne.latitude, coordinate.latitude)
+            ne.longitude = max(ne.longitude, coordinate.longitude)
+        }
+
+        // Compute the destination camera up front and animate to it exactly
+        // once: the fitting zoom applies from any starting zoom (in or out),
+        // with no post-hoc zoom calls racing the in-flight animation.
+        let bounds = MLNCoordinateBounds(sw: sw, ne: ne)
+        let camera = mapView.cameraThatFitsCoordinateBounds(bounds, edgePadding: padding)
+
+        let fittedZoom = MLNZoomLevelForAltitude(camera.altitude, camera.pitch, camera.centerCoordinate.latitude, mapView.frame.size)
+        var clampedZoom = fittedZoom
+        if let minZoom { clampedZoom = max(clampedZoom, Double(minZoom)) }
+        if let maxZoom { clampedZoom = min(clampedZoom, maxZoom) }
+        if clampedZoom != fittedZoom {
+            camera.altitude = MLNAltitudeForZoomLevel(clampedZoom, camera.pitch, camera.centerCoordinate.latitude, mapView.frame.size)
+        }
+
         flyinToSomething = true
-        coordinates.withUnsafeBufferPointer { buffer in
-            if let baseAddress = buffer.baseAddress {
-                mapView.setVisibleCoordinates(
-                    baseAddress,
-                    count: UInt(coordinates.count),
-                    edgePadding: padding,
-                    direction: -1,
-                    duration: flyinDuration,
-                    animationTimingFunction: nil
-                ) { [weak self] in
-                    self?.flyinToSomething = false
-                    self?.triggerMapDetectors()
-                }
-            }
-        }
-        if let minZoom, mapView.zoomLevel < minZoom {
-            mapView.setZoomLevel(Double(minZoom), animated: true)
-        }
-        if let maxZoom, mapView.zoomLevel > maxZoom {
-            mapView.setZoomLevel(maxZoom, animated: true)
+        mapView.setCamera(camera, withDuration: flyinDuration, animationTimingFunction: nil) { [weak self] in
+            self?.flyinToSomething = false
+            self?.triggerMapDetectors()
         }
     }
 

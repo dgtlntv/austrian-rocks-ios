@@ -22,9 +22,24 @@ struct Region: Identifiable, Hashable {
     let northEastLon: Double?
     let tags: [String]
     let published: Bool?
+    let coverPhotoUrl: String?
 
     var popular: Bool {
         tags.contains("popular")
+    }
+
+    /// Validated remote cover photo URL, or nil when the export has no
+    /// `cover_photo_url` column yet, the value is NULL, or it is not a safe
+    /// HTTP(S) URL — all rendered as the placeholder.
+    var coverPhotoURL: URL? {
+        Self.coverPhotoURL(from: coverPhotoUrl)
+    }
+
+    static func coverPhotoURL(from rawValue: String?) -> URL? {
+        guard let rawValue,
+              let url = URL(string: rawValue),
+              url.isHTTPOrHTTPS else { return nil }
+        return url
     }
 
     var center: CLLocation? {
@@ -52,12 +67,16 @@ extension Region {
     static let northEastLon = Expression<Double?>("north_east_lon")
     static let tags = Expression<String?>("tags")
     static let published = Expression<Bool?>("published")
+    // SQLite cover contract (0005-P6): nullable cover_photo_url TEXT holding
+    // the same absolute HTTPS URL the map tile properties carry as
+    // coverPhotoUrl. Read defensively — today's exports lack the column.
+    static let coverPhotoUrl = Expression<String?>("cover_photo_url")
 
-    static func load(id: Int) -> Region? {
+    static func load(id: Int, from db: Connection = SqliteStore.shared.db) -> Region? {
         let query = Table("regions").filter(self.id == id)
 
         do {
-            if let r = try SqliteStore.shared.db.pluck(query) {
+            if let r = try db.pluck(query) {
                 let allowedTags = ["popular"]
                 let tags = r[tags]?.components(separatedBy: ",").filter{allowedTags.contains($0)}
 
@@ -73,7 +92,8 @@ extension Region {
                     northEastLat: r[northEastLat],
                     northEastLon: r[northEastLon],
                     tags: tags ?? [],
-                    published: r[published]
+                    published: r[published],
+                    coverPhotoUrl: (try? r.get(coverPhotoUrl)) ?? nil
                 )
             }
 

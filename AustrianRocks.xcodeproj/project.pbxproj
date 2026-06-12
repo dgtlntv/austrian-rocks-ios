@@ -133,6 +133,8 @@
 		03FD89942D8DB18000B7FAD9 /* Bundle+AppVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FD89922D8DB18000B7FAD9 /* Bundle+AppVersion.swift */; };
 		03FD89952E26400000000001 /* BottomSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FD89952E26400000000000 /* BottomSheetView.swift */; };
 		03FD89952E26400000000002 /* BottomSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FD89952E26400000000000 /* BottomSheetView.swift */; };
+		03FD89952E26400000000011 /* CoverPhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FD89952E26400000000010 /* CoverPhotoView.swift */; };
+		03FD89952E26400000000012 /* CoverPhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FD89952E26400000000010 /* CoverPhotoView.swift */; };
 		03FD89B12F4E100000000001 /* TopoCarouselView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FD89B02F4E100000000001 /* TopoCarouselView.swift */; };
 		03FD89B12F4E100000000002 /* TopoPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FD89B02F4E100000000002 /* TopoPageView.swift */; };
 		03FD89B12F4E100000000005 /* TopoImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FD89B02F4E100000000005 /* TopoImageCache.swift */; };
@@ -244,6 +246,8 @@
 		45B00000000000000000002A /* MissingDetailActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000029 /* MissingDetailActionTests.swift */; };
 		45B000000000000000000032 /* MapStyleLoadCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000031 /* MapStyleLoadCoordinatorTests.swift */; };
 		45B00000000000000000003D /* MapSelectionControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B00000000000000000003C /* MapSelectionControllerTests.swift */; };
+		45B000000000000000000041 /* RegionCoverPhotoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B000000000000000000040 /* RegionCoverPhotoTests.swift */; };
+		45B000000000000000000043 /* SQLite in Frameworks */ = {isa = PBXBuildFile; productRef = 45B000000000000000000042 /* SQLite */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -318,6 +322,7 @@
 		03EC6F312F282711009EF938 /* StartGroupMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartGroupMenuView.swift; sourceTree = "<group>"; };
 		03FD89922D8DB18000B7FAD9 /* Bundle+AppVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+AppVersion.swift"; sourceTree = "<group>"; };
 		03FD89952E26400000000000 /* BottomSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetView.swift; sourceTree = "<group>"; };
+		03FD89952E26400000000010 /* CoverPhotoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoverPhotoView.swift; sourceTree = "<group>"; };
 		03FD89B02F4E100000000001 /* TopoCarouselView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopoCarouselView.swift; sourceTree = "<group>"; };
 		03FD89B02F4E100000000002 /* TopoPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopoPageView.swift; sourceTree = "<group>"; };
 		03FD89B02F4E100000000005 /* TopoImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopoImageCache.swift; sourceTree = "<group>"; };
@@ -384,6 +389,7 @@
 		45B000000000000000000029 /* MissingDetailActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MissingDetailActionTests.swift; sourceTree = "<group>"; };
 		45B000000000000000000031 /* MapStyleLoadCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapStyleLoadCoordinatorTests.swift; sourceTree = "<group>"; };
 		45B00000000000000000003C /* MapSelectionControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSelectionControllerTests.swift; sourceTree = "<group>"; };
+		45B000000000000000000040 /* RegionCoverPhotoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionCoverPhotoTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -409,6 +415,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				45B000000000000000000043 /* SQLite in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -437,6 +444,7 @@
 				031498992B4FEF4B0014C883 /* SafariWebView.swift */,
 				03FD89922D8DB18000B7FAD9 /* Bundle+AppVersion.swift */,
 				03FD89952E26400000000000 /* BottomSheetView.swift */,
+				03FD89952E26400000000010 /* CoverPhotoView.swift */,
 			);
 			path = Misc;
 			sourceTree = "<group>";
@@ -694,6 +702,7 @@
 				45B000000000000000000029 /* MissingDetailActionTests.swift */,
 				45B000000000000000000031 /* MapStyleLoadCoordinatorTests.swift */,
 				45B00000000000000000003C /* MapSelectionControllerTests.swift */,
+				45B000000000000000000040 /* RegionCoverPhotoTests.swift */,
 			);
 			path = AustrianRocksTests;
 			sourceTree = "<group>";
@@ -758,6 +767,7 @@
 			);
 			name = AustrianRocksTests;
 			packageProductDependencies = (
+				45B000000000000000000042 /* SQLite */,
 			);
 			productName = AustrianRocksTests;
 			productReference = 45B000000000000000000016 /* AustrianRocksTests.xctest */;
@@ -961,6 +971,7 @@
 				03147EE62B470F59005771C3 /* AreaDownloader.swift in Sources */,
 				03EC6F322F282712009EF938 /* StartGroupMenuView.swift in Sources */,
 				03FD89952E26400000000002 /* BottomSheetView.swift in Sources */,
+				03FD89952E26400000000012 /* CoverPhotoView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1072,6 +1083,7 @@
 				031F36C2291EA62900BD0C2B /* TestFontSize.swift in Sources */,
 				03EC6F332F282712009EF938 /* StartGroupMenuView.swift in Sources */,
 				03FD89952E26400000000001 /* BottomSheetView.swift in Sources */,
+				03FD89952E26400000000011 /* CoverPhotoView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1086,6 +1098,7 @@
 				45B000000000000000000028 /* SafeURLTests.swift in Sources */,
 				45B00000000000000000002A /* MissingDetailActionTests.swift in Sources */,
 				45B00000000000000000003D /* MapSelectionControllerTests.swift in Sources */,
+				45B000000000000000000041 /* RegionCoverPhotoTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1474,6 +1487,11 @@
 			productName = SQLite;
 		};
 		03C104F4290BFBD8007A94D7 /* SQLite */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 03C104F1290BFBCE007A94D7 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
+			productName = SQLite;
+		};
+		45B000000000000000000042 /* SQLite */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 03C104F1290BFBCE007A94D7 /* XCRemoteSwiftPackageReference "SQLite.swift" */;
 			productName = SQLite;

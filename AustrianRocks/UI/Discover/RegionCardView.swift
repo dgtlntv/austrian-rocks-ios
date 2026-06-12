@@ -36,10 +36,7 @@ struct RegionCardView: View {
             .frame(width: width, height: height)
             .background(
                 ZStack {
-                    // Placeholder: Use region ID for cover image
-                    // You'll need to add region-cover images to Assets
-                    Image("region-cover-\(region.id)")
-                        .resizable()
+                    CoverPhotoView(url: region.coverPhotoURL)
                     LinearGradient(gradient: shadow, startPoint: .top, endPoint: .bottom)
                 }
             )

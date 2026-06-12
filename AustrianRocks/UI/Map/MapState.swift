@@ -29,6 +29,7 @@ class MapState {
     private(set) var fitMapFeatureBounds: MapFeatureBounds? = nil
     private(set) var fitMapFeatureBoundsCount: Int = 0
     private(set) var clearMapSelectionCount: Int = 0
+    private(set) var clearProblemSelectionCount: Int = 0
 
     var presentProblemDetails = false
     var presentFilters = false
@@ -138,6 +139,13 @@ class MapState {
     func dismissMapFeatureCard() {
         selectedMapFeatureCard = nil
         clearMapSelectionCount += 1
+    }
+
+    /// Clears the selected problem layer on the map, but only if the current
+    /// map selection is still a problem — the single dismissal path for both
+    /// the iOS <26 sheet and the iOS 26 bottom sheet.
+    func clearProblemMapSelection() {
+        clearProblemSelectionCount += 1
     }
 
     func dismissMapFeatureCardFromMap() {

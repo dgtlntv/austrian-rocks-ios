@@ -7,6 +7,71 @@
 
 import Foundation
 import MapLibre
+import QuartzCore
+
+/// Style mutations the selection controller performs, abstracted so the
+/// selection/animation state machine is testable without a live MLNMapView.
+protocol MapSelectionStyling: AnyObject {
+    func layerExists(_ identifier: String) -> Bool
+    func predicate(forLayer identifier: String) -> NSPredicate?
+    func setPredicate(_ predicate: NSPredicate?, forLayer identifier: String)
+    func growExpression(forLayer identifier: String, isCircle: Bool) -> NSExpression?
+    func setGrowExpression(_ expression: NSExpression, forLayer identifier: String, isCircle: Bool)
+    func iconRotation(forLayer identifier: String) -> NSExpression?
+    func setIconRotation(_ expression: NSExpression, forLayer identifier: String)
+}
+
+/// Drives per-frame animation ticks. The production driver uses CADisplayLink
+/// so selection animations stay in sync with screen refresh; tests inject a
+/// driver they advance manually.
+protocol SelectionAnimationDriver: AnyObject {
+    var isRunning: Bool { get }
+    func start(_ tick: @escaping (CFTimeInterval) -> Void)
+    func stop()
+}
+
+final class DisplayLinkAnimationDriver: SelectionAnimationDriver {
+    private var displayLink: CADisplayLink?
+    private var tick: ((CFTimeInterval) -> Void)?
+
+    var isRunning: Bool { displayLink != nil }
+
+    func start(_ tick: @escaping (CFTimeInterval) -> Void) {
+        stop()
+        self.tick = tick
+        let link = CADisplayLink(target: WeakProxy(driver: self), selector: #selector(WeakProxy.fire))
+        link.add(to: .main, forMode: .common)
+        displayLink = link
+    }
+
+    func stop() {
+        displayLink?.invalidate()
+        displayLink = nil
+        tick = nil
+    }
+
+    deinit {
+        displayLink?.invalidate()
+    }
+
+    fileprivate func fire() {
+        tick?(CACurrentMediaTime())
+    }
+
+    // CADisplayLink retains its target; the proxy keeps the driver (and the
+    // selection controller behind it) deallocatable while a link is live.
+    private final class WeakProxy: NSObject {
+        weak var driver: DisplayLinkAnimationDriver?
+
+        init(driver: DisplayLinkAnimationDriver) {
+            self.driver = driver
+        }
+
+        @objc func fire() {
+            driver?.fire()
+        }
+    }
+}
 
 /// Mirrors the Rails MapSelection state machine: one selected map entity at a
 /// time, rendered through shared `*-selected` layers filtered by id and the
@@ -62,31 +127,45 @@ final class MapSelectionController {
         let predicate: NSPredicate?
     }
 
-    private let mapView: MLNMapView
+    private let styling: MapSelectionStyling
+    private let driver: SelectionAnimationDriver
     private var current: Selection?
     private var originalBasePredicates: [String: StoredPredicate] = [:]
     private var originalGrowExpressions: [String: NSExpression] = [:]
+    private var originalGrowExpressionJSON: [String: Any] = [:]
     private var originalIconRotations: [String: NSExpression] = [:]
     private var supplementalPredicates: [Kind: NSPredicate] = [:]
-    private var animationToken = UUID()
 
-    private let growDuration: TimeInterval = 0.52
-    private let clearDuration: TimeInterval = 0.22
-    private let iconGrowScale: CGFloat = 1.25
-    private let iconClearScale: CGFloat = 0.72
-    private let circleGrowScale: CGFloat = 1.4
-    private let circleClearScale: CGFloat = 1.0
-    private let iconSettleOvershoot: CGFloat = 0.1
-    private let circleSettleOvershoot: CGFloat = 0.08
-    private let iconWiggleDegrees: CGFloat = 5
+    let growDuration: TimeInterval = 0.52
+    let clearDuration: TimeInterval = 0.22
+    let iconGrowScale: CGFloat = 1.25
+    // Intentional deviations from the Rails constants (web follows via the
+    // 0005 cross-repo list): the circle grow is softened from 1.4 to 1.2,
+    // and clear animates back to exactly the base scale 1.0 (web shrinks to
+    // 0.72 and pops when the unselected pin reappears).
+    let circleGrowScale: CGFloat = 1.2
+    let clearScale: CGFloat = 1.0
+    let iconSettleOvershoot: CGFloat = 0.1
+    let circleSettleOvershoot: CGFloat = 0.08
+    let iconWiggleDegrees: CGFloat = 5
 
-    init(mapView: MLNMapView) {
-        self.mapView = mapView
+    init(styling: MapSelectionStyling, driver: SelectionAnimationDriver = DisplayLinkAnimationDriver()) {
+        self.styling = styling
+        self.driver = driver
+    }
+
+    convenience init(mapView: MLNMapView) {
+        self.init(styling: MapLibreSelectionStyling(mapView: mapView))
+    }
+
+    deinit {
+        driver.stop()
     }
 
     func styleDidLoad() {
         originalBasePredicates.removeAll()
         originalGrowExpressions.removeAll()
+        originalGrowExpressionJSON.removeAll()
         originalIconRotations.removeAll()
         Kind.allCases.forEach { applyClearedPredicate(to: $0) }
         if let current {
@@ -117,6 +196,13 @@ final class MapSelectionController {
         }
     }
 
+    /// Clears only when the current selection is of the given kind, so e.g.
+    /// dismissing the problem sheet never wipes a fresh POI/area selection.
+    func clear(ifKind kind: Kind, animated: Bool = true) {
+        guard current?.kind == kind else { return }
+        clear(animated: animated)
+    }
+
     func setSupplementalPredicate(_ predicate: NSPredicate?, for kind: Kind) {
         supplementalPredicates[kind] = predicate
         guard let current, current.kind == kind else {
@@ -127,7 +213,7 @@ final class MapSelectionController {
     }
 
     private func applySelection(_ selection: Selection, animated: Bool) {
-        guard layerExists(selection.kind.selectedLayerId) else { return }
+        guard styling.layerExists(selection.kind.selectedLayerId) else { return }
 
         applySelectedPredicate(for: selection)
         excludeFromBaseLayer(selection.kind, id: selection.id)
@@ -139,6 +225,9 @@ final class MapSelectionController {
         }
     }
 
+    // The selected pin lands at exactly base scale, then the selected-layer
+    // sentinel and base-layer exclusion swap in the same frame, so the
+    // selected pin visually becomes the unselected pin with no gap.
     private func finishClear(_ selection: Selection) {
         guard current == selection else { return }
         applyGrowScale(kind: selection.kind, scale: 1)
@@ -165,26 +254,25 @@ final class MapSelectionController {
 
     private func excludeFromBaseLayer(_ kind: Kind, id: Int) {
         guard let baseLayerId = kind.baseLayerId,
-              let layer = vectorLayer(baseLayerId) else { return }
+              styling.layerExists(baseLayerId) else { return }
 
         if originalBasePredicates[baseLayerId] == nil {
-            originalBasePredicates[baseLayerId] = StoredPredicate(predicate: layer.predicate)
+            originalBasePredicates[baseLayerId] = StoredPredicate(predicate: styling.predicate(forLayer: baseLayerId))
         }
 
         let original = originalBasePredicates[baseLayerId]?.predicate
         let exclusion = NSPredicate(format: "%K != %@", kind.idProperty, NSNumber(value: id))
-        layer.predicate = combinedPredicate([original, exclusion])
+        styling.setPredicate(combinedPredicate([original, exclusion]), forLayer: baseLayerId)
     }
 
     private func restoreBaseLayer(_ kind: Kind) {
         guard let baseLayerId = kind.baseLayerId,
-              let stored = originalBasePredicates[baseLayerId],
-              let layer = vectorLayer(baseLayerId) else { return }
-        layer.predicate = stored.predicate
+              let stored = originalBasePredicates[baseLayerId] else { return }
+        styling.setPredicate(stored.predicate, forLayer: baseLayerId)
     }
 
     private func setPredicate(combining predicates: [NSPredicate?], on layerId: String) {
-        vectorLayer(layerId)?.predicate = combinedPredicate(predicates)
+        styling.setPredicate(combinedPredicate(predicates), forLayer: layerId)
     }
 
     private func combinedPredicate(_ predicates: [NSPredicate?]) -> NSPredicate? {
@@ -195,43 +283,42 @@ final class MapSelectionController {
 
     private func startGrowAnimation(for kind: Kind) {
         cancelAnimation()
-        let token = animationToken
         let targetScale = kind.isCircle ? circleGrowScale : iconGrowScale
         let overshoot = kind.isCircle ? circleSettleOvershoot : iconSettleOvershoot
-        animate(duration: growDuration, token: token) { [weak self] progress in
+        animate(duration: growDuration) { [weak self] progress in
             guard let self else { return }
             self.applySelectionFrame(kind: kind, scale: self.settleScale(progress: progress, targetScale: targetScale, overshoot: overshoot), progress: progress)
         }
     }
 
     private func startClearAnimation(for selection: Selection, finish: @escaping () -> Void) {
-        let token = animationToken
         let kind = selection.kind
         let startScale = kind.isCircle ? circleGrowScale : iconGrowScale
-        let endScale = kind.isCircle ? circleClearScale : iconClearScale
-        animate(duration: clearDuration, token: token, completion: finish) { [weak self] progress in
+        let endScale = clearScale
+        animate(duration: clearDuration, completion: finish) { [weak self] progress in
             let eased = 1 - pow(1 - progress, 3)
             self?.applySelectionFrame(kind: kind, scale: startScale + ((endScale - startScale) * eased), progress: 1)
         }
     }
 
-    private func animate(duration: TimeInterval, token: UUID, completion: (() -> Void)? = nil, step: @escaping (CGFloat) -> Void) {
-        let start = CACurrentMediaTime()
-        func tick() {
-            guard token == animationToken else { return }
-            let progress = min(CGFloat((CACurrentMediaTime() - start) / duration), 1)
+    private func animate(duration: TimeInterval, completion: (() -> Void)? = nil, step: @escaping (CGFloat) -> Void) {
+        driver.stop()
+        var startTime: CFTimeInterval?
+        step(0)
+        driver.start { [weak self] time in
+            guard let self else { return }
+            if startTime == nil { startTime = time }
+            let progress = min(CGFloat((time - (startTime ?? time)) / duration), 1)
             step(progress)
-            if progress < 1 {
-                DispatchQueue.main.asyncAfter(deadline: .now() + (1.0 / 60.0)) { tick() }
-            } else {
+            if progress >= 1 {
+                self.driver.stop()
                 completion?()
             }
         }
-        tick()
     }
 
     private func cancelAnimation() {
-        animationToken = UUID()
+        driver.stop()
     }
 
     private func settleScale(progress: CGFloat, targetScale: CGFloat, overshoot: CGFloat) -> CGFloat {
@@ -253,32 +340,28 @@ final class MapSelectionController {
     }
 
     private func applyGrowScale(kind: Kind, scale: CGFloat) {
-        if kind.isCircle {
-            guard let layer = circleLayer(kind.selectedLayerId) else { return }
-            let original = originalGrowExpression(for: kind, current: layer.circleRadius ?? NSExpression(forConstantValue: 1))
-            layer.circleRadius = scaledExpression(original, scale: scale)
-        } else {
-            guard let layer = symbolLayer(kind.selectedLayerId) else { return }
-            let original = originalGrowExpression(for: kind, current: layer.iconScale ?? NSExpression(forConstantValue: 1))
-            layer.iconScale = scaledExpression(original, scale: scale)
-        }
+        let layerId = kind.selectedLayerId
+        guard styling.layerExists(layerId) else { return }
+        let current = styling.growExpression(forLayer: layerId, isCircle: kind.isCircle) ?? NSExpression(forConstantValue: 1)
+        let original = originalGrowExpression(for: kind, current: current)
+        styling.setGrowExpression(scaledExpression(original, layerId: layerId, scale: scale), forLayer: layerId, isCircle: kind.isCircle)
     }
 
     private func applyIconWiggle(kind: Kind, progress: CGFloat) {
-        guard let layer = symbolLayer(kind.selectedLayerId) else { return }
-        let base = originalIconRotation(for: kind, current: layer.iconRotation ?? NSExpression(forConstantValue: 0))
+        let layerId = kind.selectedLayerId
+        guard styling.layerExists(layerId) else { return }
+        let base = originalIconRotation(for: kind, current: styling.iconRotation(forLayer: layerId) ?? NSExpression(forConstantValue: 0))
         let baseDegrees = (base.constantValue as? NSNumber)?.doubleValue ?? 0
         let easedProgress = 1 - pow(1 - progress, 2)
         let amplitude = Double(iconWiggleDegrees * max(0, 1 - easedProgress))
         let rotation = baseDegrees + (sin(Double(easedProgress) * .pi * 2.5) * amplitude)
-        layer.iconRotation = NSExpression(forConstantValue: rotation)
+        styling.setIconRotation(NSExpression(forConstantValue: rotation), forLayer: layerId)
     }
 
     private func restoreIconRotation(kind: Kind) {
         guard !kind.isCircle,
-              let original = originalIconRotations[kind.selectedLayerId],
-              let layer = symbolLayer(kind.selectedLayerId) else { return }
-        layer.iconRotation = original
+              let original = originalIconRotations[kind.selectedLayerId] else { return }
+        styling.setIconRotation(original, forLayer: kind.selectedLayerId)
     }
 
     private func originalGrowExpression(for kind: Kind, current: NSExpression) -> NSExpression {
@@ -293,10 +376,19 @@ final class MapSelectionController {
         return current
     }
 
-    private func scaledExpression(_ expression: NSExpression, scale: CGFloat) -> NSExpression {
+    private func scaledExpression(_ expression: NSExpression, layerId: String, scale: CGFloat) -> NSExpression {
         guard scale != 1 else { return expression }
 
-        let jsonObject = expression.mgl_jsonExpressionObject
+        // Parse the base expression once per layer; per-frame work only swaps
+        // the scale constant instead of rebuilding NSExpression trees.
+        let jsonObject: Any
+        if let cached = originalGrowExpressionJSON[layerId] {
+            jsonObject = cached
+        } else {
+            jsonObject = expression.mgl_jsonExpressionObject
+            originalGrowExpressionJSON[layerId] = jsonObject
+        }
+
         if let zoomScaled = Self.zoomSafeScaledJSONObject(jsonObject, scale: scale) {
             return NSExpression(mglJSONObject: zoomScaled)
         }
@@ -347,9 +439,49 @@ final class MapSelectionController {
               let operatorName = expression.first as? String else { return false }
         return operatorName == "zoom"
     }
+}
 
-    private func layerExists(_ identifier: String) -> Bool {
+/// MLNMapView-backed styling used by the live map.
+final class MapLibreSelectionStyling: MapSelectionStyling {
+    private let mapView: MLNMapView
+
+    init(mapView: MLNMapView) {
+        self.mapView = mapView
+    }
+
+    func layerExists(_ identifier: String) -> Bool {
         mapView.style?.layer(withIdentifier: identifier) != nil
+    }
+
+    func predicate(forLayer identifier: String) -> NSPredicate? {
+        vectorLayer(identifier)?.predicate
+    }
+
+    func setPredicate(_ predicate: NSPredicate?, forLayer identifier: String) {
+        vectorLayer(identifier)?.predicate = predicate
+    }
+
+    func growExpression(forLayer identifier: String, isCircle: Bool) -> NSExpression? {
+        if isCircle {
+            return circleLayer(identifier)?.circleRadius
+        }
+        return symbolLayer(identifier)?.iconScale
+    }
+
+    func setGrowExpression(_ expression: NSExpression, forLayer identifier: String, isCircle: Bool) {
+        if isCircle {
+            circleLayer(identifier)?.circleRadius = expression
+        } else {
+            symbolLayer(identifier)?.iconScale = expression
+        }
+    }
+
+    func iconRotation(forLayer identifier: String) -> NSExpression? {
+        symbolLayer(identifier)?.iconRotation
+    }
+
+    func setIconRotation(_ expression: NSExpression, forLayer identifier: String) {
+        symbolLayer(identifier)?.iconRotation = expression
     }
 
     private func vectorLayer(_ identifier: String) -> MLNVectorStyleLayer? {
@@ -365,7 +497,7 @@ final class MapSelectionController {
     }
 }
 
-private extension MapSelectionController.Kind {
+extension MapSelectionController.Kind {
     static let allCases: [MapSelectionController.Kind] = [.region, .cluster, .area, .poi, .problem]
 }
 
