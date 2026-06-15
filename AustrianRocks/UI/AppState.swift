@@ -13,6 +13,10 @@ import SwiftUI
     var tab = Tab.map
     var selectedProblem: Problem?
     var selectedArea: Area?
+    /// A pending Discover destination requested from elsewhere (e.g. a map
+    /// feature card's "More details" button). `DiscoverView` consumes it,
+    /// navigates its stack to the route, and resets it to nil.
+    var discoverRoute: DiscoverRoute?
 
     enum Tab {
         case map

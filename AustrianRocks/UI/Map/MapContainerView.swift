@@ -22,6 +22,18 @@ struct MapContainerView: View {
     @State private var presentDownloads = false
     @State private var presentDownloadsPlaceholder = false
     @State private var presentAboutAcknowledgements = false
+    @State private var featureCardCompactHeight = MapFeatureSheetView.compactDetentHeight
+    @State private var featureCardDetent: PresentationDetent = .height(MapFeatureSheetView.compactDetentHeight)
+    @State private var featureCardCanExpand = false
+    @State private var problemSheetDetent: PresentationDetent = .medium
+
+    private var featureCardCompactDetent: PresentationDetent {
+        .height(featureCardCompactHeight)
+    }
+
+    private var featureCardDetents: Set<PresentationDetent> {
+        featureCardCanExpand ? [featureCardCompactDetent, .large] : [featureCardCompactDetent]
+    }
 
     var body: some View {
         @Bindable var mapState = mapState
@@ -55,17 +67,17 @@ struct MapContainerView: View {
         .sheet(isPresented: $mapState.presentSearch) {
             SearchSheetView()
         }
-        .modify {
-            if #available(iOS 26, *) {
-                $0 // Feature card presented via BottomSheetView in ContentView
-            } else {
-                $0.sheet(isPresented: featureCardPresented) {
-                    MapFeatureSheetView()
-                        .presentationDetents([.height(MapFeatureSheetView.compactDetentHeight), .medium, .large])
-                        .presentationBackgroundInteraction(.enabled(upThrough: .medium))
-                        .presentationDragIndicator(.visible)
-                }
-            }
+        .sheet(isPresented: featureCardPresented) {
+            MapFeatureSheetView(
+                isExpanded: featureCardDetent == .large,
+                onContentHeightChange: updateFeatureCardCompactHeight
+            )
+            .presentationDetents(featureCardDetents, selection: $featureCardDetent)
+            .presentationContentInteraction(.resizes)
+            .presentationBackground(.clear)
+            .presentationBackgroundInteraction(.enabled(upThrough: featureCardCompactDetent))
+            .presentationDragIndicator(.visible)
+            .id("\(featureCardCompactHeight)-\(featureCardCanExpand)")
         }
         .sheet(isPresented: $presentAboutAcknowledgements) {
             NavigationStack {
@@ -73,11 +85,20 @@ struct MapContainerView: View {
             }
         }
         .onChange(of: mapState.presentProblemDetails) { oldValue, newValue in
-            if !newValue {
+            if newValue {
+                problemSheetDetent = problemCompactDetent
+            } else {
                 mapState.deselectTopo()
                 // Single dismissal path (swipe, close, background tap, sheet
                 // replacement) — clears the selected problem dot on the map.
                 mapState.clearProblemMapSelection()
+            }
+        }
+        .onChange(of: mapState.selectedMapFeatureCard) { oldValue, newValue in
+            if newValue != nil, oldValue != newValue {
+                featureCardCompactHeight = MapFeatureSheetView.compactDetentHeight
+                featureCardCanExpand = false
+                featureCardDetent = featureCardCompactDetent
             }
         }
         .onChange(of: appState.selectedProblem) { oldValue, newValue in
@@ -117,24 +138,40 @@ struct MapContainerView: View {
                 }
             }
             .ignoresSafeArea(.keyboard)
-            .modify {
-                if #available(iOS 26, *) {
-                    $0 // Sheet presented via overlay for iOS 26
-                }
-                else {
-                    $0.sheet(isPresented: $mapState.presentProblemDetails) {
-                        ProblemDetailsView()
-                        .presentationDetents([detent])
-                        .presentationBackgroundInteraction(
-                            .enabled(upThrough: detent)
-                        )
-                        .presentationDragIndicator(.visible)
-                    }
-                }
+            .sheet(isPresented: $mapState.presentProblemDetails) {
+                ProblemDetailsView(isExpanded: problemSheetDetent == .large)
+                    .presentationDetents([problemCompactDetent, .large], selection: $problemSheetDetent)
+                    .presentationContentInteraction(.resizes)
+                    .presentationBackgroundInteraction(
+                        .enabled(upThrough: problemCompactDetent)
+                    )
+                    .presentationDragIndicator(.visible)
             }
     }
     
-    var detent: PresentationDetent {
+    private func updateFeatureCardCompactHeight(_ contentHeight: CGFloat) {
+        guard contentHeight > 0 else { return }
+
+        let measuredHeight = contentHeight + MapFeatureSheetView.compactContentChromePadding
+        let clampedHeight = min(
+            max(measuredHeight, MapFeatureSheetView.compactMinDetentHeight),
+            MapFeatureSheetView.compactMaxDetentHeight
+        )
+
+        let canExpand = measuredHeight > clampedHeight + 8
+
+        guard abs(featureCardCompactHeight - clampedHeight) > 1 || featureCardCanExpand != canExpand else { return }
+
+        withAnimation(.snappy) {
+            featureCardCompactHeight = clampedHeight
+            featureCardCanExpand = canExpand
+            if featureCardDetent != .large || !canExpand {
+                featureCardDetent = .height(clampedHeight)
+            }
+        }
+    }
+
+    var problemCompactDetent: PresentationDetent {
         if UIScreen.main.bounds.height <= 667 { // iPhone SE (all generations) & iPhone 8 and earlier
             return .height(420)
         }

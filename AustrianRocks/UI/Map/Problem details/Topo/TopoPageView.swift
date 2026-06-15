@@ -11,8 +11,8 @@ import SwiftUI
 /// A per-page topo wrapper for use inside `TopoLoopScrollView`.
 ///
 /// Each page owns its own `@State problem` so that page changes don't
-/// re-render sibling pages. When `zoomable` is true the topo is wrapped
-/// in a `ZoomableScrollView`.
+/// re-render sibling pages. The topo is always hosted in the same
+/// `ZoomableScrollView` hierarchy so changing zoom mode preserves `TopoView` state.
 struct TopoPageView: View {
     let topo: Topo
     let zoomable: Bool
@@ -45,20 +45,14 @@ struct TopoPageView: View {
             }
     }
     
-    @ViewBuilder
     private var topoContent: some View {
-        if zoomable {
-            ZoomableScrollView(zoomScale: $zoomScale) {
-                TopoView(
-                    problem: $problem,
-                    zoomScale: $zoomScale,
-                    onBackgroundTap: selectTopo
-                )
-            }
-        } else {
+        ZoomableScrollView(
+            zoomScale: $zoomScale,
+            isZoomEnabled: zoomable
+        ) {
             TopoView(
                 problem: $problem,
-                zoomScale: .constant(1),
+                zoomScale: $zoomScale,
                 onBackgroundTap: selectTopo
             )
         }
@@ -74,7 +68,7 @@ struct TopoPageView: View {
 
 /// Displays the topo image(s) for the current boulder, either as
 /// a looping horizontal scroll (multi-topo) or a single topo view.
-/// Set `zoomable` to `true` for the fullscreen presentation.
+/// Set `zoomable` to `true` for presentations that should support pinch zoom.
 struct TopoSwipeContentView: View {
     let problem: Problem
     let zoomable: Bool

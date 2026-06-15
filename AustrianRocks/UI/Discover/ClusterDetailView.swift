@@ -9,9 +9,6 @@ import SwiftUI
 
 struct ClusterDetailView: View {
     let cluster: Cluster
-    // Set when presented as a map bottom card: folds the tile-property card
-    // data (stats, show-on-map CTA, histogram, warning, links) into the page.
-    var mapCard: MapFeatureCardModel? = nil
 
     @Environment(\.discoverRouter) private var router
 
@@ -24,10 +21,6 @@ struct ClusterDetailView: View {
 
     var body: some View {
         List {
-            if let mapCard {
-                MapFeatureCardHeaderSection(card: mapCard)
-            }
-
             Section(header: Text("discover.cluster.areas")) {
                 if areas.isEmpty {
                     Text("discover.cluster.no_areas")

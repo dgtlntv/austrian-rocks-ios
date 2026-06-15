@@ -9,9 +9,6 @@ import SwiftUI
 
 struct RegionDetailView: View {
     let region: Region
-    // Set when presented as a map bottom card: folds the tile-property card
-    // data (stats, show-on-map CTA, histogram, warning, links) into the page.
-    var mapCard: MapFeatureCardModel? = nil
 
     @Environment(\.discoverRouter) private var router
 
@@ -19,10 +16,6 @@ struct RegionDetailView: View {
 
     var body: some View {
         List {
-            if let mapCard {
-                MapFeatureCardHeaderSection(card: mapCard)
-            }
-
             Section {
                 headerImage
             }

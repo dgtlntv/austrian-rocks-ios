@@ -163,7 +163,7 @@ struct MapLibreView: UIViewControllerRepresentable {
         }
 
         func dismissMapFeatureCard() {
-            parent.mapState.dismissMapFeatureCardFromMap()
+            parent.mapState.dismissMapFeatureCard()
         }
 
         func cameraChanged(state: MapLibreCameraState) {

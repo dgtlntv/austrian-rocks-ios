@@ -33,6 +33,7 @@ class MapLibreViewController: UIViewController, MLNMapViewDelegate {
     private var currentFilters: Filters?
     private var styleLoadTask: Task<Void, Never>?
     private var lastCameraDelegateUpdate = Date.distantPast
+    private var pendingMapInteractionDismissWorkItem: DispatchWorkItem?
     private var flyinToSomething = false
     private let flyinDuration = 0.5
     private let safePadding = UIEdgeInsets(top: 180, left: 20, bottom: 180, right: 20)
@@ -184,6 +185,11 @@ class MapLibreViewController: UIViewController, MLNMapViewDelegate {
         coordinateIsInside(newCamera.centerCoordinate, bounds: Self.pannableBounds)
     }
 
+    func mapView(_ mapView: MLNMapView, regionWillChangeAnimated animated: Bool) {
+        guard !flyinToSomething else { return }
+        scheduleCardDismissalForMapInteraction()
+    }
+
     func mapViewRegionIsChanging(_ mapView: MLNMapView) {
         guard !flyinToSomething else { return }
         guard Date().timeIntervalSince(lastCameraDelegateUpdate) > 0.1 else { return }
@@ -196,6 +202,21 @@ class MapLibreViewController: UIViewController, MLNMapViewDelegate {
         guard !flyinToSomething else { return }
         triggerMapDetectors(immediate: true)
         delegate?.cameraChanged(state: MapLibreCameraState(center: mapView.centerCoordinate, zoom: mapView.zoomLevel))
+    }
+
+    private func scheduleCardDismissalForMapInteraction() {
+        guard pendingMapInteractionDismissWorkItem == nil else { return }
+
+        // Let MapLibre begin handling the pan immediately; dismiss the sheet a
+        // beat later so the map drag does not feel like a blocked outside tap.
+        let workItem = DispatchWorkItem { [weak self] in
+            guard let self else { return }
+            self.pendingMapInteractionDismissWorkItem = nil
+            self.delegate?.dismissProblemDetails()
+            self.delegate?.dismissMapFeatureCard()
+        }
+        pendingMapInteractionDismissWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.08, execute: workItem)
     }
 
     @objc private func handleTap(_ recognizer: UITapGestureRecognizer) {

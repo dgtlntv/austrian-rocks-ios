@@ -21,11 +21,15 @@
 "map.card.show_on_map" = "Auf der Karte anzeigen";
 "map.card.details_unavailable" = "Details nicht verfügbar";
 "map.card.directions" = "Route";
+"map.card.more_details" = "Mehr Details";
 "map.card.warning" = "Warnung";
 "map.card.guidebook" = "Guidebook";
 "map.card.problems" = "Boulder";
 "map.card.grade_distribution" = "Schwierigkeitsverteilung";
 "map.card.grade_distribution_accessibility" = "Schwierigkeitsverteilung: %@";
+"map.card.kind.region" = "Region";
+"map.card.kind.cluster" = "Cluster";
+"map.card.kind.area" = "Gebiet";
 "map.unavailable.title" = "Karte nicht verfügbar";
 "map.unavailable.message" = "Die Karte konnte gerade nicht geladen werden. Du kannst den Rest der App weiter verwenden und es erneut versuchen.";
 "map.unavailable.retry" = "Erneut versuchen";

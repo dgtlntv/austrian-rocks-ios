@@ -11,7 +11,25 @@ import SwiftUI
 // MARK: – ZoomableScrollView
 struct ZoomableScrollView<Content: View>: UIViewRepresentable {
     @Binding var zoomScale: CGFloat
-    @ViewBuilder var content: () -> Content
+    let isZoomEnabled: Bool
+
+    private let minimumZoomScale: CGFloat
+    private let maximumZoomScale: CGFloat
+    @ViewBuilder private var content: () -> Content
+
+    init(
+        zoomScale: Binding<CGFloat>,
+        isZoomEnabled: Bool = true,
+        minimumZoomScale: CGFloat = 1.0,
+        maximumZoomScale: CGFloat = 5.0,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self._zoomScale = zoomScale
+        self.isZoomEnabled = isZoomEnabled
+        self.minimumZoomScale = minimumZoomScale
+        self.maximumZoomScale = maximumZoomScale
+        self.content = content
+    }
 
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
@@ -20,13 +38,13 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
     func makeUIView(context: Context) -> UIScrollView {
         let scrollView = UIScrollView()
         scrollView.delegate = context.coordinator
-        scrollView.maximumZoomScale = 5.0
-        scrollView.minimumZoomScale = 1.0
-        scrollView.bouncesZoom = true
+        scrollView.maximumZoomScale = maximumZoomScale
+        scrollView.minimumZoomScale = minimumZoomScale
+        scrollView.bouncesZoom = isZoomEnabled
         scrollView.showsVerticalScrollIndicator = false
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.alwaysBounceHorizontal = false // Don't steal horizontal gestures from outer paging ScrollView at 1x zoom
-        scrollView.zoomScale = zoomScale
+        scrollView.zoomScale = isZoomEnabled ? zoomScale : minimumZoomScale
         scrollView.contentInsetAdjustmentBehavior = .never // To avoid a wierb animation buf with safe areas
 
         // Add double tap gesture recognizer
@@ -34,6 +52,7 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
         doubleTapGesture.numberOfTapsRequired = 2
         doubleTapGesture.delegate = context.coordinator
         scrollView.addGestureRecognizer(doubleTapGesture)
+        context.coordinator.doubleTapGesture = doubleTapGesture
 
         // Host SwiftUI content
         let hostedController = UIHostingController(rootView: content())
@@ -52,23 +71,26 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
             hostedController.view.heightAnchor.constraint(equalTo: scrollView.frameLayoutGuide.heightAnchor)
         ])
 
+        context.coordinator.applyZoomConfiguration(to: scrollView, animated: false)
+
         return scrollView
     }
 
     func updateUIView(_ uiView: UIScrollView, context: Context) {
-        // Update content and recenter on layout/zoom changes
+        context.coordinator.parent = self
+
+        // Update content and recenter on layout/zoom changes.
+        // The hosted content type remains stable, so SwiftUI preserves TopoView's @State.
         context.coordinator.hostingController?.rootView = content()
+        context.coordinator.applyZoomConfiguration(to: uiView, animated: false)
         context.coordinator.recenterContent(in: uiView)
-        
-        // Update zoom scale if it changed externally
-        if uiView.zoomScale != zoomScale {
-            uiView.setZoomScale(zoomScale, animated: false)
-        }
     }
 
     class Coordinator: NSObject, UIScrollViewDelegate, UIGestureRecognizerDelegate {
         var hostingController: UIHostingController<Content>?
         var parent: ZoomableScrollView
+        weak var doubleTapGesture: UITapGestureRecognizer?
+        private var isApplyingZoomConfiguration = false
 
         init(_ parent: ZoomableScrollView) {
             self.parent = parent
@@ -81,8 +103,8 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
         }
 
         @objc func handleDoubleTap(_ gesture: UITapGestureRecognizer) {
-            guard let scrollView = gesture.view as? UIScrollView else { return }
-            scrollView.setZoomScale(1.0, animated: true)
+            guard parent.isZoomEnabled, let scrollView = gesture.view as? UIScrollView else { return }
+            scrollView.setZoomScale(parent.minimumZoomScale, animated: true)
         }
 
         func viewForZooming(in scrollView: UIScrollView) -> UIView? {
@@ -91,10 +113,61 @@ struct ZoomableScrollView<Content: View>: UIViewRepresentable {
 
         func scrollViewDidZoom(_ scrollView: UIScrollView) {
             recenterContent(in: scrollView)
-            parent.zoomScale = scrollView.zoomScale
+            setParentZoomScale(scrollView.zoomScale, deferred: isApplyingZoomConfiguration)
             // Enable horizontal bounce only when zoomed, so panning feels natural.
             // At 1x zoom, keep it off to let an outer paging ScrollView handle swipes.
-            scrollView.alwaysBounceHorizontal = scrollView.zoomScale > scrollView.minimumZoomScale + 0.01
+            scrollView.alwaysBounceHorizontal = parent.isZoomEnabled && scrollView.zoomScale > scrollView.minimumZoomScale + 0.01
+        }
+
+        func applyZoomConfiguration(to scrollView: UIScrollView, animated: Bool) {
+            isApplyingZoomConfiguration = true
+            defer { isApplyingZoomConfiguration = false }
+
+            if parent.isZoomEnabled {
+                scrollView.minimumZoomScale = parent.minimumZoomScale
+                scrollView.maximumZoomScale = max(parent.minimumZoomScale, parent.maximumZoomScale)
+                scrollView.bouncesZoom = true
+                scrollView.isScrollEnabled = true
+                scrollView.panGestureRecognizer.isEnabled = true
+                scrollView.pinchGestureRecognizer?.isEnabled = true
+                doubleTapGesture?.isEnabled = true
+
+                let clampedZoomScale = min(max(parent.zoomScale, scrollView.minimumZoomScale), scrollView.maximumZoomScale)
+                if scrollView.zoomScale != clampedZoomScale {
+                    scrollView.setZoomScale(clampedZoomScale, animated: animated)
+                }
+                setParentZoomScale(clampedZoomScale, deferred: true)
+            } else {
+                let disabledZoomScale = parent.minimumZoomScale
+                if scrollView.zoomScale != disabledZoomScale {
+                    scrollView.setZoomScale(disabledZoomScale, animated: false)
+                }
+                setParentZoomScale(disabledZoomScale, deferred: true)
+
+                scrollView.minimumZoomScale = disabledZoomScale
+                scrollView.maximumZoomScale = disabledZoomScale
+                scrollView.bouncesZoom = false
+                scrollView.isScrollEnabled = false
+                scrollView.panGestureRecognizer.isEnabled = false
+                scrollView.pinchGestureRecognizer?.isEnabled = false
+                doubleTapGesture?.isEnabled = false
+                scrollView.alwaysBounceHorizontal = false
+                scrollView.alwaysBounceVertical = false
+                scrollView.setContentOffset(.zero, animated: false)
+            }
+        }
+
+        private func setParentZoomScale(_ zoomScale: CGFloat, deferred: Bool) {
+            guard parent.zoomScale != zoomScale else { return }
+
+            if deferred {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self, self.parent.zoomScale != zoomScale else { return }
+                    self.parent.zoomScale = zoomScale
+                }
+            } else {
+                parent.zoomScale = zoomScale
+            }
         }
 
         /// Centers the hosted view within the scroll view if it's smaller than the scroll view bounds.

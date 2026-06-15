@@ -9,15 +9,32 @@ import SwiftUI
 import UIKit
 import CoreLocation
 
-/// Content of the map feature bottom card: region/cluster/area selections show
-/// the existing detail views (with a card-header section folded in), POIs show
-/// a compact directions card. Driven by `MapState.selectedMapFeatureCard` so a
-/// tap on a different feature swaps the content in place without a
-/// dismiss/present cycle.
+/// Content of the map feature bottom card. Built like the problem card — plain
+/// transparent content over the sheet's frosted material, no `List`/
+/// `NavigationStack` (those paint opaque backgrounds). Region/cluster/area show
+/// a compact "quick info" summary from the tile properties with a "More
+/// details" link to the full Discover page; POIs show a directions card.
+/// Driven by `MapState.selectedMapFeatureCard` so tapping a different feature
+/// swaps the content in place without a dismiss/present cycle.
 struct MapFeatureSheetView: View {
-    /// Compact detent: tall enough for grabber + title bar + stats + the
-    /// show-on-map CTA while keeping most of the map visible behind.
+    /// Initial fallback while the feature card measures its rendered content.
     static let compactDetentHeight: CGFloat = 300
+    static let compactMinDetentHeight: CGFloat = 200
+    static var compactMaxDetentHeight: CGFloat {
+        min(350, UIScreen.main.bounds.height * 0.44)
+    }
+    /// Small allowance for the system grabber/top chrome. The sheet already
+    /// accounts for bottom safe area, so keep this tight to avoid a hollow
+    /// footer in content-hugging cards.
+    static let compactContentChromePadding: CGFloat = 8
+
+    let isExpanded: Bool
+    let onContentHeightChange: (CGFloat) -> Void
+
+    init(isExpanded: Bool = false, onContentHeightChange: @escaping (CGFloat) -> Void = { _ in }) {
+        self.isExpanded = isExpanded
+        self.onContentHeightChange = onContentHeightChange
+    }
 
     @Environment(MapState.self) private var mapState: MapState
 
@@ -35,6 +52,8 @@ struct MapFeatureSheetView: View {
                 content(for: card)
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(SystemMaterialBackground().ignoresSafeArea())
         .onAppear {
             if let card = mapState.selectedMapFeatureCard {
                 lastCard = card
@@ -53,123 +72,205 @@ struct MapFeatureSheetView: View {
         case .poi:
             PoiCardView(card: card)
         case .region, .cluster, .area:
-            NavigationStack {
-                detail(for: card)
+            MapFeatureQuickInfoView(
+                card: card,
+                isExpanded: isExpanded,
+                onContentHeightChange: onContentHeightChange
+            )
+        }
+    }
+}
+
+/// Compact, transparent quick-info card for a region/cluster/area, modeled on
+/// the problem card. Renders purely from tile properties (no SQLite needed);
+/// "More details" forwards to the full Discover page when it exists.
+private struct MapFeatureQuickInfoView: View {
+    let card: MapFeatureCardModel
+    let isExpanded: Bool
+    let onContentHeightChange: (CGFloat) -> Void
+
+    @Environment(AppState.self) private var appState: AppState
+    @Environment(MapState.self) private var mapState: MapState
+
+    // Bumped to clear the grade chart's bar selection when the user taps
+    // anywhere in the card outside the bars.
+    @State private var gradeResetToken = 0
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                // Full-bleed cover at the top, like the problem card's topo
+                // image (regions carry covers; other kinds simply omit it).
+                if let coverURL = card.coverPhotoURL {
+                    CoverPhotoView(url: coverURL)
+                        .frame(height: 170)
+                        .frame(maxWidth: .infinity)
+                        .clipped()
+                }
+
+                VStack(alignment: .leading, spacing: 16) {
+                    header
+                    actions
+
+                    if !card.gradeDistributionEntries.isEmpty {
+                        GradeDistributionView(
+                            entries: card.gradeDistributionEntries,
+                            resetSelectionToken: gradeResetToken
+                        )
+                    }
+                    if let warning = card.warning {
+                        warningRow(warning)
+                    }
+                    links
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal)
+                .padding(.bottom, 4)
+                .padding(.top, card.coverPhotoURL == nil ? 20 : 0)
+                // Tapping the card outside the grade bars clears the selection.
+                .background(
+                    Color.clear
+                        .contentShape(Rectangle())
+                        .onTapGesture { gradeResetToken += 1 }
+                )
+            }
+            .readHeight(onContentHeightChange)
+        }
+        .scrollDisabled(!isExpanded)
+    }
+
+    // Mirrors ProblemInfoView's title row: name on the left, grade on the
+    // right of the same line, same font/weight/color.
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(alignment: .firstTextBaseline) {
+                HStack(alignment: .firstTextBaseline, spacing: 4) {
+                    Text(card.title)
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                        .truncationMode(.middle)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .minimumScaleFactor(0.5)
+
+                    Text("· \(kindLabel)")
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                }
+                .lineLimit(1)
+
+                Spacer()
+
+                if let gradeMin = card.gradeMin, let gradeMax = card.gradeMax {
+                    Text("\(gradeMin) – \(gradeMax)")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                }
+            }
+
+            if let problemCount = card.problemCount {
+                Text("\(problemCount) \(String(localized: "map.card.problems"))")
+                    .font(.body)
+                    .foregroundColor(.secondary)
             }
         }
+    }
+
+    private var kindLabel: String {
+        switch card.kind {
+        case .region:
+            return String(localized: "map.card.kind.region")
+        case .cluster:
+            return String(localized: "map.card.kind.cluster")
+        case .area:
+            return String(localized: "map.card.kind.area")
+        case .poi:
+            return ""
+        }
+    }
+
+    // Same pill buttons as ProblemActionButtonsView (adaptive glass on iOS 26,
+    // bordered Pill below), in a horizontal scroll.
+    private var actions: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(alignment: .center, spacing: 12) {
+                if card.bounds != nil {
+                    Button {
+                        mapState.fitSelectedMapFeatureOnMap()
+                    } label: {
+                        HStack(alignment: .center, spacing: 8) {
+                            Image(systemName: "scope")
+                            Text("map.card.show_on_map")
+                        }
+                        .adaptivePillPadding()
+                    }
+                    .adaptivePillStyle()
+                }
+
+                if card.detailAvailability.canOpenDetail, let route = discoverRoute {
+                    Button {
+                        openInDiscover(route)
+                    } label: {
+                        HStack(alignment: .center, spacing: 8) {
+                            Image(systemName: "arrow.up.forward.square")
+                            Text("map.card.more_details")
+                        }
+                        .adaptivePillPadding()
+                    }
+                    .adaptivePillStyle()
+                }
+            }
+            .padding(.vertical, 4)
+        }
+        .scrollClipDisabled()
     }
 
     @ViewBuilder
-    private func detail(for card: MapFeatureCardModel) -> some View {
+    private var links: some View {
+        if let guidebook = card.guidebook {
+            LabelledLinkRow(
+                label: String(localized: "map.card.guidebook"),
+                title: guidebook.author.map { "\(guidebook.title) — \($0)" } ?? guidebook.title,
+                url: guidebook.url
+            )
+        }
+
+        if let parking = card.parking {
+            LabelledLinkRow(
+                label: parking.name ?? String(localized: "map.poi_type.parking"),
+                title: String(localized: "map.card.directions"),
+                url: parking.url
+            )
+        }
+    }
+
+    private func warningRow(_ warning: String) -> some View {
+        HStack(alignment: .top, spacing: 8) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundColor(.orange)
+            Text(warning)
+                .font(.subheadline)
+                .foregroundColor(.primary)
+        }
+        .accessibilityLabel(Text("map.card.warning"))
+        .accessibilityValue(Text(warning))
+    }
+
+    private var discoverRoute: DiscoverRoute? {
         switch card.kind {
-        case .region:
-            if let region = Region.load(id: card.id) {
-                RegionDetailView(region: region, mapCard: card)
-            } else {
-                MapFeatureFallbackDetailView(card: card)
-            }
-        case .cluster:
-            if let cluster = Cluster.load(id: card.id) {
-                ClusterDetailView(cluster: cluster, mapCard: card)
-            } else {
-                MapFeatureFallbackDetailView(card: card)
-            }
-        case .area:
-            if let area = Area.load(id: card.id) {
-                AreaView(area: area, linkToMap: true, mapCard: card)
-            } else {
-                MapFeatureFallbackDetailView(card: card)
-            }
-        case .poi:
-            EmptyView()
+        case .region: return .region(card.id)
+        case .cluster: return .cluster(card.id)
+        case .area: return .area(card.id)
+        case .poi: return nil
         }
     }
-}
 
-/// Tile-property card content folded into the detail views: stats, show-on-map
-/// CTA, grade histogram, warning, and guidebook/parking links. The CTA sits
-/// first so it is visible and tappable at the compact detent.
-struct MapFeatureCardHeaderSection: View {
-    let card: MapFeatureCardModel
-    // Area pages render their own grade distribution and warning from SQLite,
-    // so they opt out here to avoid showing the same data twice.
-    var showsHistogram = true
-    var showsWarning = true
-
-    @Environment(MapState.self) private var mapState: MapState
-
-    var body: some View {
-        Section {
-            if let statsLine = card.statsLine {
-                Text(statsLine)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-            }
-
-            if card.bounds != nil {
-                Button {
-                    mapState.fitSelectedMapFeatureOnMap()
-                } label: {
-                    Label("map.card.show_on_map", systemImage: "scope")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(.appBrandColor)
-            }
-
-            if showsHistogram, !card.gradeDistributionEntries.isEmpty {
-                GradeDistributionView(entries: card.gradeDistributionEntries)
-                    .padding(.vertical, 4)
-            }
-
-            if showsWarning, let warning = card.warning {
-                HStack(alignment: .top, spacing: 8) {
-                    Image(systemName: "exclamationmark.triangle.fill")
-                        .foregroundColor(.orange)
-                    Text(warning)
-                        .font(.subheadline)
-                        .foregroundColor(.primary)
-                }
-                .accessibilityLabel(Text("map.card.warning"))
-                .accessibilityValue(Text(warning))
-            }
-
-            if let guidebook = card.guidebook {
-                LabelledLinkRow(
-                    label: String(localized: "map.card.guidebook"),
-                    title: guidebook.author.map { "\(guidebook.title) — \($0)" } ?? guidebook.title,
-                    url: guidebook.url
-                )
-            }
-
-            if let parking = card.parking {
-                LabelledLinkRow(
-                    label: parking.name ?? String(localized: "map.poi_type.parking"),
-                    title: String(localized: "map.card.directions"),
-                    url: parking.url
-                )
-            }
-        }
-    }
-}
-
-/// Shown when the tile feature has no matching SQLite row (offline database
-/// missing or out of date): the tile-property card data still renders safely.
-private struct MapFeatureFallbackDetailView: View {
-    let card: MapFeatureCardModel
-
-    var body: some View {
-        List {
-            MapFeatureCardHeaderSection(card: card)
-
-            Section {
-                Text("map.card.details_unavailable")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-            }
-        }
-        .navigationTitle(card.title)
-        .navigationBarTitleDisplayMode(.inline)
+    private func openInDiscover(_ route: DiscoverRoute) {
+        appState.discoverRoute = route
+        appState.tab = .discover
+        mapState.dismissMapFeatureCard()
     }
 }
 
@@ -249,6 +350,36 @@ private struct PoiCardView: View {
     private var canOpenWaze: Bool {
         guard let url = URL(string: "waze://") else { return false }
         return UIApplication.shared.canOpenURL(url)
+    }
+}
+
+private struct SystemMaterialBackground: UIViewRepresentable {
+    func makeUIView(context: Context) -> UIVisualEffectView {
+        UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterial))
+    }
+
+    func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
+        uiView.effect = UIBlurEffect(style: .systemMaterial)
+    }
+}
+
+private struct HeightPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
+    }
+}
+
+private extension View {
+    func readHeight(_ onChange: @escaping (CGFloat) -> Void) -> some View {
+        background(
+            GeometryReader { proxy in
+                Color.clear
+                    .preference(key: HeightPreferenceKey.self, value: proxy.size.height)
+            }
+        )
+        .onPreferenceChange(HeightPreferenceKey.self, perform: onChange)
     }
 }
 

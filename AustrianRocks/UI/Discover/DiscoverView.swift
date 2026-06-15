@@ -303,10 +303,24 @@ struct DiscoverView: View {
                     regions = Region.all.sorted{
                         $0.name.folding(options: .diacriticInsensitive, locale: .current) < $1.name.folding(options: .diacriticInsensitive, locale: .current)
                     }
+
+                    applyPendingRoute()
                 }
             }
         }
         .environment(\.discoverRouter, router)
+        // Forwarded from a map feature card's "More details" button. Handled
+        // both here (when DiscoverView is already alive) and in `.task`
+        // (first appearance, before this observer is attached).
+        .onChange(of: appState.discoverRoute) { _, _ in
+            applyPendingRoute()
+        }
+    }
+
+    private func applyPendingRoute() {
+        guard let route = appState.discoverRoute else { return }
+        router.path = [route]
+        appState.discoverRoute = nil
     }
 
     @ViewBuilder

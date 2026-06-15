@@ -17,10 +17,6 @@ struct AreaView: View {
     let area: Area
     @Environment(AppState.self) private var appState: AppState
     let linkToMap: Bool
-    // Set when presented as a map bottom card: folds the tile-property card
-    // data into the page. The page renders its own grade distribution and
-    // warning from SQLite, so the header section omits those.
-    var mapCard: MapFeatureCardModel? = nil
 
     @State private var problems = [Problem]()
     @State private var searchText = ""
@@ -32,10 +28,6 @@ struct AreaView: View {
     var body: some View {
         ZStack {
             List {
-                if let mapCard {
-                    MapFeatureCardHeaderSection(card: mapCard, showsHistogram: false, showsWarning: false)
-                }
-
                 if area.tags.count > 0 || area.localizedDescription != nil || area.localizedWarning != nil {
                     Section {
                         tagsWithFlowLayout
@@ -50,8 +42,8 @@ struct AreaView: View {
                 if poiRoutes.count > 0 {
                     poiRoutesList
                 }
-                
-                
+
+
                 if(linkToMap) {
                     // leave room for sticky footer
                     Section(header: Text("")) {
@@ -60,7 +52,7 @@ struct AreaView: View {
                     .padding(.bottom, 24)
                 }
             }
-            
+
             if(linkToMap) {
                 VStack {
                     Spacer()
