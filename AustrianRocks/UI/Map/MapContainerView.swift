@@ -25,6 +25,9 @@ struct MapContainerView: View {
     @State private var featureCardCompactHeight = MapFeatureSheetView.compactDetentHeight
     @State private var featureCardDetent: PresentationDetent = .height(MapFeatureSheetView.compactDetentHeight)
     @State private var featureCardCanExpand = false
+    @State private var infoCardCompactHeight = MapFeatureSheetView.compactDetentHeight
+    @State private var infoCardDetent: PresentationDetent = .height(MapFeatureSheetView.compactDetentHeight)
+    @State private var infoCardCanExpand = false
     @State private var problemSheetDetent: PresentationDetent = .medium
 
     private var featureCardCompactDetent: PresentationDetent {
@@ -33,6 +36,14 @@ struct MapContainerView: View {
 
     private var featureCardDetents: Set<PresentationDetent> {
         featureCardCanExpand ? [featureCardCompactDetent, .large] : [featureCardCompactDetent]
+    }
+
+    private var infoCardCompactDetent: PresentationDetent {
+        .height(infoCardCompactHeight)
+    }
+
+    private var infoCardDetents: Set<PresentationDetent> {
+        infoCardCanExpand ? [infoCardCompactDetent, .large] : [infoCardCompactDetent]
     }
 
     var body: some View {
@@ -80,9 +91,16 @@ struct MapContainerView: View {
             .id("\(featureCardCompactHeight)-\(featureCardCanExpand)")
         }
         .sheet(isPresented: $presentAboutAcknowledgements) {
-            NavigationStack {
-                AcknowledgementsView()
-            }
+            AcknowledgementsCardView(
+                isExpanded: infoCardDetent == .large,
+                onContentHeightChange: updateInfoCardCompactHeight
+            )
+            .presentationDetents(infoCardDetents, selection: $infoCardDetent)
+            .presentationContentInteraction(.resizes)
+            .presentationBackground(.clear)
+            .presentationBackgroundInteraction(.enabled(upThrough: infoCardCompactDetent))
+            .presentationDragIndicator(.visible)
+            .id("\(infoCardCompactHeight)-\(infoCardCanExpand)")
         }
         .onChange(of: mapState.presentProblemDetails) { oldValue, newValue in
             if newValue {
@@ -99,6 +117,13 @@ struct MapContainerView: View {
                 featureCardCompactHeight = MapFeatureSheetView.compactDetentHeight
                 featureCardCanExpand = false
                 featureCardDetent = featureCardCompactDetent
+            }
+        }
+        .onChange(of: presentAboutAcknowledgements) { _, newValue in
+            if newValue {
+                infoCardCompactHeight = MapFeatureSheetView.compactDetentHeight
+                infoCardCanExpand = false
+                infoCardDetent = infoCardCompactDetent
             }
         }
         .onChange(of: appState.selectedProblem) { oldValue, newValue in
@@ -150,6 +175,29 @@ struct MapContainerView: View {
     }
     
     private func updateFeatureCardCompactHeight(_ contentHeight: CGFloat) {
+        updateCompactSheetHeight(
+            contentHeight,
+            compactHeight: $featureCardCompactHeight,
+            canExpand: $featureCardCanExpand,
+            detent: $featureCardDetent
+        )
+    }
+
+    private func updateInfoCardCompactHeight(_ contentHeight: CGFloat) {
+        updateCompactSheetHeight(
+            contentHeight,
+            compactHeight: $infoCardCompactHeight,
+            canExpand: $infoCardCanExpand,
+            detent: $infoCardDetent
+        )
+    }
+
+    private func updateCompactSheetHeight(
+        _ contentHeight: CGFloat,
+        compactHeight: Binding<CGFloat>,
+        canExpand: Binding<Bool>,
+        detent: Binding<PresentationDetent>
+    ) {
         guard contentHeight > 0 else { return }
 
         let measuredHeight = contentHeight + MapFeatureSheetView.compactContentChromePadding
@@ -158,15 +206,15 @@ struct MapContainerView: View {
             MapFeatureSheetView.compactMaxDetentHeight
         )
 
-        let canExpand = measuredHeight > clampedHeight + 8
+        let measuredCanExpand = measuredHeight > clampedHeight + 8
 
-        guard abs(featureCardCompactHeight - clampedHeight) > 1 || featureCardCanExpand != canExpand else { return }
+        guard abs(compactHeight.wrappedValue - clampedHeight) > 1 || canExpand.wrappedValue != measuredCanExpand else { return }
 
         withAnimation(.snappy) {
-            featureCardCompactHeight = clampedHeight
-            featureCardCanExpand = canExpand
-            if featureCardDetent != .large || !canExpand {
-                featureCardDetent = .height(clampedHeight)
+            compactHeight.wrappedValue = clampedHeight
+            canExpand.wrappedValue = measuredCanExpand
+            if detent.wrappedValue != .large || !measuredCanExpand {
+                detent.wrappedValue = .height(clampedHeight)
             }
         }
     }

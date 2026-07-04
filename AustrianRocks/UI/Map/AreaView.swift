@@ -12,7 +12,6 @@ import CoreLocation
 struct AreaView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) var openURL
-    @Environment(\.discoverRouter) private var router
 
     let area: Area
     @Environment(AppState.self) private var appState: AppState
@@ -93,9 +92,6 @@ struct AreaView: View {
             problems = area.problems
             poiRoutes = area.poiRoutes
         }
-        .safeAreaInset(edge: .top, spacing: 0) {
-            breadcrumb
-        }
         .navigationTitle(area.name)
         .navigationBarTitleDisplayMode(.inline)
         .modify {
@@ -124,57 +120,6 @@ struct AreaView: View {
         
     }
     
-    @ViewBuilder
-    var breadcrumb: some View {
-        if let cluster = area.cluster, let region = cluster.region {
-            HStack(spacing: 6) {
-                breadcrumbSegment(label: region.name, route: .region(region.id)) {
-                    RegionDetailView(region: region)
-                }
-
-                Image(systemName: "chevron.right")
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
-
-                breadcrumbSegment(label: cluster.name, route: .cluster(cluster.id)) {
-                    ClusterDetailView(cluster: cluster)
-                }
-
-                Spacer(minLength: 0)
-            }
-            .padding(.horizontal)
-            .padding(.vertical, 8)
-            .background(.bar)
-            .overlay(alignment: .bottom) {
-                Divider()
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func breadcrumbSegment<Destination: View>(
-        label: String,
-        route: DiscoverRoute,
-        @ViewBuilder fallback: () -> Destination
-    ) -> some View {
-        if let router {
-            Button {
-                router.navigate(to: route)
-            } label: {
-                Text(label)
-                    .font(.caption)
-                    .foregroundColor(.appBrandColor)
-            }
-            .buttonStyle(.plain)
-        } else {
-            NavigationLink(destination: fallback()) {
-                Text(label)
-                    .font(.caption)
-                    .foregroundColor(.appBrandColor)
-            }
-        }
-    }
-
     var tags: some View {
         ForEach(area.tags, id: \.self) { tag in
             Text(NSLocalizedString("area.tags.\(tag)", comment: ""))

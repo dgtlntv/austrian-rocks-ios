@@ -104,18 +104,19 @@
 "discover.acknowledgements" = "About / Acknowledgements";
 
 // MARK: Acknowledgements
-"acknowledgements.title" = "About / Acknowledgements";
-"acknowledgements.intro" = "Austrian.rocks includes open-source software and map components. This screen lists required notices for the app and its current third-party dependencies.";
+"acknowledgements.title" = "About";
+"acknowledgements.intro" = "Required notices for the open-source software and map components used in the app.";
 "acknowledgements.section.app" = "App";
 "acknowledgements.section.third_party" = "Third-party notices";
 "acknowledgements.license" = "License:";
 "acknowledgements.version" = "Version:";
 "acknowledgements.website" = "Website";
+"acknowledgements.back" = "Back";
 "acknowledgements.load_failed" = "Acknowledgements could not be loaded. %@";
 "acknowledgements.about.title" = "About the project";
-"acknowledgements.about.p1" = "Austrian.rocks is a non-profit project, managed by volunteers.";
-"acknowledgements.about.p2" = "Our goal is to make discovering bouldering in Austria fun and respectful of nature.";
-"acknowledgements.about.p3" = "Austrian.rocks is a fork of Boolder, the open-source bouldering app for Fontainebleau. The code and data are open source — contributions are welcome.";
+"acknowledgements.about.p1" = "Austrian.rocks is a volunteer project making high-quality information about outdoor bouldering in Austria free for everyone.";
+"acknowledgements.about.p2" = "Good topos, maps and access information should not be locked behind a paywall. We want the app to be easy to use, pleasant to explore and open to contributions.";
+"acknowledgements.about.p3" = "Keeping access open also means using the information responsibly. Please respect nature, local residents and landowners, and follow the rules for each area.";
 "acknowledgements.section.data" = "Map data & basemap";
 
 // MARK: Area view

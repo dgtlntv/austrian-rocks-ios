@@ -65,9 +65,12 @@ struct ProblemDetailsView: View {
     private func persistentTopoLayout(for problem: Problem) -> some View {
         GeometryReader { geo in
             let compactImageHeight = geo.size.width * 3 / 4
-            let topoHeight = isExpanded ? geo.size.height : compactImageHeight
+            let detailsHeight = detailsRegionHeight(sheetHeight: geo.size.height, compactImageHeight: compactImageHeight)
+            let topoHeight = isExpanded
+                ? max(compactImageHeight, geo.size.height - detailsHeight)
+                : compactImageHeight
 
-            ZStack(alignment: .bottom) {
+            VStack(alignment: .leading, spacing: 0) {
                 TopoSwipeContentView(problem: problem, zoomable: isExpanded)
                     .frame(width: geo.size.width, height: topoHeight)
                     .background(Color.systemBackground)
@@ -89,15 +92,8 @@ struct ProblemDetailsView: View {
                             },
                         including: isExpanded ? .subviews : .all
                     )
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                    .zIndex(1)
 
-                sheetBottomContent(problem: problem)
-                    .alignmentGuide(.bottom) { dimensions in
-                        isExpanded ? dimensions[.bottom] : geo.size.height - compactImageHeight
-                    }
-                    .animation(.snappy(duration: 0.28), value: isExpanded)
-                    .zIndex(2)
+                sheetBottomContent(problem: problem, detailsHeight: max(0, geo.size.height - topoHeight))
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .animation(.easeInOut(duration: 0.3), value: mapState.isInTopoMode)
@@ -105,46 +101,34 @@ struct ProblemDetailsView: View {
     }
 
     @ViewBuilder
-    private func sheetBottomContent(problem: Problem) -> some View {
-        VStack(alignment: .leading, spacing: isExpanded ? 0 : 8) {
-            if mapState.isInTopoMode {
-                TopoCarouselView(problem: problem, style: isExpanded ? .overlay : .inline)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-            } else {
-                problemSummaryPanel(problem: problem)
-
-                if !isExpanded {
+    private func sheetBottomContent(problem: Problem, detailsHeight: CGFloat) -> some View {
+        if mapState.isInTopoMode {
+            TopoCarouselView(problem: problem, style: .inline)
+                .frame(height: detailsHeight, alignment: .top)
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+        } else {
+            ScrollView(.vertical) {
+                VStack(alignment: .leading, spacing: 8) {
+                    problemSummaryPanel(problem: problem)
                     descriptionAndVideos(for: problem)
-                        .transition(.identity)
                 }
+                .frame(maxWidth: .infinity, alignment: .topLeading)
+                .padding(.bottom, isExpanded ? 16 : 0)
             }
+            .frame(height: detailsHeight, alignment: .top)
+            .scrollIndicators(.visible)
         }
     }
 
     private func problemSummaryPanel(problem: Problem) -> some View {
-        VStack(alignment: .leading, spacing: isExpanded ? 12 : 0) {
+        VStack(alignment: .leading, spacing: 0) {
             ProblemInfoView(problem: problem)
-                .padding(.top, isExpanded ? 0 : 4)
-                .padding(.horizontal, isExpanded ? 0 : 16)
-                .foregroundStyle(.primary.opacity(isExpanded ? 0.8 : 1.0))
+                .padding(.top, 4)
+                .padding(.horizontal)
 
-            ProblemActionButtonsView(problem: problem, withHorizontalPadding: !isExpanded)
+            ProblemActionButtonsView(problem: problem)
         }
-        .padding(isExpanded ? 16 : 0)
-        .frame(maxWidth: .infinity, minHeight: isExpanded ? 150 : nil, alignment: .topLeading)
-        .modify {
-            if isExpanded {
-                if #available(iOS 26, *) {
-                    $0.background(.regularMaterial, in: Rectangle())
-                }
-                else {
-                    $0.background(Color.systemBackground)
-                }
-            }
-            else {
-                $0
-            }
-        }
+        .frame(maxWidth: .infinity, alignment: .topLeading)
     }
 
     @ViewBuilder
@@ -195,6 +179,23 @@ struct ProblemDetailsView: View {
             }
             .padding(.vertical, 4)
         }
+    }
+
+    private func detailsRegionHeight(sheetHeight: CGFloat, compactImageHeight: CGFloat) -> CGFloat {
+        if !isExpanded {
+            return max(0, sheetHeight - compactImageHeight)
+        }
+
+        let maxDetailsHeight = max(0, sheetHeight - compactImageHeight)
+        let preferredDetailsHeight: CGFloat
+
+        if mapState.isInTopoMode {
+            preferredDetailsHeight = min(max(sheetHeight * 0.14, 88), 120)
+        } else {
+            preferredDetailsHeight = min(max(sheetHeight * 0.32, 220), 320)
+        }
+
+        return min(maxDetailsHeight, preferredDetailsHeight)
     }
 
     private func presentReview() {

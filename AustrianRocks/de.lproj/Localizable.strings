@@ -104,18 +104,19 @@
 "discover.acknowledgements" = "Über / Danksagungen";
 
 // MARK: Acknowledgements
-"acknowledgements.title" = "Über / Danksagungen";
-"acknowledgements.intro" = "Austrian.rocks enthält Open-Source-Software und Kartenkomponenten. Diese Seite listet die erforderlichen Hinweise für die App und ihre aktuellen Drittanbieter-Abhängigkeiten.";
+"acknowledgements.title" = "Über";
+"acknowledgements.intro" = "Erforderliche Hinweise für die Open-Source-Software und Kartenkomponenten der App.";
 "acknowledgements.section.app" = "App";
 "acknowledgements.section.third_party" = "Drittanbieter-Hinweise";
 "acknowledgements.license" = "Lizenz:";
 "acknowledgements.version" = "Version:";
 "acknowledgements.website" = "Website";
+"acknowledgements.back" = "Zurück";
 "acknowledgements.load_failed" = "Die Danksagungen konnten nicht geladen werden. %@";
 "acknowledgements.about.title" = "Über das Projekt";
-"acknowledgements.about.p1" = "Austrian.rocks ist ein gemeinnütziges Projekt, das von Freiwilligen verwaltet wird.";
-"acknowledgements.about.p2" = "Unser Ziel ist es, das Entdecken des Boulderns in Österreich auf spielerische Weise und mit Respekt für die Natur zu erleichtern.";
-"acknowledgements.about.p3" = "Austrian.rocks ist ein Fork von Boolder, der Open-Source-Boulder-App für Fontainebleau. Code und Daten sind Open Source – Beiträge sind willkommen.";
+"acknowledgements.about.p1" = "Austrian.rocks ist ein Freiwilligenprojekt, das hochwertige Informationen zum Outdoor-Bouldern in Österreich kostenlos für alle zugänglich macht.";
+"acknowledgements.about.p2" = "Gute Topos, Karten und Zugangsinformationen sollten nicht hinter einer Paywall verschwinden. Wir möchten, dass die App einfach zu nutzen, angenehm zu entdecken und offen für Beiträge ist.";
+"acknowledgements.about.p3" = "Offener Zugang bedeutet auch, verantwortungsvoll mit den Informationen umzugehen. Bitte respektiere Natur, Anrainer:innen und Grundeigentümer:innen, und beachte die Regeln für jedes Gebiet.";
 "acknowledgements.section.data" = "Kartendaten & Grundkarte";
 
 // MARK: Area view
