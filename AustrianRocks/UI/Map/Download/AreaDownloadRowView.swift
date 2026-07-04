@@ -23,7 +23,7 @@ struct AreaDownloadRowView : View {
                     }
                 }
                 .buttonStyle(.plain)
-                .disabled(clusterDownloader.queueRunning && clusterDownloader.queueType != .manual)
+                .disabled(areaDownloader.isRemoving || (clusterDownloader.queueRunning && clusterDownloader.queueType != .manual))
             }
         }
     }
@@ -55,6 +55,11 @@ struct AreaDownloadRowView : View {
     @ViewBuilder
     private var statusAccessory: some View {
         if case .initial = areaDownloader.status  {
+            Image(systemName: "icloud.and.arrow.down")
+                .font(.body)
+                .frame(width: 24, height: 24)
+        }
+        else if areaDownloader.isRemoving {
             Image(systemName: "icloud.and.arrow.down")
                 .font(.body)
                 .frame(width: 24, height: 24)

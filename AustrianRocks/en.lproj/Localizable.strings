@@ -151,6 +151,10 @@
 "download.cancel.title" = "Stop download?";
 "download.cancel.action" = "Stop download";
 "download.zoom" = "Zoom on the map to download areas.";
+"download.area.download" = "Download area";
+"download.area.downloading" = "Downloading %d%%";
+"download.area.downloaded" = "Area downloaded";
+"download.area.queued" = "Download queued";
 "download.area.delete" = "Delete";
 
 // MARK: Top areas

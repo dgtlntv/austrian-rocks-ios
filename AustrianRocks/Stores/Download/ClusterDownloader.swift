@@ -26,7 +26,7 @@ import Combine
     
     func start() {
         stopDownloads()
-        areas.filter{ $0.status == .initial }.forEach{ $0.queue() }
+        areas.filter{ $0.status == .initial && !$0.isRemoving }.forEach{ $0.queue() }
 
         queueType = .auto
         startQueue()

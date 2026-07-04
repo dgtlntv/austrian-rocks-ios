@@ -13,9 +13,11 @@ import Combine
 class AreaDownloader: Identifiable {
     let areaId: Int
     var status: DownloadStatus
+    var isRemoving = false
     
     @ObservationIgnored var cancellable: Cancellable?
     @ObservationIgnored var task: Task<(), any Error>?
+    @ObservationIgnored var removalTask: Task<(), Never>?
     
     init(areaId: Int) {
         self.areaId = areaId
@@ -29,7 +31,7 @@ class AreaDownloader: Identifiable {
     }
     
     func start(onSuccess: @escaping () -> Void, onFailure: @escaping () -> Void) {
-        guard downloadingOrQueued else { return }
+        guard downloadingOrQueued && !isRemoving else { return }
         
         DispatchQueue.main.async {
             self.status = .downloading(progress: 0.0)
@@ -63,21 +65,53 @@ class AreaDownloader: Identifiable {
     }
     
     func queue() {
+        guard !isRemoving else { return }
+
         self.status = .queued
     }
     
     func cancel() {
         self.task?.cancel()
         cancellable = nil
+        task = nil
         
         status = .initial
     }
     
     func remove() {
-        deleteFolder()
+        task?.cancel()
         cancellable = nil
-        
+        task = nil
+        removalTask?.cancel()
+
         status = .initial
+        isRemoving = true
+
+        let folder = Downloader.onDiskFolder(areaId: areaId)
+        let successfulDownloadFile = successfulDownloadFile
+        removalTask = Task {
+            let removed = await Task.detached(priority: .utility) {
+                do {
+                    if FileManager.default.fileExists(atPath: folder.path) {
+                        try FileManager.default.removeItem(at: folder)
+                    }
+                    return true
+                } catch {
+                    return !FileManager.default.fileExists(atPath: successfulDownloadFile.path)
+                }
+            }.value
+
+            guard !Task.isCancelled else { return }
+
+            await MainActor.run {
+                if !removed {
+                    self.status = .downloaded
+                }
+
+                self.isRemoving = false
+                self.removalTask = nil
+            }
+        }
     }
     
     var downloadingOrQueued: Bool {
@@ -96,11 +130,6 @@ class AreaDownloader: Identifiable {
     
     var alreadyDownloaded: Bool {
         FileManager.default.fileExists(atPath: successfulDownloadFile.path)
-    }
-    
-    private func deleteFolder() {
-        let folder = Downloader.onDiskFolder(areaId: areaId)
-        try? FileManager.default.removeItem(at: folder)
     }
     
     var id: Int {

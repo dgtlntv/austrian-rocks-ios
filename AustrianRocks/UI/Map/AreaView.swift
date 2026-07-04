@@ -24,6 +24,10 @@ struct AreaView: View {
 
     @State private var selectedPoi: Poi?
 
+    private var areaDownloader: AreaDownloader {
+        DownloadCenter.shared.areaDownloader(id: area.id)
+    }
+
     var body: some View {
         ZStack {
             List {
@@ -94,6 +98,11 @@ struct AreaView: View {
         }
         .navigationTitle(area.name)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                AreaDownloadToolbarButton(areaDownloader: areaDownloader)
+            }
+        }
         .modify {
             if(linkToMap) {
                 $0
@@ -290,6 +299,84 @@ struct AreaView: View {
         }
     }
     
+}
+
+private struct AreaDownloadToolbarButton: View {
+    var areaDownloader: AreaDownloader
+
+    @State private var showingCancelConfirmation = false
+    @State private var showingRemoveConfirmation = false
+
+    var body: some View {
+        Button(action: handleTap) {
+            statusIcon
+                .frame(width: 24, height: 24)
+        }
+        .accessibilityLabel(accessibilityLabel)
+        .disabled(areaDownloader.isRemoving)
+        .confirmationDialog(
+            Text("download.cancel.title"),
+            isPresented: $showingCancelConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("download.cancel.action", role: .destructive) {
+                areaDownloader.cancel()
+            }
+        }
+        .confirmationDialog(
+            Text("download.remove.title"),
+            isPresented: $showingRemoveConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("download.remove.action", role: .destructive) {
+                areaDownloader.remove()
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var statusIcon: some View {
+        switch areaDownloader.status {
+        case .initial:
+            Image(systemName: "icloud.and.arrow.down")
+        case .queued, .downloading(_):
+            CircularProgressView(progress: areaDownloader.status.progress)
+        case .downloaded:
+            Image(systemName: "checkmark.icloud")
+        }
+    }
+
+    private var accessibilityLabel: Text {
+        switch areaDownloader.status {
+        case .initial:
+            Text("download.area.download")
+        case .queued:
+            Text("download.area.queued")
+        case .downloading:
+            Text(titleDownloading)
+        case .downloaded:
+            Text("download.area.downloaded")
+        }
+    }
+
+    private var titleDownloading: String {
+        let percentage = Int(Double(areaDownloader.status.progress * 100).rounded())
+        return String(format: NSLocalizedString("download.area.downloading", comment: ""), percentage)
+    }
+
+    private func handleTap() {
+        switch areaDownloader.status {
+        case .initial:
+            areaDownloader.queue()
+            areaDownloader.start(onSuccess: {}, onFailure: {})
+        case .queued:
+            areaDownloader.cancel()
+        case .downloading:
+            showingCancelConfirmation = true
+        case .downloaded:
+            showingRemoveConfirmation = true
+        }
+    }
 }
 
 //struct AreaView_Previews: PreviewProvider {
