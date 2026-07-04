@@ -115,7 +115,7 @@ struct MapContainerView: View {
         .onChange(of: mapState.selectedMapFeatureCard) { oldValue, newValue in
             if newValue != nil, oldValue != newValue {
                 featureCardCompactHeight = MapFeatureSheetView.compactDetentHeight
-                featureCardCanExpand = false
+                featureCardCanExpand = allowsExpansionWithoutOverflow(newValue)
                 featureCardDetent = featureCardCompactDetent
             }
         }
@@ -179,7 +179,8 @@ struct MapContainerView: View {
             contentHeight,
             compactHeight: $featureCardCompactHeight,
             canExpand: $featureCardCanExpand,
-            detent: $featureCardDetent
+            detent: $featureCardDetent,
+            alwaysAllowExpansion: allowsExpansionWithoutOverflow(mapState.selectedMapFeatureCard)
         )
     }
 
@@ -196,7 +197,8 @@ struct MapContainerView: View {
         _ contentHeight: CGFloat,
         compactHeight: Binding<CGFloat>,
         canExpand: Binding<Bool>,
-        detent: Binding<PresentationDetent>
+        detent: Binding<PresentationDetent>,
+        alwaysAllowExpansion: Bool = false
     ) {
         guard contentHeight > 0 else { return }
 
@@ -207,15 +209,27 @@ struct MapContainerView: View {
         )
 
         let measuredCanExpand = measuredHeight > clampedHeight + 8
+        let effectiveCanExpand = measuredCanExpand || alwaysAllowExpansion
 
-        guard abs(compactHeight.wrappedValue - clampedHeight) > 1 || canExpand.wrappedValue != measuredCanExpand else { return }
+        guard abs(compactHeight.wrappedValue - clampedHeight) > 1 || canExpand.wrappedValue != effectiveCanExpand else { return }
 
         withAnimation(.snappy) {
             compactHeight.wrappedValue = clampedHeight
-            canExpand.wrappedValue = measuredCanExpand
-            if detent.wrappedValue != .large || !measuredCanExpand {
+            canExpand.wrappedValue = effectiveCanExpand
+            if detent.wrappedValue != .large || !effectiveCanExpand {
                 detent.wrappedValue = .height(clampedHeight)
             }
+        }
+    }
+
+    private func allowsExpansionWithoutOverflow(_ card: MapFeatureCardModel?) -> Bool {
+        guard let card else { return false }
+
+        switch card.kind {
+        case .region, .cluster, .area:
+            return true
+        case .poi:
+            return false
         }
     }
 
