@@ -23,6 +23,14 @@ import Combine
             DownloadCenter.shared.areaDownloader(id: area.id)
         }
     }
+
+    init(cluster: Cluster, orderedAreas: [Area]) {
+        self.cluster = cluster
+
+        areas = orderedAreas.map { area in
+            DownloadCenter.shared.areaDownloader(id: area.id)
+        }
+    }
     
     func start() {
         stopDownloads()

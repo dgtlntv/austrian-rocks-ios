@@ -29,68 +29,21 @@ struct AreaView: View {
     }
 
     var body: some View {
-        ZStack {
-            List {
-                if area.tags.count > 0 || area.localizedDescription != nil || area.localizedWarning != nil {
-                    Section {
-                        tagsWithFlowLayout
-                        descriptionAndWarning
-                    }
-                }
-
-                levelsSection
-
-                problemsSection
-
-                if poiRoutes.count > 0 {
-                    poiRoutesList
-                }
-
-
-                if(linkToMap) {
-                    // leave room for sticky footer
-                    Section(header: Text("")) {
-                        EmptyView()
-                    }
-                    .padding(.bottom, 24)
+        List {
+            if area.tags.count > 0 || area.localizedDescription != nil || area.localizedWarning != nil {
+                Section {
+                    tagsWithFlowLayout
+                    descriptionAndWarning
                 }
             }
 
-            if(linkToMap) {
-                VStack {
-                    Spacer()
-                    
-                    Button {
-                        appState.tab = .map
-                        
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { // to avoid a weird race condition
-                            appState.selectedArea = area
-                        }
-                    } label: {
-                        Text("area.see_on_the_map")
-                            .font(.body.weight(.semibold))
-                            .modify {
-                                if #available(iOS 26, *) {
-                                    $0
-                                }
-                                else {
-                                    $0.padding(.vertical)
-                                }
-                            }
-                    }
-                    .modify {
-                        if #available(iOS 26, *) {
-                            $0.buttonStyle(.glassProminent).controlSize(.large)
-                                
-                        }
-                        else {
-                            $0.buttonStyle(LargeButton())
-                        }
-                    }
-                    .padding()
-                }
-            }
+            levelsSection
 
+            problemsSection
+
+            if poiRoutes.count > 0 {
+                poiRoutesList
+            }
         }
         .task {
             problems = area.problems
@@ -99,6 +52,21 @@ struct AreaView: View {
         .navigationTitle(area.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            if linkToMap {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        showAreaOnMap()
+                    } label: {
+                        Image(systemName: "map")
+                    }
+                    .accessibilityLabel(Text("area.see_on_the_map"))
+                }
+
+                if #available(iOS 26, *) {
+                    ToolbarSpacer(.fixed, placement: .topBarTrailing)
+                }
+            }
+
             ToolbarItem(placement: .topBarTrailing) {
                 AreaDownloadToolbarButton(areaDownloader: areaDownloader)
             }
@@ -127,6 +95,14 @@ struct AreaView: View {
             }
         }
         
+    }
+
+    private func showAreaOnMap() {
+        appState.tab = .map
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { // to avoid a weird race condition
+            appState.selectedArea = area
+        }
     }
     
     var tags: some View {

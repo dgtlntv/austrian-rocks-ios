@@ -16,7 +16,8 @@ struct ClusterDetailView: View {
     @State private var presentDownloadSheet = false
 
     private var clusterDownloader: ClusterDownloader {
-        ClusterDownloader(cluster: cluster, mainArea: cluster.mainArea)
+        let orderedAreas = areas.isEmpty ? cluster.areas : areas
+        return ClusterDownloader(cluster: cluster, orderedAreas: orderedAreas)
     }
 
     var body: some View {
