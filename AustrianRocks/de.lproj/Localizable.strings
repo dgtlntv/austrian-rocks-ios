@@ -143,6 +143,7 @@
 "download.cluster.downloaded" = "Gebiete heruntergeladen";
 "download.cluster.remove.title" = "Downloads löschen?";
 "download.cluster.remove.action" = "Löschen";
+"download.cluster.remove.all.action" = "Alle heruntergeladenen Gebiete löschen";
 "download.cluster.tip.title" = "Gebiete im Voraus herunterladen";
 "download.cluster.tip.message" = "Überspringe Ladezeiten und verwende Austrian.rocks ohne Internetverbindung.";
 "download.remove.title" = "Download löschen?";

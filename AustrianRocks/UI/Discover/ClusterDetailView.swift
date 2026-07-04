@@ -45,7 +45,8 @@ struct ClusterDetailView: View {
             }
         }
         .sheet(isPresented: $presentDownloadSheet) {
-            ClusterViewWithActionsheet(clusterDownloader: clusterDownloader)
+            ClusterView(clusterDownloader: clusterDownloader)
+                .id(cluster.id)
                 .presentationDetents([.medium, .large])
         }
         .task {

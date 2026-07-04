@@ -33,7 +33,8 @@ struct DownloadButtonView: View {
         }
 //        .buttonStyle(FabButton())
         .sheet(isPresented: $presentDownloads) {
-            ClusterViewWithActionsheet(clusterDownloader: clusterDownloader)
+            ClusterView(clusterDownloader: clusterDownloader)
+                .id(cluster.id)
                 .presentationDetents([.medium, .large])
         }
     }

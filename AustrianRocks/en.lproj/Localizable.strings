@@ -143,6 +143,7 @@
 "download.cluster.downloaded" = "Areas downloaded";
 "download.cluster.remove.title" = "Clear downloads?";
 "download.cluster.remove.action" = "Clear";
+"download.cluster.remove.all.action" = "Clear all downloaded areas";
 "download.cluster.tip.title" = "Download areas in advance";
 "download.cluster.tip.message" = "Skip loading times and use Austrian.rocks without an Internet connection.";
 "download.remove.title" = "Clear download?";

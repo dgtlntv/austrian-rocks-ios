@@ -9,73 +9,75 @@
 import SwiftUI
 
 struct AreaDownloadRowView : View {
-    let area: Area
-    
     var areaDownloader: AreaDownloader
-    @Binding var presentRemoveDownloadSheet: Bool
-    @Binding var presentCancelDownloadSheet: Bool
-    @Binding var areaToEdit: Area?
-    
     var clusterDownloader: ClusterDownloader
-    
-    init(area: Area, areaToEdit: Binding<Area?>, presentRemoveDownloadSheet: Binding<Bool>, presentCancelDownloadSheet: Binding<Bool>, clusterDownloader: ClusterDownloader) {
-        self.area = area
-        self.areaDownloader = DownloadCenter.shared.areaDownloader(id: area.id)
-        self._areaToEdit = areaToEdit
-        self._presentRemoveDownloadSheet = presentRemoveDownloadSheet
-        self._presentCancelDownloadSheet = presentCancelDownloadSheet
-        self.clusterDownloader = clusterDownloader
-    }
-    
+
     var body: some View {
-        Button {
-            if !clusterDownloader.queueRunning || clusterDownloader.queueType == .manual {
-                if case .initial = areaDownloader.status  {
-                    clusterDownloader.addAreaToQueue(areaDownloader)
+        Group {
+            if case .downloaded = areaDownloader.status {
+                downloadedRow
+            } else {
+                Button(action: handleTap) {
+                    rowContent {
+                        statusAccessory
+                    }
                 }
-                else if case .queued = areaDownloader.status  {
-                    clusterDownloader.removeAreaFromQueue(areaDownloader)
-                }
-                else if case .downloading(_) = areaDownloader.status  {
-                    areaToEdit = area
-                    presentCancelDownloadSheet = true
-                }
-                else if case .downloaded = areaDownloader.status  {
-                    areaToEdit = area
-                    presentRemoveDownloadSheet = true
-                }
-            }
-        } label: {
-            HStack {
-                
-                if case .initial = areaDownloader.status  {
-                    Image(systemName: "icloud.and.arrow.down").font(.title2)
-                }
-                else if areaDownloader.downloadingOrQueued  {
-                    CircularProgressView(progress: areaDownloader.status.progress).frame(height: 18)
-                }
-                else if case .downloaded = areaDownloader.status  {
-                    Image(systemName: "checkmark.icloud").foregroundStyle(.gray).font(.title2)
-                }
-                else {
-                    Text(areaDownloader.status.label)
-                }
+                .buttonStyle(.plain)
+                .disabled(clusterDownloader.queueRunning && clusterDownloader.queueType != .manual)
             }
         }
-        .modify {
-            if case .downloaded = areaDownloader.status  {
-                $0.swipeActions(allowsFullSwipe: false) {
-                    Button {
-                        areaDownloader.remove()
-                    } label: {
-                        Label("download.area.delete", systemImage: "trash.fill")
-                    }
-                    .tint(.red)
-                }
+    }
+
+    private var downloadedRow: some View {
+        rowContent {
+            Button(role: .destructive) {
+                areaDownloader.remove()
+            } label: {
+                Text("download.remove.action")
             }
-            else {
-                $0
-            }
+            .buttonStyle(.borderless)
+        }
+    }
+
+    private func rowContent<Accessory: View>(@ViewBuilder accessory: () -> Accessory) -> some View {
+        HStack {
+            Text(areaDownloader.area.name)
+                .foregroundColor(.primary)
+
+            Spacer()
+
+            accessory()
+        }
+        .frame(minHeight: 24)
+        .contentShape(Rectangle())
+    }
+
+    @ViewBuilder
+    private var statusAccessory: some View {
+        if case .initial = areaDownloader.status  {
+            Image(systemName: "icloud.and.arrow.down")
+                .font(.body)
+                .frame(width: 24, height: 24)
+        }
+        else if areaDownloader.downloadingOrQueued  {
+            CircularProgressView(progress: areaDownloader.status.progress).frame(height: 18)
+        }
+        else {
+            Text(areaDownloader.status.label)
+        }
+    }
+
+    private func handleTap() {
+        guard !clusterDownloader.queueRunning || clusterDownloader.queueType == .manual else { return }
+
+        if case .initial = areaDownloader.status  {
+            clusterDownloader.addAreaToQueue(areaDownloader)
+        }
+        else if case .queued = areaDownloader.status  {
+            clusterDownloader.removeAreaFromQueue(areaDownloader)
+        }
+        else if case .downloading(_) = areaDownloader.status  {
+            areaDownloader.cancel()
         }
     }
 }

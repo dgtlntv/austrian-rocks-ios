@@ -7,39 +7,25 @@
 //
 
 import SwiftUI
-import TipKit
 
 struct ClusterView: View {
     var clusterDownloader: ClusterDownloader
-    
-    @Binding var presentRemoveDownloadSheet: Bool
-    @Binding var presentCancelDownloadSheet: Bool
-    @Binding var presentRemoveClusterDownloadSheet: Bool
-    @Binding var areaToEdit: Area?
-    
-    let tip = DownloadTip()
-    
+
+    private let areaDownloaders: [AreaDownloader]
+
+    init(clusterDownloader: ClusterDownloader) {
+        self.clusterDownloader = clusterDownloader
+        self.areaDownloaders = clusterDownloader.areas
+    }
+
     var body: some View {
         List {
-            bigButton
-            
-            TipView(tip)
-                .tipBackground(Color.systemBackground)
-                .listRowInsets(EdgeInsets())
-                .listRowBackground(Color.clear)
-                .onChange(of: clusterDownloader.queueRunning) { oldValue, newValue in
-                    tip.invalidate(reason: .actionPerformed)
-                }
-            
+            clusterStatus
+            clusterAction
+
             Section(header: Text("download.cluster.areas")) {
-                ForEach(areas) { a in
-                    HStack {
-                        Text(a.name).foregroundColor(.primary)
-                        
-                        Spacer()
-                        
-                        AreaDownloadRowView(area: a, areaToEdit: $areaToEdit, presentRemoveDownloadSheet: $presentRemoveDownloadSheet, presentCancelDownloadSheet: $presentCancelDownloadSheet, clusterDownloader: clusterDownloader)
-                    }
+                ForEach(areaDownloaders) { areaDownloader in
+                    AreaDownloadRowView(areaDownloader: areaDownloader, clusterDownloader: clusterDownloader)
                 }
             }
         }
@@ -47,82 +33,75 @@ struct ClusterView: View {
             newValue
         }
     }
-    
-    var bigButton: some View {
-        Group {
-            if clusterDownloader.allDownloaded {
-                Section {
-                    Button {
-                        presentRemoveClusterDownloadSheet = true
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Image(systemName: "checkmark.icloud").font(.title2)
-                            Text("download.cluster.downloaded")
-                            Spacer()
-                        }
-                        .foregroundStyle(.appGreen)
-                    }
-                    .actionSheet(isPresented: $presentRemoveClusterDownloadSheet) {
-                        ActionSheet(
-                            title: Text("download.cluster.remove.title"),
-                            buttons: [
-                                .destructive(Text("download.cluster.remove.action")) {
-                                    clusterDownloader.removeDownloads()
-                                },
-                                .cancel()
-                            ]
-                        )
-                    }
-                    
+
+    @ViewBuilder
+    private var clusterStatus: some View {
+        if clusterDownloader.downloadingOrQueued && clusterDownloader.queueType == .auto {
+            Section {
+                HStack {
+                    CircularProgressView(progress: clusterDownloader.progress)
+                        .frame(height: 18)
+                    Text(titleDownloading)
+                        .foregroundStyle(.secondary)
                 }
-            }
-            else if clusterDownloader.downloadingOrQueued && clusterDownloader.queueType == .auto {
-                Section {
-                    Button {
-                        clusterDownloader.stopDownloads()
-                    } label: {
-                        HStack {
-                            Image(systemName: "stop.circle").frame(height: 18)
-                            Text(titleDownloading)
-                        }
-                        .font(.title3.weight(.semibold))
-                        .padding(.vertical, 12)
-                    }
-                    .buttonStyle(LargeButton())
-                }
-                .listRowInsets(EdgeInsets())
-                .listRowBackground(Color.clear)
-            }
-            else {
-                Section {
-                    Button {
-                        clusterDownloader.start()
-                    } label: {
-                        HStack {
-                            Image(systemName: "icloud.and.arrow.down").frame(height: 18)
-                            Text("download.cluster.download")
-                        }
-                        .font(.title3.weight(.semibold))
-                        .padding(.vertical, 12)
-                        
-                    }
-                    .buttonStyle(LargeButton())
-                }
-                .listRowInsets(EdgeInsets())
-                .listRowBackground(Color.clear)
             }
         }
     }
-    
+
+    @ViewBuilder
+    private var clusterAction: some View {
+        if clusterDownloader.allDownloaded {
+            Section {
+                Button(role: .destructive) {
+                    clusterDownloader.removeDownloads()
+                } label: {
+                    HStack {
+                        Spacer()
+                        Text("download.cluster.remove.all.action")
+                        Spacer()
+                    }
+                }
+            }
+        }
+        else if clusterDownloader.downloadingOrQueued && clusterDownloader.queueType == .auto {
+            Section {
+                Button {
+                    clusterDownloader.stopDownloads()
+                } label: {
+                    HStack {
+                        Image(systemName: "stop.circle").frame(height: 18)
+                        Text("download.cancel.action")
+                    }
+                    .font(.title3.weight(.semibold))
+                    .padding(.vertical, 12)
+                }
+                .buttonStyle(LargeButton())
+            }
+            .listRowInsets(EdgeInsets())
+            .listRowBackground(Color.clear)
+        }
+        else {
+            Section {
+                Button {
+                    clusterDownloader.start()
+                } label: {
+                    HStack {
+                        Image(systemName: "icloud.and.arrow.down").frame(height: 18)
+                        Text("download.cluster.download")
+                    }
+                    .font(.title3.weight(.semibold))
+                    .padding(.vertical, 12)
+                }
+                .buttonStyle(LargeButton())
+            }
+            .listRowInsets(EdgeInsets())
+            .listRowBackground(Color.clear)
+        }
+    }
+
     var titleDownloading: String {
         let percentage = Int(Double(clusterDownloader.progress*100).rounded())
         return String(format: NSLocalizedString("download.cluster.downloading", comment: ""), percentage)
-    }
-    
-    // TODO: use AreaDownloader instead of Area
-    var areas: [Area] {
-        clusterDownloader.areas.map{$0.area}
     }
 }
 
