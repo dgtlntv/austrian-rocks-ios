@@ -9,7 +9,6 @@
 import SwiftUI
 
 struct SearchSheetView: View {
-    @Environment(\.dismiss) private var dismiss
     @Environment(MapState.self) private var mapState: MapState
     
     @State private var query = ""
@@ -69,11 +68,11 @@ struct SearchSheetView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     if #available(iOS 26, *) {
                         Button(role: .close) {
-                            dismiss()
+                            closeSearch()
                         }
                     } else {
                         Button {
-                            dismiss()
+                            closeSearch()
                         } label: {
                             Image(systemName: "xmark")
                         }
@@ -83,7 +82,7 @@ struct SearchSheetView: View {
         }
         .onChange(of: isSearchFocused) { oldValue, newValue in
             if oldValue && !newValue {
-                dismiss()
+                mapState.presentSearch = false
             }
         }
     }
@@ -121,15 +120,22 @@ struct SearchSheetView: View {
     }
     
     private func selectArea(_ area: Area) {
-        dismiss()
-        mapState.clearFilters()
-        mapState.selectArea(area)
-        mapState.centerOnArea(area)
+        resignSearchField()
+        mapState.queueSearchAreaSelection(area)
     }
     
     private func selectProblem(_ problem: Problem) {
-        dismiss()
-        mapState.clearFilters()
-        mapState.selectAndPresentAndCenterOnProblem(problem)
+        resignSearchField()
+        mapState.queueSearchProblemSelection(problem)
+    }
+
+    private func closeSearch() {
+        resignSearchField()
+        mapState.presentSearch = false
+    }
+
+    private func resignSearchField() {
+        isSearchFocused = false
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }

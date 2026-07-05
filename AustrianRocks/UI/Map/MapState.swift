@@ -36,6 +36,9 @@ class MapState {
     var presentAreaView = false
     var presentSearch = false
     private(set) var presentTopoFullScreenRequestCount: Int = 0
+
+    @ObservationIgnored private var pendingSearchAreaSelection: Area?
+    @ObservationIgnored private var pendingSearchProblemSelection: Problem?
     
     func centerOnArea(_ area: Area) {
         centerOnArea = area
@@ -84,6 +87,33 @@ class MapState {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [self] in
             self.selectProblem(problem)
             self.presentProblemDetails = true
+        }
+    }
+
+    func queueSearchAreaSelection(_ area: Area) {
+        pendingSearchProblemSelection = nil
+        pendingSearchAreaSelection = area
+        presentSearch = false
+    }
+
+    func queueSearchProblemSelection(_ problem: Problem) {
+        pendingSearchAreaSelection = nil
+        pendingSearchProblemSelection = problem
+        presentSearch = false
+    }
+
+    func completeSearchDismissal() {
+        if let area = pendingSearchAreaSelection {
+            pendingSearchAreaSelection = nil
+            clearFilters()
+            selectArea(area)
+            centerOnArea(area)
+        }
+
+        if let problem = pendingSearchProblemSelection {
+            pendingSearchProblemSelection = nil
+            clearFilters()
+            selectAndPresentAndCenterOnProblem(problem)
         }
     }
     

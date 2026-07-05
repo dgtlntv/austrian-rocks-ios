@@ -11,9 +11,6 @@ enum DiscoverRoute: Hashable {
     case region(Int)
     case cluster(Int)
     case area(Int)
-    case topAreasLevel
-    case topAreasDryFast
-    case topAreasBeginner
     case acknowledgements
     case settings
 }

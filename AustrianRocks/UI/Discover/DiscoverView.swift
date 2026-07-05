@@ -11,9 +11,6 @@ import SwiftUI
 struct DiscoverView: View {
     @Environment(\.openURL) var openURL
 
-    @State var presentArea = false
-    @State private var presentWebView = false
-
     @State private var popularRegions: [Region] = []
     @State private var regions: [Region] = []
     @State private var router = DiscoverRouter()
@@ -24,93 +21,6 @@ struct DiscoverView: View {
         NavigationStack(path: $router.path) {
             GeometryReader { geo in
                 ScrollView {
-                    VStack(alignment: .leading) {
-                        
-                        VStack {
-                            HStack {
-                                Button {
-                                    presentWebView = true
-                                } label: {
-                                    
-                                    VStack(alignment: .leading) {
-                                        HStack {
-                                            Text("discover.beginners_guide")
-                                                .textCase(.uppercase)
-                                        }
-                                        .padding()
-                                        .font(.subheadline.weight(.bold))
-                                        .foregroundColor(Color.white)
-                                        .frame(height: 70)
-                                        .frame(maxWidth: .infinity)
-                                        .background(
-                                            LinearGradient(gradient:
-                                                            Gradient(colors: [Color.green.opacity(0.4), Color.green.opacity(0.6)]),
-                                                           startPoint: .top,
-                                                           endPoint: .bottom)
-                                        )
-                                        .cornerRadius(8)
-                                    }
-                                }
-                                .fullScreenCover(isPresented: $presentWebView) {
-                                    SafariWebView(url: URL(string: "https://\(BrandConfig.Domains.www)/\(NSLocale.websiteLocale)/articles/beginners-guide")!)
-                                        .ignoresSafeArea()
-
-                                }
-                                
-                                NavigationLink(value: DiscoverRoute.topAreasLevel) {
-                                    
-                                    VStack(alignment: .leading) {
-                                        HStack {
-                                            Image(systemName: "chart.bar")
-                                            Text("discover.top_areas.level")
-                                                .textCase(.uppercase)
-                                        }
-                                        .padding()
-                                        .font(.subheadline.weight(.bold))
-                                        .foregroundColor(Color.white)
-                                        .frame(height: 70)
-                                        .frame(maxWidth: .infinity)
-                                        .background(
-                                            LinearGradient(gradient:
-                                                            Gradient(colors: [Color.blue.opacity(0.4), Color.blue.opacity(0.6)]),
-                                                           startPoint: .top,
-                                                           endPoint: .bottom)
-                                        )
-                                        .cornerRadius(8)
-                                    }
-                                }
-                                
-                            }
-                            
-                            HStack {
-                                NavigationLink(value: DiscoverRoute.topAreasDryFast) {
-
-                                    VStack(alignment: .leading) {
-                                        HStack {
-                                            Image(systemName: "sun.max")
-                                            Text("discover.top_areas.dry_fast")
-                                                .textCase(.uppercase)
-                                        }
-                                        .padding()
-                                        .font(.subheadline.weight(.bold))
-                                        .foregroundColor(Color.white)
-                                        .frame(height: 70)
-                                        .frame(maxWidth: .infinity)
-                                        .background(
-                                            LinearGradient(gradient:
-                                                            Gradient(colors: [Color.yellow.opacity(0.4), Color.yellow.opacity(0.6)]),
-                                                           startPoint: .top,
-                                                           endPoint: .bottom)
-                                        )
-                                        .cornerRadius(8)
-                                    }
-                                }
-                            }
-                        }
-                        .padding(.horizontal)
-                        .padding(.top)
-                    }
-                    
                     if popularRegions.isEmpty {
                         VStack {
                             Spacer()
@@ -338,12 +248,6 @@ struct DiscoverView: View {
             if let area = Area.load(id: id) {
                 AreaView(area: area, linkToMap: true)
             }
-        case .topAreasLevel:
-            TopAreasLevelView()
-        case .topAreasDryFast:
-            TopAreasDryFast()
-        case .topAreasBeginner:
-            TopAreasBeginnerView()
         case .acknowledgements:
             AcknowledgementsView()
         case .settings:

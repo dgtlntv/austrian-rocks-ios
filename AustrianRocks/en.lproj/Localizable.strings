@@ -77,7 +77,6 @@
 
 // MARK: Discover view
 "discover.title" = "Discover";
-"discover.all_areas" = "All areas";
 "discover.regions.all" = "All Regions";
 "discover.regions.title" = "Regions";
 "discover.regions.clusters" = "%d clusters";
@@ -88,15 +87,6 @@
 "discover.cluster.areas_count" = "%d areas";
 "discover.cluster.problems_count" = "%d problems";
 "discover.popular" = "Popular";
-"discover.beginners_guide" = "Beginner's guide";
-"discover.top_areas.level" = "For your level";
-"discover.top_areas.level.beginner_friendly" = "Beginner friendly";
-"discover.top_areas.level.beginner.intro" = "These areas are a good starting point if you are new to bouldering or want easier problems.";
-"discover.top_areas.train" = "Accessible by train + bike";
-"discover.top_areas.train.intro" = "Bike time from the station:";
-"discover.top_areas.see_in_google_maps" = "See in Google Maps";
-"discover.top_areas.dry_fast" = "Dries fast";
-"discover.all_areas.map" = "Map";
 "discover.search_prompt" = "Area";
 "discover.support" = "Want to help?";
 "discover.rate" = "Rate the app";
@@ -157,24 +147,6 @@
 "download.area.queued" = "Download queued";
 "download.area.delete" = "Delete";
 
-// MARK: Top areas
-"top_areas.level.title" = "For your level";
-"top_areas.level.level" = "Level";
-"top_areas.level.beginner" = "Beginner";
-"top_areas.level.intermediate" = "Intermediate";
-"top_areas.level.advanced" = "Advanced";
-"top_areas.level.description.beginner" = "These areas offer lots of problems graded 2 and 3, with low boulders and good landings.";
-"top_areas.level.description.intermediate" = "These areas offer lots of problems graded 4 and 5.";
-"top_areas.level.description.advanced" = "These problems offer lots of problems graded 6 and above.";
-"top_areas.level.intermediate.warning" = "Careful: grades may vary by area.";
-"top_areas.level.read_guide" = "Read the beginner's guide";
-"top_areas.groups.title" = "For groups";
-"top_areas.groups.description" = "These areas offer lots of problems in all grades from 2 to 7.";
-"top_areas.train.title" = "Train + bike";
-"top_areas.dry_fast.title" = "Dries fast";
-"top_areas.dry_fast.description" = "These areas dry faster than most areas thanks to the sun&wind exposure";
-"top_areas.dry_fast.warning" = "Don't climb if the rock is still wet, you may damage it.";
-"top_areas.dry_fast.useful_link" = "Useful link:";
 "all_areas.map.title" = "All areas";
 "all_areas.map.problems" = "%@ problems";
 

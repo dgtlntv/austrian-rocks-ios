@@ -77,7 +77,6 @@
 
 // MARK: Discover view
 "discover.title" = "Entdecken";
-"discover.all_areas" = "Alle Gebiete";
 "discover.regions.all" = "Alle Regionen";
 "discover.regions.title" = "Regionen";
 "discover.regions.clusters" = "%d Cluster";
@@ -88,15 +87,6 @@
 "discover.cluster.areas_count" = "%d Gebiete";
 "discover.cluster.problems_count" = "%d Boulder";
 "discover.popular" = "Beliebt";
-"discover.beginners_guide" = "Anfänger-Guide";
-"discover.top_areas.level" = "Für deine Schwierigkeit";
-"discover.top_areas.level.beginner_friendly" = "Anfängerfreundlich";
-"discover.top_areas.level.beginner.intro" = "Diese Gebiete sind ein guter Einstieg, wenn du neu beim Bouldern bist oder leichtere Boulder suchst.";
-"discover.top_areas.train" = "Mit Zug + Rad erreichbar";
-"discover.top_areas.train.intro" = "Radzeit vom Bahnhof:";
-"discover.top_areas.see_in_google_maps" = "In Google Maps öffnen";
-"discover.top_areas.dry_fast" = "Trocknet schnell";
-"discover.all_areas.map" = "Karte";
 "discover.search_prompt" = "Gebiet";
 "discover.support" = "Möchtest du helfen?";
 "discover.rate" = "App bewerten";
@@ -157,24 +147,6 @@
 "download.area.queued" = "Download in Warteschlange";
 "download.area.delete" = "Löschen";
 
-// MARK: Top areas
-"top_areas.level.title" = "Für deine Schwierigkeit";
-"top_areas.level.level" = "Schwierigkeit";
-"top_areas.level.beginner" = "Anfänger";
-"top_areas.level.intermediate" = "Fortgeschritten";
-"top_areas.level.advanced" = "Experte";
-"top_areas.level.description.beginner" = "Diese Gebiete bieten viele Boulder der Schwierigkeiten 2 und 3, mit niedrigen Bouldern und guten Landungen.";
-"top_areas.level.description.intermediate" = "Diese Gebiete bieten viele Boulder der Schwierigkeiten 4 und 5.";
-"top_areas.level.description.advanced" = "Diese Gebiete bieten viele Boulder der Schwierigkeiten 6 und höher.";
-"top_areas.level.intermediate.warning" = "Vorsicht: Die Bewertungen können je nach Gebiet variieren.";
-"top_areas.level.read_guide" = "Anfänger-Guide lesen";
-"top_areas.groups.title" = "Für Gruppen";
-"top_areas.groups.description" = "Diese Gebiete bieten viele Boulder in allen Schwierigkeiten von 2 bis 7.";
-"top_areas.train.title" = "Zug + Rad";
-"top_areas.dry_fast.title" = "Trocknet schnell";
-"top_areas.dry_fast.description" = "Diese Gebiete trocknen schneller als die meisten anderen dank der Sonnen- und Windexposition";
-"top_areas.dry_fast.warning" = "Klettere nicht, wenn der Fels noch nass ist, du könntest ihn beschädigen.";
-"top_areas.dry_fast.useful_link" = "Nützlicher Link:";
 "all_areas.map.title" = "Alle Gebiete";
 "all_areas.map.problems" = "%@ Boulder";
 

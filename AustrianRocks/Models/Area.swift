@@ -38,12 +38,6 @@ struct Area : Identifiable {
     let clusterId: Int?
     let downloadSize: Double
 
-    static var forBeginners : [Area] {
-        all
-            .filter{$0.beginnerFriendly}
-            .sorted { $0.problemsCount > $1.problemsCount }
-    }
-
     var localizedDescription: String? {
         if NSLocale.websiteLocale == "de" {
             return descriptionDe
@@ -66,16 +60,8 @@ struct Area : Identifiable {
         problems.filter{$0.featured}
     }
     
-    var beginnerFriendly: Bool {
-        tags.contains("beginner_friendly")
-    }
-    
     var popular: Bool {
         tags.contains("popular")
-    }
-    
-    var dryFast: Bool {
-        tags.contains("dry_fast")
     }
     
     var levels: [Level] {

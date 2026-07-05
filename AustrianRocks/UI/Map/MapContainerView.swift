@@ -75,7 +75,9 @@ struct MapContainerView: View {
                 .zIndex(30)
                 .opacity(mapState.selectedArea != nil ? 1 : 0)
         }
-        .sheet(isPresented: $mapState.presentSearch) {
+        .sheet(isPresented: $mapState.presentSearch, onDismiss: {
+            mapState.completeSearchDismissal()
+        }) {
             SearchSheetView()
         }
         .sheet(isPresented: featureCardPresented) {
